@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # CommerceEditor
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 15.2.2.
@@ -29,4 +28,3 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 =======
 # FileSystemInterface
 A file system interface for web apps
->>>>>>> 03adf439be98dda2fa0a222bf93d4f76d7cb7ef7
