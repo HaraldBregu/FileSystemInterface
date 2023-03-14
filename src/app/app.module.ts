@@ -8,7 +8,14 @@ import { NavbarComponent } from './components/navbar/navbar.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { HomeComponent } from './components/home/home.component';
-import { HttpClientModule } from '@angular/common/http'
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http'
+import { ResourcesInterceptor } from './core/interceptors/resources.interceptor';
+import { environment } from 'src/environments/environment.prod';
+
+
+export function getBaseUrl() {
+  return environment.baseUrl;
+}
 
 @NgModule({
   declarations: [
@@ -18,13 +25,24 @@ import { HttpClientModule } from '@angular/common/http'
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'serverApp' }),
-    HttpClientModule,
     AppRoutingModule,
+    HttpClientModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
     FontAwesomeModule
   ],
-  providers: [],
+  providers: [
+    { 
+      provide: 'BASE_URL', 
+      useFactory: getBaseUrl, 
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ResourcesInterceptor,
+      multi: true,
+      
+    },
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
