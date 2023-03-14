@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { CatalogService } from 'src/app/core/services/catalog.service';
+import { CategoryService } from 'src/app/core/services/category.service';
 
 @Component({
   selector: 'app-home',
@@ -7,4 +9,10 @@ import { Component } from '@angular/core';
 })
 export class HomeComponent {
 
+  constructor(
+    private catalogService: CatalogService,
+    private categoryService: CategoryService) {
+
+    //this.catalogService.getCatalogs();
+  }
 }
