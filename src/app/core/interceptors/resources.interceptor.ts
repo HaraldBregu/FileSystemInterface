@@ -3,7 +3,8 @@ import {
   HttpRequest,
   HttpHandler,
   HttpEvent,
-  HttpInterceptor
+  HttpInterceptor,
+  HTTP_INTERCEPTORS
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment.prod';
@@ -20,3 +21,9 @@ export class ResourcesInterceptor implements HttpInterceptor {
     return next.handle(apiReq);
   }
 }
+
+export const ResourcesInterceptorProvider = {
+  provide: HTTP_INTERCEPTORS,
+  useClass: ResourcesInterceptor,
+  multi: true,
+};

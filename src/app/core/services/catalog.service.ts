@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
+import { environment } from 'src/environments/environment.prod';
 import { Catalog } from '../interfaces/catalog';
 
 
@@ -8,16 +9,22 @@ import { Catalog } from '../interfaces/catalog';
   providedIn: 'root'
 })
 export class CatalogService {
-  private url = "api/catalogs.json";
+  private baseUrl = environment.baseUrl;
 
   constructor(private httpClient: HttpClient) {
 
   }
 
-  getCatalogs(date: string): Observable<Catalog[]> {
-    return this.httpClient.get<Catalog[]>(this.url).pipe(map(catalogs => {
-      return catalogs.filter(e => e.date.includes(date));
-    }))
+  get(): Observable<Catalog[]> {
+    return this.httpClient.get<Catalog[]>(this.baseUrl);
+  }
+
+  getWithId(id: string): Observable<Catalog> {
+    return this.httpClient.get<Catalog>(this.baseUrl + "/" + id);
+  }
+
+  search(string: string): Observable<Catalog> {
+    return this.httpClient.get<Catalog>(this.baseUrl + "/" + string);
   }
 
 }

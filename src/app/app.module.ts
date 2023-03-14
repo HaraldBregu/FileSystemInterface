@@ -10,12 +10,8 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { HomeComponent } from './components/home/home.component';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http'
 import { ResourcesInterceptor } from './core/interceptors/resources.interceptor';
-import { environment } from 'src/environments/environment.prod';
+import { AuthorizationInterceptor, AuthorizationInterceptorProvider } from './core/interceptors/authorization.interceptor';
 
-
-export function getBaseUrl() {
-  return environment.baseUrl;
-}
 
 @NgModule({
   declarations: [
@@ -32,16 +28,7 @@ export function getBaseUrl() {
     FontAwesomeModule
   ],
   providers: [
-    { 
-      provide: 'BASE_URL', 
-      useFactory: getBaseUrl, 
-    },
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: ResourcesInterceptor,
-      multi: true,
-      
-    },
+    AuthorizationInterceptorProvider,
   ],
   bootstrap: [AppComponent]
 })
