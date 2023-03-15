@@ -15,6 +15,8 @@ export class HomeComponent implements OnInit {
   addFolderIcon = faFolderPlus;
   fileIcon = faFile;
   addFileIcon = faFileCirclePlus;
+  isSyncAnimated = true;
+
 
   constructor(
     private catalogService: CatalogService,

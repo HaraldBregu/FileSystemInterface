@@ -17,6 +17,11 @@ export class AuthService {
     return localStorage.getItem("auth_token");
   }
 
+  /*
+
+
+
+  */
   login(username: string, password: string): Observable<User> {
     return this.httpClient.post<User>(this.loginUrl, {
       username: username,
