@@ -2,34 +2,35 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { ReactiveFormsModule } from '@angular/forms';
 
+import { ComponentsModule } from './core/components/components.module'
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { HomeComponent } from './components/home/home.component';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http'
-import { ResourcesInterceptor } from './core/interceptors/resources.interceptor';
-import { AuthorizationInterceptor, AuthorizationInterceptorProvider } from './core/interceptors/authorization.interceptor';
+import { HttpClientModule } from '@angular/common/http'
+import { AuthorizationInterceptorProvider } from './core/interceptors/authorization.interceptor';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     NavbarComponent,
-    HomeComponent,
+    HomeComponent  
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'serverApp' }),
     AppRoutingModule,
     HttpClientModule,
+    ComponentsModule,
     ReactiveFormsModule,
-    BrowserAnimationsModule,
-    FontAwesomeModule
+    BrowserAnimationsModule
   ],
   providers: [
     AuthorizationInterceptorProvider,
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  exports: [
+  ]
 })
 export class AppModule { }

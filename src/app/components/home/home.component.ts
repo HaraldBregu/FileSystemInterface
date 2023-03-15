@@ -44,7 +44,7 @@ export class HomeComponent implements OnInit {
 
   }
 
-  selectCatalog(item: Catalog) {
+  selectItem(item: Catalog) {
     console.log(item);
   }
 
