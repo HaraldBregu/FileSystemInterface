@@ -12,5 +12,9 @@ export class SidebarComponent {
   fileIcon = faFile;
   addFileIcon = faFileCirclePlus;
 
+  showCatalogs = false;
 
+  toggleCatalogs() {
+    this.showCatalogs = !this.showCatalogs
+  }
 }

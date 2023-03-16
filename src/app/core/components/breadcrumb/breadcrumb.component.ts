@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { faFolder, faFolderPlus, faFile, faFileCirclePlus, faList } from '@fortawesome/free-solid-svg-icons';
+import { faAddressCard } from '@fortawesome/free-regular-svg-icons';
 
 @Component({
   selector: 'app-breadcrumb',

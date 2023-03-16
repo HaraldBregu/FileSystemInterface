@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { ProductItemType } from 'src/app/core/enums/product-item-type';
 import { Catalog } from 'src/app/core/interfaces/catalog';
+import { ProductItem } from 'src/app/core/interfaces/product-item';
 
 @Component({
   selector: 'app-dashboard',
@@ -7,17 +9,29 @@ import { Catalog } from 'src/app/core/interfaces/catalog';
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
-  catalogs: Catalog[] = [];
+  catalogs: ProductItem[] = [];
 
   constructor() {
-    this.catalogs.push({id: 23, name: "cat 1", content: 23});
-    this.catalogs.push({id: 23, name: "cat 1", content: 3});
-    this.catalogs.push({id: 23, name: "cat 1", content: 123});
-    this.catalogs.push({id: 23, name: "cat 1", content: 263});
-    this.catalogs.push({id: 23, name: "cat 1", content: 86});
-    this.catalogs.push({id: 23, name: "cat 1", content: 33});
-    this.catalogs.push({id: 23, name: "cat 1", content: 65});
-    this.catalogs.push({id: 23, name: "cat 1", content: 1});
+
+    this.catalogs = [];
+
+    for (let i = 0; i < 4; i++) {
+      let r = (Math.random() + 1).toString(36).substring(7);
+      this.catalogs.push({
+        type: ProductItemType.Category,
+        name: "Category " + r,
+        childs: Math.floor((Math.random()*100)+1),
+        data: null
+      });
+    }
+
+    for (let i = 0; i < 3; i++) {
+      let r = (Math.random() + 1).toString(36).substring(7);
+      this.catalogs.push({
+        type: ProductItemType.File,
+        name: "File_" + r + ".pdf"
+      });
+    }
   }
 
   ngOnInit() {
