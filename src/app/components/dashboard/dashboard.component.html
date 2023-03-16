@@ -1,9 +1,10 @@
 <app-sidebar></app-sidebar>
  
  <div class="p-4 sm:ml-64">
-   <app-breadcrumb></app-breadcrumb>   
-   <app-listcollection></app-listcollection>
-   <app-cardcollection [data]="catalogs"></app-cardcollection>
+   <app-breadcrumb></app-breadcrumb>  
+   <app-datafilter (onItemSelected)="switchListMode()"></app-datafilter>
+   <app-listcollection *ngIf="isTableList" [data]="catalogs"></app-listcollection>
+   <app-cardcollection *ngIf="!isTableList" [data]="catalogs"></app-cardcollection>
  </div>
  
  

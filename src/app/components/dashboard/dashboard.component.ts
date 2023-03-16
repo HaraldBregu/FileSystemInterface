@@ -16,20 +16,20 @@ export class DashboardComponent implements OnInit {
     this.catalogs = [];
 
     for (let i = 0; i < 4; i++) {
-      let r = (Math.random() + 1).toString(36).substring(7);
       this.catalogs.push({
         type: ProductItemType.Category,
-        name: "Category " + r,
+        name: (Math.random() + 1).toString(36).substring(7),
+        color: "text-blue-500",
         childs: Math.floor((Math.random()*100)+1),
         data: null
       });
     }
 
     for (let i = 0; i < 3; i++) {
-      let r = (Math.random() + 1).toString(36).substring(7);
       this.catalogs.push({
         type: ProductItemType.File,
-        name: "File_" + r + ".pdf"
+        name: (Math.random() + 1).toString(36).substring(7) + ".pdf",
+        color: "text-rose-500",
       });
     }
   }
@@ -39,5 +39,9 @@ export class DashboardComponent implements OnInit {
 
   }
 
+  isTableList: boolean = true;
 
+  switchListMode( ){
+    this.isTableList = !this.isTableList
+  }
 }

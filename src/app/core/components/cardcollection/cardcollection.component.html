@@ -6,7 +6,7 @@
             
             <div *ngIf="isCategoryType(item.type)">
               <fa-layers class="text-7xl text-slate-300">
-                <fa-icon [icon]="folderIcon"></fa-icon>
+                <fa-icon [icon]="folderIcon" class="{{item.color}}"></fa-icon>
                 <fa-layers-text content="{{item.childs}}" class="text-white" transform="shrink-10"></fa-layers-text>
               </fa-layers>
               <p class="mt-2 text-sm font-bold text-slate-500">{{item.name}}</p>
@@ -14,7 +14,7 @@
             
             <div *ngIf="isFileType(item.type)">
               <fa-layers class="text-7xl text-slate-300">
-                <fa-icon [icon]="fileIcon"></fa-icon>
+                <fa-icon [icon]="fileIcon" class="{{item.color}}"></fa-icon>
                 <fa-layers-text class="text-white" transform="shrink-10"></fa-layers-text>
               </fa-layers>
               <p class="mt-2 text-sm font-bold text-slate-500">{{item.name}}</p>
