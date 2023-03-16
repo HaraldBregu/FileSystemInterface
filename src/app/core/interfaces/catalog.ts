@@ -1,5 +1,5 @@
 export interface Catalog {
-    id: Number
-    name: String
+    id: number
+    name: string
     content: number
 }

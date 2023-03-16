@@ -5,11 +5,10 @@ import { CardcollectionComponent } from './cardcollection/cardcollection.compone
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 
-
 @NgModule({
   declarations: [
     BreadcrumbComponent,
-    CardcollectionComponent
+    CardcollectionComponent,
   ],
   imports: [
     CommonModule,
@@ -17,7 +16,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
   ],
   exports: [
     BreadcrumbComponent,
-    CardcollectionComponent
+    CardcollectionComponent,
   ]
 })
 export class ComponentsModule { }

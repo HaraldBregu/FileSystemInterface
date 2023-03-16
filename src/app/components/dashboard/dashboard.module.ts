@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { DashboardComponent } from './dashboard.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { ComponentsModule } from 'src/app/core/components/components.module';
 
 
 @NgModule({
@@ -12,7 +13,8 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
   ],
   imports: [
     CommonModule,
-    FontAwesomeModule
+    FontAwesomeModule,
+    ComponentsModule
   ],
   exports: [
     SidebarComponent,
