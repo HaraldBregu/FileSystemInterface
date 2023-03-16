@@ -7,22 +7,22 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HomeComponent } from './components/home/home.component';
 import { HttpClientModule } from '@angular/common/http'
 import { AuthorizationInterceptorProvider } from './core/interceptors/authorization.interceptor';
+import { DashboardModule } from './components/dashboard/dashboard.module';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    NavbarComponent,
-    HomeComponent  
+    NavbarComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'serverApp' }),
     AppRoutingModule,
     HttpClientModule,
     ComponentsModule,
+    DashboardModule,
     ReactiveFormsModule,
     BrowserAnimationsModule
   ],
