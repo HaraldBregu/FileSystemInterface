@@ -35,7 +35,7 @@ export class DataListComponent {
     switch (item.type) {
       case DataItemType.Category:
         return "text-blue-500";
-      case DataItemType.File:
+      case DataItemType.Product:
         return "text-rose-500";
     }
     

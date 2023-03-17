@@ -3,7 +3,7 @@
 <div class="p-4 sm:ml-80">
   <app-breadcrumb></app-breadcrumb>
   <app-data-filter (onItemSelected)="isTableList = !isTableList"></app-data-filter>
-  <div [ngSwitch]="isTableList">
+  <div [ngSwitch]="isTableList" *ngIf="categoryObservable | async">
     <app-data-grid *ngSwitchCase="true" [data]="items"></app-data-grid>
     <app-data-list *ngSwitchDefault [data]="items"></app-data-list>
   </div>

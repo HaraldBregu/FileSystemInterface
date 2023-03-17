@@ -12,6 +12,9 @@ export class DataGridComponent implements OnInit, OnChanges {
   @Input() data: DataItem[] = [];
   @Output() onItemSelected = new EventEmitter<DataItem>();
 
+  dataItemTypeCategory: DataItemType = DataItemType.Category;
+  dataItemTypeProduct: DataItemType = DataItemType.Product;
+
   folderIcon = faFolder;
   addFolderIcon = faFolderPlus;
   fileIcon = faFile;
@@ -35,7 +38,7 @@ export class DataGridComponent implements OnInit, OnChanges {
   }
 
   isFileType(type: DataItemType): boolean {
-    return type == DataItemType.File
+    return type == DataItemType.Product
   }
 
   colorForItem(item: DataItem)  {
@@ -44,7 +47,7 @@ export class DataGridComponent implements OnInit, OnChanges {
     switch (item.type) {
       case DataItemType.Category:
         return "text-blue-500";
-      case DataItemType.File:
+      case DataItemType.Product:
         return "text-rose-500";
     }
     

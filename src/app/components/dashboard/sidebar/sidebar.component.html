@@ -3,7 +3,6 @@
    aria-label="Sidebar">
    <div class="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
       <ul class="space-y-2">
-
          <li>
             <button type="button" (click)="toggleCatalogs()"
                class="flex items-center w-full p-2 text-base font-normal text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
@@ -16,21 +15,11 @@
                   </path>
                </svg>
             </button>
-            <ul *ngIf="showCatalogs" class="py-2 space-y-2">
-               <li>
+            <ul *ngIf="showCatalogs && (catalogsObservable | async)" class="py-2 space-y-2">
+               <li *ngFor="let item of items">
                   <a href="#"
-                     class="flex items-center w-full p-2 text-base font-normal text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Catalog
-                     1</a>
-               </li>
-               <li>
-                  <a href="#"
-                     class="flex items-center w-full p-2 text-base font-normal text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Catalog
-                     2</a>
-               </li>
-               <li>
-                  <a href="#"
-                     class="flex items-center w-full p-2 text-base font-normal text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Catalog
-                     3</a>
+                     class="flex items-center w-full p-2 text-base font-normal text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
+                     {{item.name}}</a>
                </li>
             </ul>
          </li>
@@ -54,8 +43,6 @@
             </a>
          </li>
       </ul>
-
-
       <ul class="pt-4 mt-4 space-y-2 border-t border-gray-200 dark:border-gray-700">
          <li>
             <a href="#"

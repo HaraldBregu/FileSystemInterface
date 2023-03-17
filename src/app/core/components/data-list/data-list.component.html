@@ -3,28 +3,22 @@
         <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead class="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
-                    <th scope="col" class="px-6 py-6">
+                    <th scope="col" class="px-6 py-4">
                         Product name
                     </th>
-                    <th scope="col" class="px-6 py-6">
+                    <th scope="col" class="px-6 py-4">
                         Type
                     </th>
-                    <th scope="col" class="px-6 py-6">
+                    <th scope="col" class="px-6 py-4">
                         Data 1
                     </th>
-                    <th scope="col" class="px-6 py-6">
+                    <th scope="col" class="px-6 py-4">
                         Data 2
                     </th>
-                    <th scope="col" class="px-6 py-6">
-                        Data 3
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        Data 4
-                    </th>
-                    <th scope="col" class="px-6 py-3">
+                    <th scope="col" class="px-6 py-4">
                         Content
                     </th>
-                    <th scope="col" class="px-6 py-3">
+                    <th scope="col" class="px-6 py-4">
                         Action
                     </th>
                 </tr>
@@ -35,19 +29,13 @@
                     <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                         <fa-icon *ngIf="item.type===dataItemType.Category" [icon]="folderIcon"
                             [ngClass]="colorForItem(item)"></fa-icon>
-                        <fa-icon *ngIf="item.type===dataItemType.File" [icon]="fileIcon"
+                        <fa-icon *ngIf="item.type===dataItemType.Product" [icon]="fileIcon"
                             [ngClass]="colorForItem(item)"></fa-icon>
                         <span class="ml-2">{{item.title}}</span>
                     </th>
                     <td class="px-6 py-4">
                         <span *ngIf="item.type===dataItemType.Category">Category</span>
-                        <span *ngIf="item.type===dataItemType.File">File</span>
-                    </td>
-                    <td class="px-6 py-4">
-                        -
-                    </td>
-                    <td class="px-6 py-4">
-                        -
+                        <span *ngIf="item.type===dataItemType.Product">File</span>
                     </td>
                     <td class="px-6 py-4">
                         -

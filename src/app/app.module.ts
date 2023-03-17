@@ -8,7 +8,6 @@ import { AppComponent } from './app.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http'
-import { AuthorizationInterceptorProvider } from './core/interceptors/authorization.interceptor';
 import { DashboardModule } from './components/dashboard/dashboard.module';
 
 
@@ -27,7 +26,7 @@ import { DashboardModule } from './components/dashboard/dashboard.module';
     BrowserAnimationsModule
   ],
   providers: [
-    AuthorizationInterceptorProvider,
+
   ],
   bootstrap: [AppComponent],
   exports: [
