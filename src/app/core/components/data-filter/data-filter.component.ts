@@ -2,11 +2,11 @@ import { Component, EventEmitter, Output } from '@angular/core';
 import { faFolder, faFolderPlus, faFile, faFileCirclePlus, faList } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
-  selector: 'app-datafilter',
-  templateUrl: './datafilter.component.html',
-  styleUrls: ['./datafilter.component.scss']
+  selector: 'app-data-filter',
+  templateUrl: './data-filter.component.html',
+  styleUrls: ['./data-filter.component.scss']
 })
-export class DatafilterComponent {
+export class DataFilterComponent {
   @Output() onItemSelected = new EventEmitter();
   folderIcon = faFolder;
   addFolderIcon = faFolderPlus;

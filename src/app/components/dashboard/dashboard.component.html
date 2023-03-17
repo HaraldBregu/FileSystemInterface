@@ -1,10 +1,10 @@
 <app-sidebar></app-sidebar>
- 
- <div class="p-4 sm:ml-80">
-   <app-breadcrumb></app-breadcrumb>  
-   <app-datafilter (onItemSelected)="switchListMode()"></app-datafilter>
-   <app-listcollection *ngIf="isTableList" [data]="catalogs"></app-listcollection>
-   <app-cardcollection *ngIf="!isTableList" [data]="catalogs"></app-cardcollection>
- </div>
- 
- 
+
+<div class="p-4 sm:ml-80">
+  <app-breadcrumb></app-breadcrumb>
+  <app-data-filter (onItemSelected)="isTableList = !isTableList"></app-data-filter>
+  <div [ngSwitch]="isTableList">
+    <app-data-grid *ngSwitchCase="true" [data]="items"></app-data-grid>
+    <app-data-list *ngSwitchDefault [data]="items"></app-data-list>
+  </div>
+</div>

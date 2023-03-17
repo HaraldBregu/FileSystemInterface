@@ -1,0 +1,27 @@
+<div class="mx-auto grid max-w-6xl grid-cols-1 gap-6 pt-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+  <div *ngFor="let item of data">
+    <a (click)="selectCatalog(item)">
+      <div
+        class="rounded-xl border-2 border-slate-300 bg-white pt-8 pb-7 shadow-lg hover:shadow-xl hover:transform hover:scale-105 duration-300 text-center">
+
+        <div *ngIf="isCategoryType(item.type)">
+          <fa-layers class="text-7xl text-slate-300">
+            <fa-icon [icon]="folderIcon" [ngClass]="colorForItem(item)"></fa-icon>
+            <fa-layers-text content="{{item.childs}}" class="text-white" transform="shrink-10"></fa-layers-text>
+          </fa-layers>
+          <p class="mt-2 text-sm font-bold text-slate-500">{{item.title}}</p>
+        </div>
+
+        <div *ngIf="isFileType(item.type)">
+          <fa-layers class="text-7xl text-slate-300">
+            <fa-icon [icon]="fileIcon" [ngClass]="colorForItem(item)"></fa-icon>
+            <fa-layers-text class="text-white" transform="shrink-10"></fa-layers-text>
+          </fa-layers>
+          <p class="mt-2 text-sm font-bold text-slate-500">{{item.title}}</p>
+        </div>
+
+      </div>
+    </a>
+  </div>
+
+</div>

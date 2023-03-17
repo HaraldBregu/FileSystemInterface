@@ -1,18 +1,18 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BreadcrumbComponent } from './breadcrumb/breadcrumb.component';
-import { CardcollectionComponent } from './cardcollection/cardcollection.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { ListcollectionComponent } from './listcollection/listcollection.component';
-import { DatafilterComponent } from './datafilter/datafilter.component';
+import { DataListComponent } from './data-list/data-list.component';
+import { DataGridComponent } from './data-grid/data-grid.component';
+import { DataFilterComponent } from './data-filter/data-filter.component';
 
 
 @NgModule({
   declarations: [
     BreadcrumbComponent,
-    CardcollectionComponent,
-    ListcollectionComponent,
-    DatafilterComponent,
+    DataListComponent,
+    DataGridComponent,
+    DataFilterComponent,
   ],
   imports: [
     CommonModule,
@@ -20,9 +20,9 @@ import { DatafilterComponent } from './datafilter/datafilter.component';
   ],
   exports: [
     BreadcrumbComponent,
-    CardcollectionComponent,
-    ListcollectionComponent,
-    DatafilterComponent
+    DataListComponent,
+    DataGridComponent,
+    DataFilterComponent,
   ]
 })
 export class ComponentsModule { }

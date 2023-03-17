@@ -14,7 +14,6 @@ export class NavbarComponent {
 
   menu_icon = faBars
 
-
   menuToggle = false
   visibilityMenuItem = false
   currentNavItem = null;

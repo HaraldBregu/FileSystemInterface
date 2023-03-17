@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { ProductItemType } from 'src/app/core/enums/product-item-type';
-import { Catalog } from 'src/app/core/interfaces/catalog';
-import { ProductItem } from 'src/app/core/interfaces/product-item';
+import { DataItemType } from 'src/app/core/enums/data-item-type';
+import { DataItem } from 'src/app/core/interfaces/data-item';
 
 @Component({
   selector: 'app-dashboard',
@@ -9,27 +8,26 @@ import { ProductItem } from 'src/app/core/interfaces/product-item';
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
-  catalogs: ProductItem[] = [];
+  items: DataItem[] = [];
+  isTableList: boolean = true;
 
   constructor() {
 
-    this.catalogs = [];
+    this.items = [];
 
-    for (let i = 0; i < 4; i++) {
-      this.catalogs.push({
-        type: ProductItemType.Category,
-        name: (Math.random() + 1).toString(36).substring(7),
-        color: "text-blue-500",
+    for (let i = 0; i < 7; i++) {
+      this.items.push({
+        type: DataItemType.Category,
+        title: (Math.random() + 1).toString(36).substring(7),
         childs: Math.floor((Math.random()*100)+1),
         data: null
       });
     }
 
-    for (let i = 0; i < 3; i++) {
-      this.catalogs.push({
-        type: ProductItemType.File,
-        name: (Math.random() + 1).toString(36).substring(7) + ".pdf",
-        color: "text-rose-500",
+    for (let i = 0; i < 67; i++) {
+      this.items.push({
+        type: DataItemType.File,
+        title: (Math.random() + 1).toString(36).substring(7) + ".pdf",
       });
     }
   }
@@ -39,9 +37,5 @@ export class DashboardComponent implements OnInit {
 
   }
 
-  isTableList: boolean = true;
 
-  switchListMode( ){
-    this.isTableList = !this.isTableList
-  }
 }

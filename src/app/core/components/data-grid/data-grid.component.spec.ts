@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DatafilterComponent } from './datafilter.component';
+import { DataGridComponent } from './data-grid.component';
 
-describe('DatafilterComponent', () => {
-  let component: DatafilterComponent;
-  let fixture: ComponentFixture<DatafilterComponent>;
+describe('DataGridComponent', () => {
+  let component: DataGridComponent;
+  let fixture: ComponentFixture<DataGridComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ DatafilterComponent ]
+      declarations: [ DataGridComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(DatafilterComponent);
+    fixture = TestBed.createComponent(DataGridComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

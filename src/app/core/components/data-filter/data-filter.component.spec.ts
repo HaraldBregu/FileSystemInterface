@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ListcollectionComponent } from './listcollection.component';
+import { DataFilterComponent } from './data-filter.component';
 
-describe('ListcollectionComponent', () => {
-  let component: ListcollectionComponent;
-  let fixture: ComponentFixture<ListcollectionComponent>;
+describe('DataFilterComponent', () => {
+  let component: DataFilterComponent;
+  let fixture: ComponentFixture<DataFilterComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ListcollectionComponent ]
+      declarations: [ DataFilterComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ListcollectionComponent);
+    fixture = TestBed.createComponent(DataFilterComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
