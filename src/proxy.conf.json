@@ -1,0 +1,8 @@
+{
+    "/CommerceWebApi": {
+      "target": "http://ktb028/",
+      "secure": false,
+      "logLevel": "debug",
+      "changeOrigin": true
+    }
+  }
