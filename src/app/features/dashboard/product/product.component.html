@@ -1,0 +1,13 @@
+
+<div *ngIf="catalogSubscription$ | async">
+  <app-breadcrumb></app-breadcrumb>
+
+  <app-detail-form></app-detail-form>
+  
+  <app-data-filter (onItemSelected)="isTableList = !isTableList"></app-data-filter>
+  <div [ngSwitch]="isTableList" *ngIf="categoryObservable | async">
+    <app-data-grid *ngSwitchCase="false" [data]="items"></app-data-grid>
+    <app-data-list *ngSwitchDefault [data]="items"></app-data-list>
+  </div>
+  
+</div>

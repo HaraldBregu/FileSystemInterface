@@ -11,7 +11,6 @@ import { DashboardModule } from './features/dashboard/dashboard.module';
 import { AuthComponent } from './features/auth/auth.component';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import { reducers, metaReducers } from './reducers';
 import { environment } from 'src/environments/environment.prod';
 
 
@@ -28,7 +27,7 @@ import { environment } from 'src/environments/environment.prod';
     DashboardModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
-    StoreModule.forRoot(reducers, { metaReducers }),
+    StoreModule.forRoot({}),
     !environment.production ? StoreDevtoolsModule.instrument({
       maxAge: 25,
       logOnly: environment.production,
@@ -37,10 +36,9 @@ import { environment } from 'src/environments/environment.prod';
   ],
   providers: [
 
-   ],
+  ],
   bootstrap: [AppComponent],
   exports: [
-  
     AuthComponent
   ]
 })
