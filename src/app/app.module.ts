@@ -1,21 +1,23 @@
-import { NgModule } from '@angular/core';
+import { NgModule, isDevMode } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { ReactiveFormsModule } from '@angular/forms';
 
 import { ComponentsModule } from './shared/components/components.module'
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { NavbarComponent } from './shared/components/navbar/navbar.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http'
-import { DashboardModule } from './components/dashboard/dashboard.module';
-import { AuthComponent } from './components/auth/auth.component';
+import { DashboardModule } from './features/dashboard/dashboard.module';
+import { AuthComponent } from './features/auth/auth.component';
+import { StoreModule } from '@ngrx/store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { reducers, metaReducers } from './reducers';
+import { environment } from 'src/environments/environment.prod';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    NavbarComponent,
     AuthComponent
   ],
   imports: [
@@ -25,7 +27,13 @@ import { AuthComponent } from './components/auth/auth.component';
     ComponentsModule,
     DashboardModule,
     ReactiveFormsModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    StoreModule.forRoot(reducers, { metaReducers }),
+    !environment.production ? StoreDevtoolsModule.instrument({
+      maxAge: 25,
+      logOnly: environment.production,
+      autoPause: true
+    }) : [],
   ],
   providers: [
 
