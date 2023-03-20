@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { faFolder, faFolderPlus, faFile, faFileCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import { map, Observable } from 'rxjs';
-import { Catalog } from 'src/app/interfaces/catalog';
-import { CatalogService } from 'src/app/services/catalog.service';
+import { Catalog } from 'src/app/shared/interfaces/catalog';
+import { CatalogService } from 'src/app/shared/services/catalog.service';
 
 @Component({
   selector: 'app-sidebar',

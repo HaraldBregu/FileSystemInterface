@@ -1,3 +1,5 @@
 {
-    "svn.ignoreMissingSvnWarning": true
+    "svn.ignoreMissingSvnWarning": true,
+    "nrf-connect.topdir": "\\home\\harald\\zephyrproject",
+    "nrf-connect.toolchain.path": "PATH"
 }

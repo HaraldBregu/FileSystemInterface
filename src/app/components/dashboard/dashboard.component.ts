@@ -1,13 +1,12 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { filter, map, Observable, range } from 'rxjs';
 import { DataItemType } from 'src/app/core/enums/data-item-type';
 import { DataItem } from 'src/app/core/interfaces/data-item';
-import { CategoryType } from 'src/app/enums/category-type';
-import { Catalog } from 'src/app/interfaces/catalog';
-import { Category } from 'src/app/interfaces/category';
-import { CatalogService } from 'src/app/services/catalog.service';
-import { CategoryService } from 'src/app/services/category.service';
+import { CategoryType } from 'src/app/shared/enums/category-type';
+import { Catalog } from 'src/app/shared/interfaces/catalog';
+import { Category } from 'src/app/shared/interfaces/category';
+import { CatalogService } from 'src/app/shared/services/catalog.service';
+import { CategoryService } from 'src/app/shared/services/category.service';
 
 @Component({
   selector: 'app-dashboard',
