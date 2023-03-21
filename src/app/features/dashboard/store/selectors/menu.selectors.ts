@@ -4,15 +4,8 @@ import { DashboardModel } from "../models";
 
 export const DASHBOARD_SELECTOR = "MENU_STATE_GET_ITEMS";
 
-export const selectMenuItems = createSelector(
+export const dashboardDataSelector = createSelector(
     createFeatureSelector<DashboardModel>(DASHBOARD_SELECTOR), (dashboard: DashboardModel) => {
-        console.log(dashboard)
         return dashboard;
     }
 );
-
-export const selectItemName = createSelector(
-    createFeatureSelector(DASHBOARD_SELECTOR), (item: Catalog) => {
-        return item.name
-    }
-)

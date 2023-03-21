@@ -5,8 +5,8 @@ import { map, Observable } from 'rxjs';
 import { Catalog } from 'src/app/shared/interfaces/catalog';
 import { CatalogService } from 'src/app/shared/services/catalog.service';
 import { DashboardModel } from '../store';
-import { getCatalogs, getCatalogsSuccess, selectCatalog } from '../store/actions';
-import { selectMenuItems } from '../store/selectors/menu.selectors';
+import { getCatalogs, getCatalogsSuccess, getCategories, selectCatalog } from '../store/actions';
+import { dashboardDataSelector } from '../store/selectors/menu.selectors';
 
 @Component({
   selector: 'app-sidebar',
@@ -28,7 +28,7 @@ export class SidebarComponent implements OnInit {
   menuItems$: Observable<Catalog[]> = new Observable<Catalog[]>
 
   constructor(private catalogService: CatalogService, private store: Store) {
-    this.menuStateItems$ = this.store.select(selectMenuItems);
+    this.menuStateItems$ = this.store.select(dashboardDataSelector);
 
     this.menuStateItems$.subscribe(item => console.log(item));
 
@@ -42,12 +42,11 @@ export class SidebarComponent implements OnInit {
   toggleCatalogs() {
     this.showCatalogs = !this.showCatalogs
     this.store.dispatch(getCatalogs());
-    //this.store.dispatch(getCatalogsSuccess());
   }
 
   selectCatalog(item: Catalog) {
-    //console.log(item);
     this.store.dispatch(selectCatalog(item));
+    this.store.dispatch(getCategories({ catalog_name: item.name }));
   }
 
   getAllCatalogs() {

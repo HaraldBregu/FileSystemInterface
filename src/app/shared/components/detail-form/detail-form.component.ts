@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-detail-form',
@@ -6,6 +6,8 @@ import { Component } from '@angular/core';
   styleUrls: ['./detail-form.component.scss']
 })
 export class DetailFormComponent {
+  @Input() title: string | undefined;
+  @Input() description?: string;
 
-  collapse = false;
+  collapse = true;
 }

@@ -1,7 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { map, Observable, Subscription } from 'rxjs';
-import { selectItemName } from './store/selectors/menu.selectors';
+import { map, Observable } from 'rxjs';
+import { Catalog } from 'src/app/shared/interfaces/catalog';
+import { DashboardModel } from './store';
+import { dashboardDataSelector } from './store/selectors/menu.selectors';
 
 @Component({
   selector: 'app-dashboard',
@@ -9,13 +11,15 @@ import { selectItemName } from './store/selectors/menu.selectors';
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
-
-  catalogSubscription$: Observable<string> = new Observable<string>
+  dashboardSubscription$: Observable<DashboardModel> = new Observable<DashboardModel>
+  catalog$: Observable<Catalog | undefined> = new Observable<Catalog | undefined>
 
   constructor(private store: Store) {
-    this.catalogSubscription$ = this.store.select(selectItemName);
+    this.dashboardSubscription$ = this.store.select(dashboardDataSelector);
+    this.catalog$ = this.dashboardSubscription$.pipe(map(data => data.selectedCatalog));
+    
+    this.dashboardSubscription$.subscribe(item => console.log(item))
 
-    this.catalogSubscription$.subscribe(item => console.log(item))
   }
 
   ngOnInit(): void {

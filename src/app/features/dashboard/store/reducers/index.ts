@@ -1,12 +1,13 @@
 import { createReducer, on } from "@ngrx/store";
 import { Catalog } from "src/app/shared/interfaces/catalog";
-import { getCatalogs, getCatalogsFailure, getCatalogsSuccess, selectCatalog } from "../actions";
+import { getCatalogs, getCatalogsFailure, getCatalogsSuccess, getCategories, getCategoriesFailure, getCategoriesSuccess, selectCatalog } from "../actions";
 import { DashboardModel } from "../models";
 
 const initialState: DashboardModel = {
     loading: false,
     loaded: true,
     catalogs: [],
+    categories: [],
     error: undefined,
     selectedCatalog: undefined
 }
@@ -22,7 +23,7 @@ export const menuReducer = createReducer(
         ...state,
         loaded: true,
         loading: false,
-        catalogs: data.items
+        catalogs: data.catalogs
     })),
 
     on(getCatalogsFailure, (state, data) =>({
@@ -30,14 +31,30 @@ export const menuReducer = createReducer(
         loaded: false,
         loading: false,
     })),
-/*
-    on(getCatalogsFailure, (state, data) => {
 
-        state.error = data.error;
+    on(selectCatalog, (state, data) => ({
+        ...state,
+        selectedCatalog: data
+    })),
 
-        return state
-    })
-*/
+    
+    on(getCategories, (state: DashboardModel) =>  ({
+        ...state
+    })),
+
+    on(getCategoriesSuccess, (state, data) =>({
+        ...state,
+        loaded: true,
+        loading: false,
+        categories: data.categories
+    })),
+
+    on(getCategoriesFailure, (state, data) =>({
+        ...state,
+        loaded: false,
+        loading: false,
+    })),
+
 
 /*
     on(selectCatalog, (catalog, product) => {

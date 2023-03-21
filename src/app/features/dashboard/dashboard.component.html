@@ -1,7 +1,5 @@
 <app-sidebar></app-sidebar>
 
-<div class="p-4 sm:ml-80">
-  <h1 *ngIf="(catalogSubscription$ | async) === '' " class="mt-20">No data found</h1>
-  <h1 *ngIf="catalogSubscription$ | async" class="mt-20">Counter: {{ catalogSubscription$ | async }}</h1>
+<div class="p-4 sm:ml-80 mb-40">
   <app-product></app-product>
 </div>

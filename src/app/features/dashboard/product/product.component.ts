@@ -4,10 +4,10 @@ import { DataItemType } from 'src/app/core/enums/data-item-type';
 import { DataItem } from 'src/app/core/interfaces/data-item';
 import { Catalog } from 'src/app/shared/interfaces/catalog';
 import { Category } from 'src/app/shared/interfaces/category';
-import { CatalogService } from 'src/app/shared/services/catalog.service';
 import { CategoryService } from 'src/app/shared/services/category.service';
 import { CategoryType } from 'src/app/shared/enums/category-type';
 import { Store } from '@ngrx/store';
+import { dashboardDataSelector } from '../store/selectors/menu.selectors';
 
 @Component({
   selector: 'app-product',
@@ -15,99 +15,89 @@ import { Store } from '@ngrx/store';
   styleUrls: ['./product.component.scss']
 })
 export class ProductComponent implements OnInit {
-  items: DataItem[] = [];
-
-  catalogsObservable: Observable<Catalog[]> = new Observable();
-  categoryObservable: Observable<Category[]> = new Observable();
-
+  catalogSubscription$: Observable<Catalog | undefined> = new Observable<Catalog | undefined>
+  categoriesSubscription$: Observable<Category[]> = new Observable<Category[]>
   isTableList: boolean = true;
 
-  catalogSubscription$: Observable<string> = new Observable<string>
+  items$: Observable<DataItem[]> = new Observable<DataItem[]>
+  items: DataItem[] = []
 
-  constructor(private store: Store, private catalogService: CatalogService,
-    private categoryService: CategoryService) {
-    //this.catalogSubscription$ = this.store.select(selectIdProductName);
+  constructor(private store: Store, private categoryService: CategoryService) {
+    const dashboardSubscription$ = this.store.select(dashboardDataSelector);
 
-    this.cleanDataItems();
-
-  }
-
-  exmple() {
+    this.catalogSubscription$ = dashboardSubscription$.pipe(map(data => data.selectedCatalog));
+    this.categoriesSubscription$ = dashboardSubscription$.pipe(map(data => data.categories));
 
 
-    /*
-        for (let i = 0; i < 7; i++) {
-          this.items.push({
-            type: DataItemType.Category,
-            title: (Math.random() + 1).toString(36).substring(7),
-            childs: Math.floor((Math.random() * 100) + 1),
-            data: null
-          });
+    this.items$ = dashboardSubscription$.pipe(map(data => data.categories)).pipe(map(data => {
+      return data.map(d => {
+        return {
+          type: DataItemType.Category,
+          title: d.name
         }
-    
-        for (let i = 0; i < 67; i++) {
-          this.items.push({
-            type: DataItemType.File,
-            title: (Math.random() + 1).toString(36).substring(7) + ".pdf",
-          });
-        }*/
+      })
+    }))
+
+    this.items$.pipe().subscribe(data => {
+      this.items = data;
+    })
+
+  
+
   }
 
   ngOnInit() {
-    this.cleanDataItems()
-    this.getCategoryFromCatalog()
+
   }
 
-  getCategoryFromCatalog() {
-    this.categoryObservable = this.categoryService.get("CCN_NAVE");
-    this.categoryObservable.pipe(map((data: Category[]) => {
-      for (const id in data) {
-        if (data.hasOwnProperty(id)) {
-          const dataItem: DataItem = {
-            type: DataItemType.Category,
-            title: "",
-            subtitle: "",
-            childs: 0,
-            data: null
-          };
-          dataItem.type = this.toDataType(data[id].type)
-          dataItem.title = data[id].name
-          dataItem.childs = 45
-          dataItem.data = data[id]
-          this.items.push(dataItem)
+  /*
+    getCategoryFromCatalog() {
+      this.categoryObservable = this.categoryService.get("CCN_NAVE");
+      this.categoryObservable.pipe(map((data: Category[]) => {
+        for (const id in data) {
+          if (data.hasOwnProperty(id)) {
+            const dataItem: DataItem = {
+              type: DataItemType.Category,
+              title: "",
+              subtitle: "",
+              childs: 0,
+              data: null
+            };
+            dataItem.type = this.toDataType(data[id].type)
+            dataItem.title = data[id].name
+            dataItem.childs = 45
+            dataItem.data = data[id]
+            this.items.push(dataItem)
+          }
         }
-      }
-      return this.items;
-    })).subscribe();
-  }
-
-  getCategories() {
-    this.categoryObservable = this.categoryService.get("CCN_LISTINO", 45);
-    this.categoryObservable.pipe(map((data: Category[]) => {
-      for (const id in data) {
-        if (data.hasOwnProperty(id)) {
-          const dataItem: DataItem = {
-            type: DataItemType.Category,
-            title: "",
-            subtitle: "",
-            childs: 0,
-            data: null
-          };
-          dataItem.type = this.toDataType(data[id].type)
-          dataItem.title = data[id].name
-          dataItem.childs = 45
-          dataItem.data = data[id]
-          this.items.push(dataItem)
-        }
-      }
-      return this.items;
-    })).subscribe();
-  }
-
-  cleanDataItems() {
-    this.items = []
-  }
+        return this.items;
+      })).subscribe();
+    }
   
+    getCategories() {
+      this.categoryObservable = this.categoryService.get("CCN_LISTINO", 45);
+      this.categoryObservable.pipe(map((data: Category[]) => {
+        for (const id in data) {
+          if (data.hasOwnProperty(id)) {
+            const dataItem: DataItem = {
+              type: DataItemType.Category,
+              title: "",
+              subtitle: "",
+              childs: 0,
+              data: null
+            };
+            dataItem.type = this.toDataType(data[id].type)
+            dataItem.title = data[id].name
+            dataItem.childs = 45
+            dataItem.data = data[id]
+            this.items.push(dataItem)
+          }
+        }
+        return this.items;
+      })).subscribe();
+    }
+    */
+
   toDataType(category: CategoryType) {
     switch (category) {
       case CategoryType.Category:
