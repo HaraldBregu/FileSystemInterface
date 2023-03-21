@@ -4,7 +4,9 @@ import { Store } from '@ngrx/store';
 import { map, Observable } from 'rxjs';
 import { Catalog } from 'src/app/shared/interfaces/catalog';
 import { CatalogService } from 'src/app/shared/services/catalog.service';
-import { selectCatalog } from '../store/actions/menu.actions';
+import { DashboardModel } from '../store';
+import { getCatalogs, getCatalogsSuccess, selectCatalog } from '../store/actions';
+import { selectMenuItems } from '../store/selectors/menu.selectors';
 
 @Component({
   selector: 'app-sidebar',
@@ -22,12 +24,30 @@ export class SidebarComponent implements OnInit {
 
   showCatalogs = false;
 
-  constructor(private catalogService: CatalogService, private store: Store) {
+  menuStateItems$: Observable<DashboardModel> = new Observable<DashboardModel>
+  menuItems$: Observable<Catalog[]> = new Observable<Catalog[]>
 
+  constructor(private catalogService: CatalogService, private store: Store) {
+    this.menuStateItems$ = this.store.select(selectMenuItems);
+
+    this.menuStateItems$.subscribe(item => console.log(item));
+
+    this.menuItems$ = this.menuStateItems$.pipe(map(data => data.catalogs));
   }
 
   ngOnInit() {
 
+  }
+
+  toggleCatalogs() {
+    this.showCatalogs = !this.showCatalogs
+    this.store.dispatch(getCatalogs());
+    //this.store.dispatch(getCatalogsSuccess());
+  }
+
+  selectCatalog(item: Catalog) {
+    //console.log(item);
+    this.store.dispatch(selectCatalog(item));
   }
 
   getAllCatalogs() {
@@ -37,16 +57,5 @@ export class SidebarComponent implements OnInit {
       this.items = data;
       return data;
     })).subscribe();
-  }
-
-  toggleCatalogs() {
-    this.showCatalogs = !this.showCatalogs
-    this.getAllCatalogs()
-
-  }
-
-  selectCatalog(item: Catalog) {
-    console.log(item);
-    this.store.dispatch(selectCatalog(item));
   }
 }

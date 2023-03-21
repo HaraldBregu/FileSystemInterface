@@ -12,7 +12,7 @@ import { AuthComponent } from './features/auth/auth.component';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from 'src/environments/environment.prod';
-
+import { EffectsModule } from '@ngrx/effects';
 
 @NgModule({
   declarations: [
@@ -28,6 +28,7 @@ import { environment } from 'src/environments/environment.prod';
     ReactiveFormsModule,
     BrowserAnimationsModule,
     StoreModule.forRoot({}),
+    EffectsModule.forRoot([]),
     !environment.production ? StoreDevtoolsModule.instrument({
       maxAge: 25,
       logOnly: environment.production,

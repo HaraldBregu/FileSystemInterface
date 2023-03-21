@@ -8,7 +8,6 @@ import { CatalogService } from 'src/app/shared/services/catalog.service';
 import { CategoryService } from 'src/app/shared/services/category.service';
 import { CategoryType } from 'src/app/shared/enums/category-type';
 import { Store } from '@ngrx/store';
-import { selectIdProductName } from '../store/selectors/menu.selectors';
 
 @Component({
   selector: 'app-product',
@@ -27,7 +26,7 @@ export class ProductComponent implements OnInit {
 
   constructor(private store: Store, private catalogService: CatalogService,
     private categoryService: CategoryService) {
-    this.catalogSubscription$ = this.store.select(selectIdProductName);
+    //this.catalogSubscription$ = this.store.select(selectIdProductName);
 
     this.cleanDataItems();
 

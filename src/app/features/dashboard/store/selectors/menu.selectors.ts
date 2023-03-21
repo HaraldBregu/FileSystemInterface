@@ -1,11 +1,18 @@
 import { createFeatureSelector, createSelector } from "@ngrx/store";
 import { Catalog } from "src/app/shared/interfaces/catalog";
+import { DashboardModel } from "../models";
 
-export const MENU_STATE_ITEM = "MENU_STATE_ITEM";
+export const DASHBOARD_SELECTOR = "MENU_STATE_GET_ITEMS";
 
-export const selectIdProductName = createSelector(
-    createFeatureSelector(MENU_STATE_ITEM), 
-    (state: Catalog) => {
-        return state.name
+export const selectMenuItems = createSelector(
+    createFeatureSelector<DashboardModel>(DASHBOARD_SELECTOR), (dashboard: DashboardModel) => {
+        console.log(dashboard)
+        return dashboard;
+    }
+);
+
+export const selectItemName = createSelector(
+    createFeatureSelector(DASHBOARD_SELECTOR), (item: Catalog) => {
+        return item.name
     }
 )

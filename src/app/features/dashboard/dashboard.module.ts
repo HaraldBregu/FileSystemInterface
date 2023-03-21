@@ -6,8 +6,10 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ComponentsModule } from 'src/app/shared/components/components.module';
 import { ProductComponent } from './product/product.component';
 import { StoreModule } from '@ngrx/store';
-import { menuReducer} from './store/reducers/menu.reducer'
-import { MENU_STATE_ITEM } from './store/selectors/menu.selectors';
+import { menuReducer} from './store/reducers'
+import { DASHBOARD_SELECTOR } from './store/selectors/menu.selectors';
+import { EffectsModule } from '@ngrx/effects';
+import { MenuEffects } from './store/effects';
 
 @NgModule({
   declarations: [
@@ -16,8 +18,8 @@ import { MENU_STATE_ITEM } from './store/selectors/menu.selectors';
     ProductComponent
   ],
   imports: [
-    //StoreModule.forRoot({cartEntries: menuReducer}),
-    StoreModule.forFeature(MENU_STATE_ITEM, menuReducer),
+    StoreModule.forFeature(DASHBOARD_SELECTOR, menuReducer),
+    EffectsModule.forFeature([MenuEffects]),
     CommonModule,
     FontAwesomeModule,
     ComponentsModule,
