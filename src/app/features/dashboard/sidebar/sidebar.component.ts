@@ -3,7 +3,6 @@ import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { Store } from '@ngrx/store';
 import { map, Observable } from 'rxjs';
 import { Catalog } from 'src/app/shared/interfaces/catalog';
-import { DashboardModel } from '../store';
 import { getCatalogs, getCategories, searchCatalog, selectCatalog } from '../store/actions';
 import { dashboardDataSelector } from '../store/selectors/menu.selectors';
 import { fas } from '@fortawesome/free-solid-svg-icons';
@@ -31,7 +30,6 @@ export class SidebarComponent {
   }
 
   toggleCatalogs() {
-    this.showCatalogs = !this.showCatalogs
     this.store.dispatch(getCatalogs());
   }
 
@@ -41,7 +39,6 @@ export class SidebarComponent {
   }
 
   onInputType(input: any) {
-    console.log(input.inputValue);
     this.store.dispatch(searchCatalog({ catalog_name: input.inputValue }));
   }
 

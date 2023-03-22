@@ -12,6 +12,7 @@ import { DASHBOARD_SELECTOR } from './store/selectors/menu.selectors';
 import { EffectsModule } from '@ngrx/effects';
 import { MenuEffects } from './store/effects';
 import { metaReducers } from './store';
+import { ExplorerComponent } from './explorer/explorer.component';
 
 
 @NgModule({
@@ -19,6 +20,7 @@ import { metaReducers } from './store';
     SidebarComponent,
     DashboardComponent,
     ProductComponent,
+    ExplorerComponent,
   ],
   imports: [
     StoreModule.forFeature(
@@ -35,6 +37,7 @@ import { metaReducers } from './store';
     SidebarComponent,
     DashboardComponent,
     ProductComponent,
+    ExplorerComponent,
   ]
 })
 export class DashboardModule { }
