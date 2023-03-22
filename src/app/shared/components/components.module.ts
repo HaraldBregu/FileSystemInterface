@@ -8,7 +8,6 @@ import { DataFilterComponent } from './data-filter/data-filter.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { DetailFormComponent } from './detail-form/detail-form.component';
 
-
 @NgModule({
   declarations: [
     NavbarComponent,
@@ -20,7 +19,7 @@ import { DetailFormComponent } from './detail-form/detail-form.component';
   ],
   imports: [
     CommonModule,
-    FontAwesomeModule
+    FontAwesomeModule,
   ],
   exports: [
     NavbarComponent,
@@ -28,7 +27,7 @@ import { DetailFormComponent } from './detail-form/detail-form.component';
     DataListComponent,
     DataGridComponent,
     DataFilterComponent,
-    DetailFormComponent
+    DetailFormComponent,
   ]
 })
 export class ComponentsModule { }

@@ -7,6 +7,7 @@ export enum CatalogsTypes {
     GET_CATALOGS_SUCCESS = '[CATALOG][GET] success',
     GET_CATALOGS_FAILURE = '[CATALOG][GET] failure',
     SELECT_CATALOG = '[CATALOG][SELECT]',
+    SEARCH_CATALOG = '[CATALOG][SEARCH]',
 
     GET_CATEGORIES = '[CATEOGORIES][GET]',
     GET_CATEGORIES_SUCCESS = '[CATEOGORIES][GET] success',
@@ -27,6 +28,10 @@ export const getCatalogsFailure = createAction(
 export const selectCatalog = createAction(
     CatalogsTypes.SELECT_CATALOG,
     props<Catalog>());
+
+export const searchCatalog = createAction(
+    CatalogsTypes.SEARCH_CATALOG,
+    props<{ catalog_name: string }>());
 
 export const getCategories = createAction(
     CatalogsTypes.GET_CATEGORIES,

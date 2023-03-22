@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { DashboardComponent } from './dashboard.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { BaseComponentsModule } from 'src/app/core/components/base-components.module';
 import { ComponentsModule } from 'src/app/shared/components/components.module';
 import { ProductComponent } from './product/product.component';
 import { StoreModule } from '@ngrx/store';
@@ -15,19 +16,20 @@ import { MenuEffects } from './store/effects';
   declarations: [
     SidebarComponent,
     DashboardComponent,
-    ProductComponent
+    ProductComponent,
   ],
   imports: [
     StoreModule.forFeature(DASHBOARD_SELECTOR, menuReducer),
     EffectsModule.forFeature([MenuEffects]),
     CommonModule,
     FontAwesomeModule,
+    BaseComponentsModule,
     ComponentsModule,
   ],
   exports: [
     SidebarComponent,
     DashboardComponent,
-    ProductComponent
+    ProductComponent,
   ]
 })
 export class DashboardModule { }

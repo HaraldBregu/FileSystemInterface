@@ -17,6 +17,7 @@ export interface NavItemModel {
 export interface DashboardModel {
     loading: boolean
     catalogs: Catalog[]
+    filteredCatalog: Catalog[]
     categories: Category[]
     error: any
     selectedCatalog: Catalog | undefined

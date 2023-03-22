@@ -4,7 +4,7 @@ import { Store } from '@ngrx/store';
 import { map, Observable } from 'rxjs';
 import { Catalog } from 'src/app/shared/interfaces/catalog';
 import { DashboardModel } from '../store';
-import { getCatalogs, getCategories, selectCatalog } from '../store/actions';
+import { getCatalogs, getCategories, searchCatalog, selectCatalog } from '../store/actions';
 import { dashboardDataSelector } from '../store/selectors/menu.selectors';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
@@ -18,7 +18,6 @@ export class SidebarComponent {
   catalogsObservable: Observable<Catalog[]> = new Observable();
   items: Catalog[] = [];
   showCatalogs = false;
-  menuStateItems$: Observable<DashboardModel> = new Observable<DashboardModel>
   menuItems$: Observable<Catalog[]> = new Observable<Catalog[]>
 
   constructor(
@@ -27,9 +26,8 @@ export class SidebarComponent {
 
     library.addIconPacks(fas, far);
 
-    this.menuStateItems$ = this.store.select(dashboardDataSelector);
-    this.menuStateItems$.subscribe(item => console.log(item));
-    this.menuItems$ = this.menuStateItems$.pipe(map(data => data.catalogs));
+    const dashboardObservable$ = this.store.select(dashboardDataSelector);
+    this.menuItems$ = dashboardObservable$.pipe(map(data => data.filteredCatalog));
   }
 
   toggleCatalogs() {
@@ -40,6 +38,11 @@ export class SidebarComponent {
   selectCatalog(item: Catalog) {
     this.store.dispatch(selectCatalog(item));
     this.store.dispatch(getCategories({ catalog_name: item.name }));
+  }
+
+  onInputType(input: any) {
+    console.log(input.inputValue);
+    this.store.dispatch(searchCatalog({ catalog_name: input.inputValue }));
   }
 
 }

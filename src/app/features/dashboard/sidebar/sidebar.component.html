@@ -13,9 +13,13 @@
 
             <ul *ngIf="showCatalogs && (menuItems$ | async)" class="my-4 space-y-3">
                <li>
-                  <input type="text" name="text"
-                     class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                     placeholder="Search products">
+                  <div class="relative">
+                     <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <fa-icon [icon]="['fas', 'search']" class="text-gray-600"></fa-icon>
+                     </div>
+                     <app-input #input inputType="search" inputClass="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" (onInput)="onInputType(input)">
+                     </app-input>
+                  </div>
                </li>
                <li *ngFor="let item of (menuItems$ | async)">
                   <a (click)="selectCatalog(item)"
