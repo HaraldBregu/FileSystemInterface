@@ -11,7 +11,6 @@ export enum CatalogsTypes {
     GET_CATEGORIES = '[CATEOGORIES][GET]',
     GET_CATEGORIES_SUCCESS = '[CATEOGORIES][GET] success',
     GET_CATEGORIES_FAILURE = '[CATEOGORIES][GET] failure',
-
 }
 
 export const getCatalogs = createAction(

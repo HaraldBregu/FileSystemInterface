@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { faFile, faFileCirclePlus, faFolder, faFolderPlus } from '@fortawesome/free-solid-svg-icons';
-import { DataItemType } from '../../../core/enums/data-item-type';
+import { DataItemType } from 'src/app/core/enums/data-item-type';
 import { DataItem } from '../../../core/interfaces/data-item';
 
 @Component({

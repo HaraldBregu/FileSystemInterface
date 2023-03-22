@@ -29,11 +29,11 @@ import { EffectsModule } from '@ngrx/effects';
     BrowserAnimationsModule,
     StoreModule.forRoot({}),
     EffectsModule.forRoot([]),
-    !environment.production ? StoreDevtoolsModule.instrument({
+    StoreDevtoolsModule.instrument({
       maxAge: 25,
       logOnly: environment.production,
       autoPause: true
-    }) : [],
+    }),
   ],
   providers: [
 

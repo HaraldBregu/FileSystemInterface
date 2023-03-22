@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { map, Observable } from 'rxjs';
-import { DataItemType } from 'src/app/core/enums/data-item-type';
 import { DataItem } from 'src/app/core/interfaces/data-item';
 import { Catalog } from 'src/app/shared/interfaces/catalog';
 import { Category } from 'src/app/shared/interfaces/category';
@@ -8,6 +7,8 @@ import { CategoryService } from 'src/app/shared/services/category.service';
 import { CategoryType } from 'src/app/shared/enums/category-type';
 import { Store } from '@ngrx/store';
 import { dashboardDataSelector } from '../store/selectors/menu.selectors';
+import { DataItemType } from 'src/app/core/enums/data-item-type';
+import { NavItemModel, NavItemModelType } from '../store';
 
 @Component({
   selector: 'app-product',
@@ -15,21 +16,47 @@ import { dashboardDataSelector } from '../store/selectors/menu.selectors';
   styleUrls: ['./product.component.scss']
 })
 export class ProductComponent implements OnInit {
+  navItemObservable$: Observable<NavItemModel[]> = new Observable<NavItemModel[]>
   catalogSubscription$: Observable<Catalog | undefined> = new Observable<Catalog | undefined>
   categoriesSubscription$: Observable<Category[]> = new Observable<Category[]>
+
   isTableList: boolean = true;
 
   items$: Observable<DataItem[]> = new Observable<DataItem[]>
   items: DataItem[] = []
+  navitems: DataItem[] = []
 
   constructor(private store: Store, private categoryService: CategoryService) {
-    const dashboardSubscription$ = this.store.select(dashboardDataSelector);
+    const dashboardObservable$ = this.store.select(dashboardDataSelector);
 
-    this.catalogSubscription$ = dashboardSubscription$.pipe(map(data => data.selectedCatalog));
-    this.categoriesSubscription$ = dashboardSubscription$.pipe(map(data => data.categories));
+    this.navItemObservable$ = dashboardObservable$.pipe(map(data => data.navItems))
+    this.catalogSubscription$ = dashboardObservable$.pipe(map(data => data.selectedCatalog));
+    this.categoriesSubscription$ = dashboardObservable$.pipe(map(data => data.categories));
 
+    const f = DataItemType[NavItemModelType.Catalog]
 
-    this.items$ = dashboardSubscription$.pipe(map(data => data.categories)).pipe(map(data => {
+    function mapDataItemTypeToNavItemModelType(dataItemType: NavItemModelType): DataItemType {
+      switch (dataItemType) {
+        case NavItemModelType.Catalog:
+          return DataItemType.Catalog;
+        case NavItemModelType.Category:
+          return DataItemType.Category;
+        case NavItemModelType.Product:
+          return DataItemType.Product;
+        default:
+          throw new Error(`Unsupported DataItemType: ${dataItemType}`);
+      }
+    }
+
+    this.navItemObservable$.subscribe(data => this.navitems = data.map(item => {
+      return {
+        title: item.title,
+        type: DataItemType[NavItemModelType[item.type] as keyof typeof DataItemType],
+        childs: item.childs,
+      };
+    }))
+
+    this.items$ = dashboardObservable$.pipe(map(data => data.categories)).pipe(map(data => {
       return data.map(d => {
         return {
           type: DataItemType.Category,
@@ -41,13 +68,14 @@ export class ProductComponent implements OnInit {
     this.items$.pipe().subscribe(data => {
       this.items = data;
     })
-
-  
-
   }
 
   ngOnInit() {
 
+  }
+
+  selectItem(item: DataItem) {
+    console.log(item)
   }
 
   /*

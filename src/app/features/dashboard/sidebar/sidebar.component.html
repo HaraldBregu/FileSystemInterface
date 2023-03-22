@@ -6,14 +6,9 @@
          <li>
             <button type="button" (click)="toggleCatalogs()"
                class="flex items-center w-full p-2 text-base font-normal text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
-               <fa-icon [icon]="folderIcon" class="text-gray-700"></fa-icon>
+               <fa-icon [icon]="['fas', 'folder']" class="text-gray-600"></fa-icon>
                <span class="flex-1 ml-3 text-left whitespace-nowrap">Catalogs</span>
-               <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                  <path fill-rule="evenodd"
-                     d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                     clip-rule="evenodd">
-                  </path>
-               </svg>
+               <fa-icon [icon]="['fas', 'chevron-down']" class="text-gray-600"></fa-icon>
             </button>
 
             <ul *ngIf="showCatalogs && (menuItems$ | async)" class="my-4 space-y-3">
@@ -35,7 +30,7 @@
          <li>
             <a href="#"
                class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-               <fa-icon [icon]="fileIcon" class="text-gray-600"></fa-icon>
+               <fa-icon [icon]="['fas', 'file']" class="text-gray-600"></fa-icon>
                <span class="flex-1 ml-3 whitespace-nowrap">Products</span>
                <span
                   class="inline-flex items-center justify-center px-2 ml-3 text-sm font-medium text-gray-800 bg-gray-200 rounded-full dark:bg-gray-700 dark:text-gray-300">Pro</span>
@@ -44,8 +39,17 @@
          <li>
             <a href="#"
                class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-               <fa-icon [icon]="addFileIcon" class="text-gray-600"></fa-icon>
+               <fa-icon [icon]="['fas', 'file-circle-plus']" class="text-gray-600"></fa-icon>
                <span class="flex-1 ml-3 whitespace-nowrap">Create product</span>
+               <span
+                  class="inline-flex items-center justify-center px-2 ml-3 text-sm font-medium text-gray-800 bg-gray-200 rounded-full dark:bg-gray-700 dark:text-gray-300">Pro</span>
+            </a>
+         </li>
+         <li>
+            <a href="#"
+               class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+               <fa-icon [icon]="['fas', 'search']"></fa-icon>
+               <span class="flex-1 ml-3 whitespace-nowrap">Search</span>
                <span
                   class="inline-flex items-center justify-center px-2 ml-3 text-sm font-medium text-gray-800 bg-gray-200 rounded-full dark:bg-gray-700 dark:text-gray-300">Pro</span>
             </a>

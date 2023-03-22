@@ -1,66 +1,77 @@
 import { createReducer, on } from "@ngrx/store";
-import { Catalog } from "src/app/shared/interfaces/catalog";
 import { getCatalogs, getCatalogsFailure, getCatalogsSuccess, getCategories, getCategoriesFailure, getCategoriesSuccess, selectCatalog } from "../actions";
-import { DashboardModel } from "../models";
+import { DashboardModel, NavItemModel, NavItemModelType } from "../models";
 
 const initialState: DashboardModel = {
     loading: false,
-    loaded: true,
     catalogs: [],
     categories: [],
     error: undefined,
-    selectedCatalog: undefined
+    selectedCatalog: undefined,
+    navItems: []
 }
 
 export const menuReducer = createReducer(
     initialState,
 
-    on(getCatalogs, (state: DashboardModel) =>  ({
-        ...state
+    on(getCatalogs, (state: DashboardModel) => ({
+        ...state,
+        loading: true
     })),
 
-    on(getCatalogsSuccess, (state, data) =>({
+    on(getCatalogsSuccess, (state: DashboardModel, data) => ({
         ...state,
-        loaded: true,
         loading: false,
-        catalogs: data.catalogs
+        catalogs: data.catalogs,
     })),
 
-    on(getCatalogsFailure, (state, data) =>({
+    on(getCatalogsFailure, (state: DashboardModel, data) => ({
         ...state,
-        loaded: false,
-        loading: false,
-    })),
-
-    on(selectCatalog, (state, data) => ({
-        ...state,
-        selectedCatalog: data
-    })),
-
-    
-    on(getCategories, (state: DashboardModel) =>  ({
-        ...state
-    })),
-
-    on(getCategoriesSuccess, (state, data) =>({
-        ...state,
-        loaded: true,
-        loading: false,
-        categories: data.categories
-    })),
-
-    on(getCategoriesFailure, (state, data) =>({
-        ...state,
-        loaded: false,
         loading: false,
     })),
 
+    on(selectCatalog, (state: DashboardModel, data) => {
+        const catalog: NavItemModel = { 
+            type: NavItemModelType.Catalog, 
+            title: data.name, 
+            childs: 0, 
+        };
 
-/*
-    on(selectCatalog, (catalog, product) => {
-        return product;
-    })
-*/
+        return {
+            ...state,
+            selectedCatalog: data,
+            navItems: [catalog]
+        };
+    }),
 
+    on(getCategories, (state: DashboardModel) => ({
+        ...state,
+        loading: true,
+    })),
+
+    on(getCategoriesSuccess, (state: DashboardModel, data) => {
+        var navItems: NavItemModel[] = state.navItems;
+
+        if (navItems.length === 1) {
+            var newItem: NavItemModel = {
+                type: navItems[0].type,
+                title: navItems[0].title,
+                childs: data.categories.length,
+            }
+            navItems = [newItem]
+        }
+
+        return {
+            ...state,
+            loading: false,
+            categories: data.categories,
+            navItems: navItems,
+        };
+    }),
+
+    on(getCategoriesFailure, (state: DashboardModel, data) => ({
+        ...state,
+        loading: false,
+    })),
 
 );

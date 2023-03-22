@@ -1,4 +1,5 @@
 export enum DataItemType {
-    Category = "category",
-    Product = "product"
+    Catalog = 0,
+    Category = 1,
+    Product = 2
 }

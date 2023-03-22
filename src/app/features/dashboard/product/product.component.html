@@ -1,5 +1,5 @@
 <div *ngIf="catalogSubscription$ | async">
-  <app-breadcrumb></app-breadcrumb>
+  <app-breadcrumb (onItemSelected)="selectItem($event)" [items]="navitems"></app-breadcrumb>
   <app-detail-form [title]="(catalogSubscription$ | async)?.name"></app-detail-form>
   <app-data-filter (onItemSelected)="isTableList = !isTableList"></app-data-filter>
   <div [ngSwitch]="isTableList" *ngIf="items$ | async">
