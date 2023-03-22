@@ -7,10 +7,12 @@ import { BaseComponentsModule } from 'src/app/core/components/base-components.mo
 import { ComponentsModule } from 'src/app/shared/components/components.module';
 import { ProductComponent } from './product/product.component';
 import { StoreModule } from '@ngrx/store';
-import { menuReducer} from './store/reducers'
+import { dashboardReducer } from './store/reducers'
 import { DASHBOARD_SELECTOR } from './store/selectors/menu.selectors';
 import { EffectsModule } from '@ngrx/effects';
 import { MenuEffects } from './store/effects';
+import { metaReducers } from './store';
+
 
 @NgModule({
   declarations: [
@@ -19,7 +21,10 @@ import { MenuEffects } from './store/effects';
     ProductComponent,
   ],
   imports: [
-    StoreModule.forFeature(DASHBOARD_SELECTOR, menuReducer),
+    StoreModule.forFeature(
+      DASHBOARD_SELECTOR,
+      dashboardReducer,
+      { metaReducers }),
     EffectsModule.forFeature([MenuEffects]),
     CommonModule,
     FontAwesomeModule,

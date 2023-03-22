@@ -13,7 +13,7 @@ const initialState: DashboardModel = {
     navItems: []
 }
 
-export const menuReducer = createReducer(
+export const dashboardReducer = createReducer(
     initialState,
 
     on(getCatalogs, (state: DashboardModel) => ({

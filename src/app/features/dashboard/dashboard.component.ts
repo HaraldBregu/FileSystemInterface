@@ -15,6 +15,7 @@ export class DashboardComponent implements OnInit {
   catalog$: Observable<Catalog | undefined> = new Observable<Catalog | undefined>
 
   constructor(private store: Store) {
+
     this.dashboardSubscription$ = this.store.select(dashboardDataSelector);
     this.catalog$ = this.dashboardSubscription$.pipe(map(data => data.selectedCatalog));
     
