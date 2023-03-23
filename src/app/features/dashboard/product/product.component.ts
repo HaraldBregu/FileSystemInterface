@@ -75,6 +75,8 @@ export class ProductComponent implements OnInit {
   }
 
   selectItem(item: DataItem) {
+    // Quando selezioni un item "B2C_PACKAGE"
+    //
     console.log(item)
   }
 

@@ -15,28 +15,7 @@ export class CatalogService {
 
   getAll(): Observable<Catalog[]> {
     var path = "/CommerceWebApi/Api/Catalog/GetCatalogList"
-    return this.httpClient
-      .get<Catalog[]>(path)
-      .pipe(retry(1), catchError(this.handleError));
+    return this.httpClient.get<Catalog[]>(path)
   }
 
-  getCatalogElements(catalogName: string): Observable<Category[]> {
-    var path = "/CommerceWebApi/Api/Catalog/GetCatalogElements?catalogName=" + catalogName //CCN_NAVE
-    return this.httpClient
-      .get<Category[]>(path)
-      .pipe(retry(1), catchError(this.handleError));
-  }
-
-  handleError(error: any) {
-    let errorMessage = '';
-    if (error.error instanceof ErrorEvent) {
-      errorMessage = error.error.message;
-    } else {
-      errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
-    }
-    window.alert(errorMessage);
-    return throwError(() => {
-      return errorMessage;
-    });
-  }
 }

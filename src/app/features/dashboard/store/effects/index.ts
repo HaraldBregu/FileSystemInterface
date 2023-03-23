@@ -1,14 +1,14 @@
 import { Injectable } from "@angular/core";
 import { Actions } from "@ngrx/effects";
 import { createEffect, ofType } from "@ngrx/effects";
-import { catchError, EMPTY, exhaustMap, map, mergeMap, of } from "rxjs";
+import { catchError, map, mergeMap, of } from "rxjs";
 import { CatalogService } from "src/app/shared/services/catalog.service";
 import { CategoryService } from "src/app/shared/services/category.service";
 import { getCatalogs, getCatalogsFailure, getCatalogsSuccess, getCategories, getCategoriesFailure, getCategoriesSuccess } from '../actions';
 
 
 @Injectable()
-export class MenuEffects {
+export class DashboardEffects {
 
     constructor(
         private actions$: Actions,
@@ -19,8 +19,10 @@ export class MenuEffects {
         this.actions$.pipe(
             ofType(getCatalogs),
             mergeMap(() => this.catalogService.getAll().pipe(
-                map(catalogs => getCatalogsSuccess({ catalogs: catalogs })),
-                catchError(async () => getCatalogsFailure)
+                map(catalogs =>
+                    getCatalogsSuccess({ catalogs: catalogs })),
+                catchError((error) =>
+                    of(getCatalogsFailure({ error: error })))
             ))
         )
     );
@@ -28,9 +30,10 @@ export class MenuEffects {
     categoryList$ = createEffect(() =>
         this.actions$.pipe(
             ofType(getCategories),
-            mergeMap(({catalog_name}) => this.categoryService.get(catalog_name).pipe(
+            mergeMap(({ catalog_name }) => this.categoryService.get(catalog_name).pipe(
                 map(categories => getCategoriesSuccess({ categories: categories })),
-                catchError(async () => getCategoriesFailure)
+                catchError((error) =>
+                    of(getCategoriesFailure({ error: error })))
             ))
         )
     );

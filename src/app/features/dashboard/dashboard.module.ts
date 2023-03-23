@@ -10,7 +10,7 @@ import { StoreModule } from '@ngrx/store';
 import { dashboardReducer } from './store/reducers'
 import { DASHBOARD_SELECTOR } from './store/selectors/menu.selectors';
 import { EffectsModule } from '@ngrx/effects';
-import { MenuEffects } from './store/effects';
+import { DashboardEffects } from './store/effects';
 import { metaReducers } from './store';
 import { ExplorerComponent } from './explorer/explorer.component';
 
@@ -27,7 +27,9 @@ import { ExplorerComponent } from './explorer/explorer.component';
       DASHBOARD_SELECTOR,
       dashboardReducer,
       { metaReducers }),
-    EffectsModule.forFeature([MenuEffects]),
+    EffectsModule.forFeature([
+      DashboardEffects
+    ]),
     CommonModule,
     FontAwesomeModule,
     BaseComponentsModule,
