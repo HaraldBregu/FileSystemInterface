@@ -24,18 +24,18 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let item of data"
+                <tr *ngFor="let item of data" (click)="clickingrow(item)"
                     class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                     <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                        <fa-icon *ngIf="item.type===dataItemType.Category" [icon]="folderIcon"
+                        <fa-icon *ngIf="item.type===productType.Category" [icon]="folderIcon"
                             [ngClass]="colorForItem(item)"></fa-icon>
-                        <fa-icon *ngIf="item.type===dataItemType.Product" [icon]="fileIcon"
+                        <fa-icon *ngIf="item.type===productType.File" [icon]="fileIcon"
                             [ngClass]="colorForItem(item)"></fa-icon>
-                        <span class="ml-2">{{item.title}}</span>
+                        <span class="ml-2">{{item.name}}</span>
                     </th>
                     <td class="px-6 py-4">
-                        <span *ngIf="item.type===dataItemType.Category">Category</span>
-                        <span *ngIf="item.type===dataItemType.Product">File</span>
+                        <span *ngIf="item.type===productType.Category">Category</span>
+                        <span *ngIf="item.type===productType.File">File</span>
                     </td>
                     <td class="px-6 py-4">
                         -
@@ -44,7 +44,7 @@
                         -
                     </td>
                     <td class="px-6 py-4">
-                        {{ item.childs || "-" }}
+                        {{ item.items_count || "-" }}
                     </td>
                     <td class="flex items-center px-6 py-4 space-x-3">
                         <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>

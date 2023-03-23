@@ -1,25 +1,37 @@
-import { Catalog } from "src/app/shared/interfaces/catalog";
-import { Category } from "src/app/shared/interfaces/category";
-
-export enum NavItemModelType {   
-    Catalog = 0,
-    Category = 1,
-    Product = 2 
-}
-
-export interface NavItemModel {
-    type: NavItemModelType
-    id?: number
-    title: string
-    childs: number
-}
+import { Product } from "src/app/shared/interfaces/product";
 
 export interface DashboardModel {
     loading: boolean
-    catalogs: Catalog[]
-    filteredCatalog: Catalog[]
-    categories: Category[]
+    catalogs: Product[]
+    filteredCatalog: Product[]
+    categories: Product[]
     error: any
-    selectedCatalog: Catalog | undefined
-    navItems: NavItemModel[]
+    selectedCatalog: Product | undefined
+    navItems: Product[]
 }
+
+/* 
+[
+    15: 56
+Number,
+        BigNumber,
+        Decimal,
+        Double,
+        Boolean,
+        Text,
+        DateTime,
+        MoneyCurrency,
+        FileName,
+        MultipleChoice,
+        LongText
+
+  {                
+    "name": "IsSearchable",                
+    "displayname": "Is Searchable",                
+    "datatype": "Boolean",               
+     "ismultilanguage": false,               
+      "isrequired": true,                
+      "value": "0",               
+       "languagesvalue": []           
+    }
+*/

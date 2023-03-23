@@ -8,12 +8,11 @@ import { ComponentsModule } from 'src/app/shared/components/components.module';
 import { ProductComponent } from './product/product.component';
 import { StoreModule } from '@ngrx/store';
 import { dashboardReducer } from './store/reducers'
-import { DASHBOARD_SELECTOR } from './store/selectors/menu.selectors';
+import { DASHBOARD_SELECTOR } from './store/selectors';
 import { EffectsModule } from '@ngrx/effects';
 import { DashboardEffects } from './store/effects';
-import { metaReducers } from './store';
+import { hydrationMetaReducer } from './store';
 import { ExplorerComponent } from './explorer/explorer.component';
-
 
 @NgModule({
   declarations: [
@@ -25,8 +24,11 @@ import { ExplorerComponent } from './explorer/explorer.component';
   imports: [
     StoreModule.forFeature(
       DASHBOARD_SELECTOR,
-      dashboardReducer,
-      { metaReducers }),
+      dashboardReducer, {
+      metaReducers: [
+        hydrationMetaReducer
+      ]
+    }),
     EffectsModule.forFeature([
       DashboardEffects
     ]),

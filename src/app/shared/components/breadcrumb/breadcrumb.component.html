@@ -5,14 +5,14 @@
       <a (click)="selectItem(item)" class="cursor-pointer">
         <div class="flex items-center">
           <div [ngSwitch]="item.type">
-            <fa-icon *ngSwitchCase="itemTypeCatalog" [icon]="['fas', 'home']" class="text-gray-400"></fa-icon>
-            <fa-icon *ngSwitchCase="itemTypeCategory" [icon]="['fas', 'folder']" class="text-gray-400"></fa-icon>
-            <fa-icon *ngSwitchCase="itemTypeProduct" [icon]="['fas', 'folder']" class="text-gray-400"></fa-icon>
+            <fa-icon *ngSwitchCase="productTypeCatalog" [icon]="['fas', 'home']" class="text-gray-400"></fa-icon>
+            <fa-icon *ngSwitchCase="productTypeCategory" [icon]="['fas', 'folder']" class="text-gray-400"></fa-icon>
+            <fa-icon *ngSwitchCase="productTypeFile" [icon]="['fas', 'folder']" class="text-gray-400"></fa-icon>
           </div>
-          <span class="mx-1 text-sm font-medium text-gray-500 md:mx-2 dark:text-gray-400">{{item.title}}</span>
-          <span *ngIf="item.childs && item.childs > 0"
+          <span class="mx-1 text-sm font-medium text-gray-500 md:mx-2 dark:text-gray-400">{{item.name}}</span>
+          <span *ngIf="item.items_count && item.items_count > 0"
             class="bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800 hidden sm:flex">
-            {{item.childs}}
+            {{item.items_count}}
           </span>
         </div>
       </a>

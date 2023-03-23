@@ -4,8 +4,7 @@ import { createEffect, ofType } from "@ngrx/effects";
 import { catchError, map, mergeMap, of } from "rxjs";
 import { CatalogService } from "src/app/shared/services/catalog.service";
 import { CategoryService } from "src/app/shared/services/category.service";
-import { getCatalogs, getCatalogsFailure, getCatalogsSuccess, getCategories, getCategoriesFailure, getCategoriesSuccess } from '../actions';
-
+import { getCatalogs, getCatalogsFailure, getCatalogsSuccess, getCategories, getCategoriesFailure, getCategoriesSuccess, getSubCategories, getSubCategoriesFailure, getSubCategoriesSuccess } from '../actions';
 
 @Injectable()
 export class DashboardEffects {
@@ -31,11 +30,23 @@ export class DashboardEffects {
         this.actions$.pipe(
             ofType(getCategories),
             mergeMap(({ catalog_name }) => this.categoryService.get(catalog_name).pipe(
-                map(categories => getCategoriesSuccess({ categories: categories })),
+                map(categories =>
+                    getCategoriesSuccess({ categories: categories })),
                 catchError((error) =>
                     of(getCategoriesFailure({ error: error })))
             ))
         )
     );
 
+    subCategoryList$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(getSubCategories),
+            mergeMap(({ catalog_name, category_name, category_id }) => this.categoryService.get(catalog_name, category_id).pipe(
+                map(categories =>
+                    getSubCategoriesSuccess({ category_name, categories })),
+                catchError((error) =>
+                    of(getSubCategoriesFailure({ error: error })))
+            ))
+        )
+    );
 }

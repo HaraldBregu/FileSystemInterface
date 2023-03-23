@@ -1,9 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { map, Observable } from 'rxjs';
-import { Catalog } from 'src/app/shared/interfaces/catalog';
+import { Product } from 'src/app/shared/interfaces/product';
 import { DashboardModel } from './store';
-import { dashboardDataSelector } from './store/selectors/menu.selectors';
+import { dashboardDataSelector } from './store/selectors';
 
 @Component({
   selector: 'app-dashboard',
@@ -11,8 +11,8 @@ import { dashboardDataSelector } from './store/selectors/menu.selectors';
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
-  dashboardSubscription$: Observable<DashboardModel> = new Observable<DashboardModel>
-  catalog$: Observable<Catalog | undefined> = new Observable<Catalog | undefined>
+  dashboardSubscription$: Observable<DashboardModel> = new Observable()
+  catalog$: Observable<Product | undefined> = new Observable()
 
   constructor(private store: Store) {
 

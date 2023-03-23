@@ -18,24 +18,3 @@ export const hydrationMetaReducer = (reducer: ActionReducer<DashboardModel>): Ac
         return nextState;
     };
 };
-
-/*
-export function debug(reducer: ActionReducer<any>): ActionReducer<any> {
-    return function (state, action) {
-        console.log('state', state);
-        console.log('action', action);
-        return reducer(state, action);
-    };
-}
-
-export function cache(reducer: ActionReducer<any>): ActionReducer<any> {
-    return (state, action) => {
-        const newState = reducer(state, action);
-        localStorage.setItem('__dashboard_state_storage__', JSON.stringify(newState));
-        return newState;
-    };
-}
-*/
-export const metaReducers: MetaReducer<any>[] = [
-    hydrationMetaReducer
-];

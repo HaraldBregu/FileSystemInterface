@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { faFolder, faFolderPlus, faFile, faFileCirclePlus } from '@fortawesome/free-solid-svg-icons';
-import { DataItemType } from 'src/app/core/enums/data-item-type';
-import { DataItem } from '../../../core/interfaces/data-item';
+import { ProductType } from '../../enums/product-type';
+import { Product } from '../../interfaces/product';
 
 @Component({
   selector: 'app-data-grid',
@@ -9,11 +9,11 @@ import { DataItem } from '../../../core/interfaces/data-item';
   styleUrls: ['./data-grid.component.scss']
 })
 export class DataGridComponent implements OnInit, OnChanges {
-  @Input() data: DataItem[] = [];
-  @Output() onItemSelected = new EventEmitter<DataItem>();
+  @Input() data: Product[] = [];
+  @Output() onItemSelected = new EventEmitter<Product>();
 
-  dataItemTypeCategory: DataItemType = DataItemType.Category;
-  dataItemTypeProduct: DataItemType = DataItemType.Product;
+  productTypeCategory = ProductType.Category;
+  productTypeFile = ProductType.File;
 
   folderIcon = faFolder;
   addFolderIcon = faFolderPlus;
@@ -29,25 +29,25 @@ export class DataGridComponent implements OnInit, OnChanges {
     console.log("data changed");
   }
 
-  selectCatalog(item: DataItem) {
+  selectCatalog(item: Product) {
     this.onItemSelected.emit(item);
   }
 
-  isCategoryType(type: DataItemType): boolean {
-    return type == DataItemType.Category
+  isCategoryType(type: ProductType): boolean {
+    return type == ProductType.Category
   }
 
-  isFileType(type: DataItemType): boolean {
-    return type == DataItemType.Product
+  isFileType(type: ProductType): boolean {
+    return type == ProductType.File
   }
 
-  colorForItem(item: DataItem)  {
+  colorForItem(item: Product)  {
     //color: "text-blue-500",
     //color: "text-rose-500",
     switch (item.type) {
-      case DataItemType.Category:
+      case ProductType.Category:
         return "text-blue-500";
-      case DataItemType.Product:
+      case ProductType.File:
         return "text-rose-500";
     }
     

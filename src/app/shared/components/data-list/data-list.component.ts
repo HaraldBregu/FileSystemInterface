@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { faFile, faFileCirclePlus, faFolder, faFolderPlus } from '@fortawesome/free-solid-svg-icons';
-import { DataItemType } from 'src/app/core/enums/data-item-type';
-import { DataItem } from '../../../core/interfaces/data-item';
+import { ProductType } from '../../enums/product-type';
+import { Product } from '../../interfaces/product';
 
 @Component({
   selector: 'app-data-list',
@@ -9,10 +9,10 @@ import { DataItem } from '../../../core/interfaces/data-item';
   styleUrls: ['./data-list.component.scss']
 })
 export class DataListComponent {
-  @Input() data: DataItem[] = [];
-  @Output() onItemSelected = new EventEmitter<DataItem>();
+  @Input() data: Product[] = [];
+  @Output() onItemSelected = new EventEmitter<Product>();
 
-  dataItemType = DataItemType;
+  productType = ProductType;
 
   folderIcon = faFolder;
   addFolderIcon = faFolderPlus;
@@ -20,22 +20,15 @@ export class DataListComponent {
   addFileIcon = faFileCirclePlus;
   isSyncAnimated = true;
 
-  
-  selectProductItem(item: DataItem) {
+  clickingrow(item: Product) {
     this.onItemSelected.emit(item);
   }
 
-  rowClick() {
-    console.log("test row click");
-  }
-
-  colorForItem(item: DataItem)  {
-    //color: "text-blue-500",
-    //color: "text-rose-500",
+  colorForItem(item: Product)  {
     switch (item.type) {
-      case DataItemType.Category:
+      case ProductType.Category:
         return "text-blue-500";
-      case DataItemType.Product:
+      case ProductType.File:
         return "text-rose-500";
     }
     

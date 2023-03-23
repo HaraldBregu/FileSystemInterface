@@ -2,11 +2,11 @@ import { Component } from '@angular/core';
 import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { Store } from '@ngrx/store';
 import { map, Observable } from 'rxjs';
-import { Catalog } from 'src/app/shared/interfaces/catalog';
 import { getCatalogs, getCategories, searchCatalog, selectCatalog } from '../store/actions';
-import { dashboardDataSelector } from '../store/selectors/menu.selectors';
+import { dashboardDataSelector } from '../store/selectors';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
+import { Product } from 'src/app/shared/interfaces/product';
 
 @Component({
   selector: 'app-sidebar',
@@ -14,10 +14,10 @@ import { far } from '@fortawesome/free-regular-svg-icons';
   styleUrls: ['./sidebar.component.scss']
 })
 export class SidebarComponent {
-  catalogsObservable: Observable<Catalog[]> = new Observable();
-  items: Catalog[] = [];
+  catalogsObservable: Observable<Product[]> = new Observable();
+  items: Product[] = [];
   showCatalogs = false;
-  menuItems$: Observable<Catalog[]> = new Observable<Catalog[]>
+  menuItems$: Observable<Product[]> = new Observable<Product[]>
 
   constructor(
     library: FaIconLibrary,
@@ -33,8 +33,8 @@ export class SidebarComponent {
     this.store.dispatch(getCatalogs());
   }
 
-  selectCatalog(item: Catalog) {
-    this.store.dispatch(selectCatalog(item));
+  selectCatalog(item: Product) {
+    this.store.dispatch(selectCatalog({ product: item }));
     this.store.dispatch(getCategories({ catalog_name: item.name }));
   }
 
