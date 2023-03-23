@@ -3,12 +3,14 @@ import { Product } from "src/app/shared/interfaces/product";
 export interface DashboardModel {
     loading: boolean
     catalogs: Product[]
-    filteredCatalog: Product[]
-    categories: Product[]
+    currentCatalog: Product | undefined
+    filteredCatalogs: Product[]
+    products: Product[]
+    currentProduct: Product | undefined
     error: any
-    selectedCatalog: Product | undefined
     navItems: Product[]
 }
+
 
 /* 
 [

@@ -14,28 +14,28 @@ import { Product } from 'src/app/shared/interfaces/product';
   styleUrls: ['./sidebar.component.scss']
 })
 export class SidebarComponent {
-  catalogsObservable: Observable<Product[]> = new Observable();
+  catalogsObservable: Observable<Product[]> = new Observable<Product[]>();
   items: Product[] = [];
-  showCatalogs = false;
   menuItems$: Observable<Product[]> = new Observable<Product[]>
+  showCatalogs = false;
 
-  constructor(
-    library: FaIconLibrary,
-    private store: Store) {
+  constructor(library: FaIconLibrary, private store: Store) {
 
     library.addIconPacks(fas, far);
 
-    const dashboardObservable$ = this.store.select(dashboardDataSelector);
-    this.menuItems$ = dashboardObservable$.pipe(map(data => data.filteredCatalog));
+    const dashboardObservable$ = this.store.select(dashboardDataSelector)
+    this.menuItems$ = dashboardObservable$.pipe(map(data => data.filteredCatalogs))
+    //this.menuItems$.subscribe(data => console.log(data))
   }
 
   toggleCatalogs() {
+    this.showCatalogs = !this.showCatalogs; 
     this.store.dispatch(getCatalogs());
   }
 
   selectCatalog(item: Product) {
     this.store.dispatch(selectCatalog({ product: item }));
-    this.store.dispatch(getCategories({ catalog_name: item.name }));
+    this.store.dispatch(getCategories({ catalog: item }));
   }
 
   onInputType(input: any) {

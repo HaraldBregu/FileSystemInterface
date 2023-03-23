@@ -2,7 +2,7 @@ import { createAction, props } from "@ngrx/store";
 import { Product } from "src/app/shared/interfaces/product";
 
 export enum CatalogsTypes {
-    
+
     GET_CATALOGS = '[CATALOG][GET]',
     GET_CATALOGS_SUCCESS = '[CATALOG][GET] success',
     GET_CATALOGS_FAILURE = '[CATALOG][GET] failure',
@@ -12,6 +12,8 @@ export enum CatalogsTypes {
     GET_CATEGORIES = '[CATEOGORIES][GET]',
     GET_CATEGORIES_SUCCESS = '[CATEOGORIES][GET] success',
     GET_CATEGORIES_FAILURE = '[CATEOGORIES][GET] failure',
+
+    SELECT_CATEGORY = '[CATEOGORY][SELECT]',
 
     GET_SUB_CATEGORIES = '[SUBCATEOGORIES][GET]',
     GET_SUB_CATEGORIES_SUCCESS = '[SUBCATEOGORIES][GET] success',
@@ -32,7 +34,7 @@ export const getCatalogsFailure = createAction(
 
 export const selectCatalog = createAction(
     CatalogsTypes.SELECT_CATALOG,
-    props< { product: Product } >());
+    props<{ product: Product }>());
 
 export const searchCatalog = createAction(
     CatalogsTypes.SEARCH_CATALOG,
@@ -40,7 +42,7 @@ export const searchCatalog = createAction(
 
 export const getCategories = createAction(
     CatalogsTypes.GET_CATEGORIES,
-    props<{ catalog_name: string }>());
+    props<{ catalog: Product }>());
 
 export const getCategoriesSuccess = createAction(
     CatalogsTypes.GET_CATEGORIES_SUCCESS,
@@ -50,13 +52,17 @@ export const getCategoriesFailure = createAction(
     CatalogsTypes.GET_CATEGORIES_FAILURE,
     props<{ error: any }>());
 
+export const selectCategory = createAction(
+    CatalogsTypes.SELECT_CATEGORY,
+    props<{ category: Product }>());
+
 export const getSubCategories = createAction(
     CatalogsTypes.GET_SUB_CATEGORIES,
-    props<{ catalog_name: string, category_name: string, category_id: number }>());
+    props<{ catalog: Product, category: Product }>());
 
 export const getSubCategoriesSuccess = createAction(
     CatalogsTypes.GET_SUB_CATEGORIES_SUCCESS,
-    props<{ category_name: string, categories: Product[] }>());
+    props<{ category: Product, categories: Product[] }>());
 
 export const getSubCategoriesFailure = createAction(
     CatalogsTypes.GET_SUB_CATEGORIES_FAILURE,

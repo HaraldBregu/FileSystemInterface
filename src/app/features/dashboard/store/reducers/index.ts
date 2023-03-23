@@ -1,6 +1,5 @@
 import { createReducer, on } from "@ngrx/store";
 import Utils from "src/app/core/utils";
-import { ProductType } from "src/app/shared/enums/product-type";
 import { Product } from "src/app/shared/interfaces/product";
 import {
     getCatalogs,
@@ -13,17 +12,19 @@ import {
     getSubCategoriesFailure,
     getSubCategoriesSuccess,
     searchCatalog,
-    selectCatalog
+    selectCatalog,
+    selectCategory
 } from "../actions";
 import { DashboardModel } from "../models";
 
 const initialState: DashboardModel = {
     loading: false,
     catalogs: [],
-    filteredCatalog: [],
-    categories: [],
+    currentCatalog: undefined,
+    filteredCatalogs: [],
+    products: [],
+    currentProduct: undefined,
     error: undefined,
-    selectedCatalog: undefined,
     navItems: []
 }
 
@@ -39,7 +40,7 @@ export const dashboardReducer = createReducer(
         ...state,
         loading: false,
         catalogs: data.catalogs,
-        filteredCatalog: data.catalogs,
+        filteredCatalogs: data.catalogs,
     })),
 
     on(getCatalogsFailure, (state: DashboardModel, data) => ({
@@ -50,7 +51,7 @@ export const dashboardReducer = createReducer(
     on(selectCatalog, (state: DashboardModel, data) => {
         return {
             ...state,
-            selectedCatalog: data.product,
+            currentCatalog: data.product,
             navItems: updateCatalogNavItems(state, data.product),
         };
     }),
@@ -62,7 +63,7 @@ export const dashboardReducer = createReducer(
                 content => content.name.toLowerCase().includes(data.catalog_name.toLowerCase()))
         return {
             ...state,
-            filteredCatalog: filteredCatalogs
+            filteredCatalogs: filteredCatalogs
         };
     }),
 
@@ -75,7 +76,7 @@ export const dashboardReducer = createReducer(
         return {
             ...state,
             loading: false,
-            categories: data.categories,
+            products: data.categories,
         };
     }),
 
@@ -83,6 +84,14 @@ export const dashboardReducer = createReducer(
         ...state,
         loading: false,
     })),
+
+    on(selectCategory, (state: DashboardModel, data) => {
+        return {
+            ...state,
+            currentCatalog: data.category,
+            navItems: updateCatalogNavItems(state, data.category),
+        };
+    }),
 
     on(getSubCategories, (state: DashboardModel) => ({
         ...state,
@@ -93,8 +102,7 @@ export const dashboardReducer = createReducer(
         return {
             ...state,
             loading: false,
-            //categories: data.categories,
-            //navItems: updateCategoryNavItems(state, data),
+            categories: data.categories,
         };
     }),
 
@@ -108,12 +116,8 @@ export const dashboardReducer = createReducer(
 
 function updateCatalogNavItems(state: DashboardModel, data: Product) {
     var navItems: Product[] = []
-    navItems.push({
-        id: 0,
-        type: ProductType.Catalog,
-        name: data.name,
-        items_count: 0,
-    })
+  
+    navItems.push(data)
 
     console.log("---------------")
     console.log(data.name)
@@ -124,6 +128,8 @@ function updateCatalogNavItems(state: DashboardModel, data: Product) {
 
 function updateCategoryNavItems(state: DashboardModel, data: Product) {
     var navItems: Product[] = [...state.navItems]
+
+    navItems.push(data)
 
     console.log("---------------")
     console.log(data.name)

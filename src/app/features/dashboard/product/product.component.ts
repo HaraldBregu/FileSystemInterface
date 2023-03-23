@@ -12,18 +12,13 @@ import { ProductType } from 'src/app/shared/enums/product-type';
   templateUrl: './product.component.html',
   styleUrls: ['./product.component.scss']
 })
-export class ProductComponent implements OnInit {
-  catalogSubscription$: Observable<Product | undefined> = new Observable<Product | undefined>
-  categoriesSubscription$: Observable<Product[]> = new Observable<Product[]>
-
-  isTableList: boolean = true;
-
+export class ProductComponent {
+  catalogSubscription$: Observable<Product | undefined> = new Observable()
   items$: Observable<Product[]> = new Observable()
   items: Product[] = []
-
   navitems: Product[] = []
-
-  selectedCatalog: Product | undefined
+  currentCatalog: Product | undefined
+  isTableList: boolean = true
 
   constructor(private store: Store, private categoryService: CategoryService) {
     const dashboardObservable$ = this.store.select(dashboardDataSelector);
@@ -32,51 +27,34 @@ export class ProductComponent implements OnInit {
       .pipe(map(data => data.navItems))
       .subscribe(product => this.navitems = product)
 
-    this.items$ = dashboardObservable$.pipe(map(data => data.categories))
+    this.items$ = dashboardObservable$.pipe(map(data => data.products))
     this.items$.subscribe(product => this.items = product)
 
-    this.catalogSubscription$ = dashboardObservable$.pipe(map(data => data.selectedCatalog));
-    this.categoriesSubscription$ = dashboardObservable$.pipe(map(data => data.categories));
+    this.catalogSubscription$ = dashboardObservable$.pipe(map(data => data.currentCatalog))
 
-    this.catalogSubscription$.subscribe(catalog => this.selectedCatalog = catalog)
-
-
-    /*
-        this.items$ = dashboardObservable$.pipe(map(data => data.categories)).pipe(map(data => {
-          return data.map(d => {
-            return {
-              id: d.id,
-              type: ProductType.Category,
-              name: d.name,
-            }
-          })
-        }))
-    */
-    /*
-     this.items$.pipe().subscribe(data => {
-       this.items = data;
-     })*/
-
-  }
-
-  ngOnInit() {
-
+    this.catalogSubscription$.subscribe(catalog => this.currentCatalog = catalog)
   }
 
   selectBreadcrumbItem(item: Product) {
     switch (item.type) {
       case ProductType.Catalog:
-        this.store.dispatch(getCategories({ catalog_name: item.name }));
+        this.store.dispatch(getCategories({ catalog: item }))
         break
       case ProductType.Category:
+        //this.store.dispatch(getCategories({ catalog: item }))
+        break
       case ProductType.File:
     }
   }
 
   selectCategory(item: Product) {
-    const catalogName = this.selectedCatalog?.name ?? ""
+    if (this.currentCatalog == null)
+      return
 
-    this.store.dispatch(getSubCategories({ catalog_name: catalogName, category_name: item.name, category_id: item.id }));
+    this.store.dispatch(getSubCategories({
+      catalog: this.currentCatalog,
+      category: item,
+    }))
   }
 
 }

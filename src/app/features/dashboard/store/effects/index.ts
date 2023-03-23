@@ -29,7 +29,7 @@ export class DashboardEffects {
     categoryList$ = createEffect(() =>
         this.actions$.pipe(
             ofType(getCategories),
-            mergeMap(({ catalog_name }) => this.categoryService.get(catalog_name).pipe(
+            mergeMap(({ catalog }) => this.categoryService.get(catalog.name).pipe(
                 map(categories =>
                     getCategoriesSuccess({ categories: categories })),
                 catchError((error) =>
@@ -41,9 +41,9 @@ export class DashboardEffects {
     subCategoryList$ = createEffect(() =>
         this.actions$.pipe(
             ofType(getSubCategories),
-            mergeMap(({ catalog_name, category_name, category_id }) => this.categoryService.get(catalog_name, category_id).pipe(
+            mergeMap(({ catalog, category }) => this.categoryService.get(catalog.name, category.id).pipe(
                 map(categories =>
-                    getSubCategoriesSuccess({ category_name, categories })),
+                    getSubCategoriesSuccess({ category, categories })),
                 catchError((error) =>
                     of(getSubCategoriesFailure({ error: error })))
             ))
