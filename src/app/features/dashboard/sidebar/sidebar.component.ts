@@ -16,7 +16,8 @@ import { Product } from 'src/app/shared/interfaces/product';
 export class SidebarComponent {
   catalogsObservable: Observable<Product[]> = new Observable<Product[]>();
   items: Product[] = [];
-  menuItems$: Observable<Product[]> = new Observable<Product[]>
+  menuItems$: Observable<Product[]> = new Observable()     
+  currentCatalog$: Observable<Product | undefined> = new Observable()
   showCatalogs = false;
 
   constructor(library: FaIconLibrary, private store: Store) {
@@ -25,6 +26,8 @@ export class SidebarComponent {
 
     const dashboardObservable$ = this.store.select(dashboardDataSelector)
     this.menuItems$ = dashboardObservable$.pipe(map(data => data.filteredCatalogs))
+    this.currentCatalog$ = dashboardObservable$.pipe(map(data => data.currentCatalog))
+
     //this.menuItems$.subscribe(data => console.log(data))
   }
 
