@@ -1,5 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { faFolder, faFolderPlus, faFile, faFileCirclePlus } from '@fortawesome/free-solid-svg-icons';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ProductType } from '../../enums/product-type';
 import { Product } from '../../interfaces/product';
 
@@ -8,50 +7,41 @@ import { Product } from '../../interfaces/product';
   templateUrl: './data-grid.component.html',
   styleUrls: ['./data-grid.component.scss']
 })
-export class DataGridComponent implements OnInit, OnChanges {
+export class DataGridComponent {
   @Input() data: Product[] = [];
   @Output() onItemSelected = new EventEmitter<Product>();
 
-  productTypeCategory = ProductType.Category;
-  productTypeFile = ProductType.File;
-
-  folderIcon = faFolder;
-  addFolderIcon = faFolderPlus;
-  fileIcon = faFile;
-  addFileIcon = faFileCirclePlus;
-  isSyncAnimated = true;
-
-  ngOnInit(): void {
-    
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    console.log("data changed");
-  }
-
-  selectCatalog(item: Product) {
+  selectItem(item: Product) {
     this.onItemSelected.emit(item);
   }
 
-  isCategoryType(type: ProductType): boolean {
-    return type == ProductType.Category
-  }
-
-  isFileType(type: ProductType): boolean {
-    return type == ProductType.File
-  }
-
-  colorForItem(item: Product)  {
-    //color: "text-blue-500",
-    //color: "text-rose-500",
+  colorForItem(item: Product) {
     switch (item.type) {
       case ProductType.Category:
+      case ProductType.CategoryVariant:
         return "text-blue-500";
       case ProductType.File:
+      case ProductType.FileVariant:
         return "text-rose-500";
     }
-    
     return "text-blue-500";
-  }  
+  } 
 
+  isCategory(item: ProductType) {
+    switch (item) {
+      case ProductType.Category:
+      case ProductType.CategoryVariant:
+        return true;
+    }
+    return false
+  }
+
+  isFile(item: ProductType) {
+    switch (item) {
+      case ProductType.File:
+      case ProductType.FileVariant:
+        return true;
+    }
+    return false
+  }
 }

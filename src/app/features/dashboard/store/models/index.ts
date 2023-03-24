@@ -26,14 +26,4 @@ Number,
         FileName,
         MultipleChoice,
         LongText
-
-  {                
-    "name": "IsSearchable",                
-    "displayname": "Is Searchable",                
-    "datatype": "Boolean",               
-     "ismultilanguage": false,               
-      "isrequired": true,                
-      "value": "0",               
-       "languagesvalue": []           
-    }
 */

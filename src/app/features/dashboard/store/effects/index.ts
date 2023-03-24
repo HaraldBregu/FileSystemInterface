@@ -4,7 +4,14 @@ import { createEffect, ofType } from "@ngrx/effects";
 import { catchError, map, mergeMap, of } from "rxjs";
 import { CatalogService } from "src/app/shared/services/catalog.service";
 import { CategoryService } from "src/app/shared/services/category.service";
-import { getCatalogs, getCatalogsFailure, getCatalogsSuccess, getCategories, getCategoriesFailure, getCategoriesSuccess, getSubCategories, getSubCategoriesFailure, getSubCategoriesSuccess } from '../actions';
+import {
+    getCatalogs,
+    getCatalogsFailure,
+    getCatalogsSuccess,
+    getCategories,
+    getCategoriesFailure,
+    getCategoriesSuccess
+} from '../actions';
 
 @Injectable()
 export class DashboardEffects {
@@ -29,7 +36,7 @@ export class DashboardEffects {
     categoryList$ = createEffect(() =>
         this.actions$.pipe(
             ofType(getCategories),
-            mergeMap(({ catalog }) => this.categoryService.get(catalog.name).pipe(
+            mergeMap(({ catalog, category }) => this.categoryService.get(catalog.name, category?.id).pipe(
                 map(categories =>
                     getCategoriesSuccess({ categories: categories })),
                 catchError((error) =>
@@ -37,16 +44,16 @@ export class DashboardEffects {
             ))
         )
     );
-
-    subCategoryList$ = createEffect(() =>
-        this.actions$.pipe(
-            ofType(getSubCategories),
-            mergeMap(({ catalog, category }) => this.categoryService.get(catalog.name, category.id).pipe(
-                map(categories =>
-                    getSubCategoriesSuccess({ category, categories })),
-                catchError((error) =>
-                    of(getSubCategoriesFailure({ error: error })))
-            ))
-        )
-    );
+    /*
+        subCategoryList$ = createEffect(() =>
+            this.actions$.pipe(
+                ofType(getSubCategories),
+                mergeMap(({ catalog, category }) => this.categoryService.get(catalog.name, category.id).pipe(
+                    map(categories =>
+                        getSubCategoriesSuccess({ category, categories })),
+                    catchError((error) =>
+                        of(getSubCategoriesFailure({ error: error })))
+                ))
+            )
+        );*/
 }

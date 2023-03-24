@@ -14,11 +14,11 @@ export enum CatalogsTypes {
     GET_CATEGORIES_FAILURE = '[CATEOGORIES][GET] failure',
 
     SELECT_CATEGORY = '[CATEOGORY][SELECT]',
-
+/*
     GET_SUB_CATEGORIES = '[SUBCATEOGORIES][GET]',
     GET_SUB_CATEGORIES_SUCCESS = '[SUBCATEOGORIES][GET] success',
     GET_SUB_CATEGORIES_FAILURE = '[SUBCATEOGORIES][GET] failure',
-
+*/
 }
 
 export const getCatalogs = createAction(
@@ -34,7 +34,7 @@ export const getCatalogsFailure = createAction(
 
 export const selectCatalog = createAction(
     CatalogsTypes.SELECT_CATALOG,
-    props<{ product: Product }>());
+    props<{ catalog: Product }>());
 
 export const searchCatalog = createAction(
     CatalogsTypes.SEARCH_CATALOG,
@@ -42,7 +42,7 @@ export const searchCatalog = createAction(
 
 export const getCategories = createAction(
     CatalogsTypes.GET_CATEGORIES,
-    props<{ catalog: Product }>());
+    props<{ catalog: Product, category?: Product }>());
 
 export const getCategoriesSuccess = createAction(
     CatalogsTypes.GET_CATEGORIES_SUCCESS,
@@ -55,15 +55,3 @@ export const getCategoriesFailure = createAction(
 export const selectCategory = createAction(
     CatalogsTypes.SELECT_CATEGORY,
     props<{ category: Product }>());
-
-export const getSubCategories = createAction(
-    CatalogsTypes.GET_SUB_CATEGORIES,
-    props<{ catalog: Product, category: Product }>());
-
-export const getSubCategoriesSuccess = createAction(
-    CatalogsTypes.GET_SUB_CATEGORIES_SUCCESS,
-    props<{ category: Product, categories: Product[] }>());
-
-export const getSubCategoriesFailure = createAction(
-    CatalogsTypes.GET_SUB_CATEGORIES_FAILURE,
-    props<{ error: any }>());

@@ -1,23 +1,21 @@
 <div class="mx-auto grid max-w-6xl grid-cols-1 gap-6 pt-6 sm:grid-cols-2  grid-cols-1 md:grid-cols-3 lg:grid-cols-4">
   <div *ngFor="let item of data">
-    <a (click)="selectCatalog(item)">
+    <a (click)="selectItem(item)" class="cursor-pointer">
       <div
         class="rounded-xl border-2 border-slate-300 bg-white pt-8 pb-7 shadow-lg hover:shadow-xl hover:transform hover:scale-105 duration-300 text-center">
-        <div [ngSwitch]="item.type">
-          <div class="p-2" *ngSwitchCase="productTypeCategory">
-            <fa-layers class="text-7xl text-slate-300">
-              <fa-icon [icon]="folderIcon" [ngClass]="colorForItem(item)"></fa-icon>
-              <fa-layers-text content="{{item.items_count}}" class="text-white" transform="shrink-10"></fa-layers-text>
-            </fa-layers>
-            <p class="mt-2 text-sm font-bold text-slate-500 text-ellipsis overflow-hidden">{{item.name}}</p>
-          </div>
-          <div *ngSwitchCase="productTypeFile">
-            <fa-layers class="text-7xl text-slate-300">
-              <fa-icon [icon]="fileIcon" [ngClass]="colorForItem(item)"></fa-icon>
-              <fa-layers-text class="text-white" transform="shrink-10"></fa-layers-text>
-            </fa-layers>
-            <p class="mt-2 text-sm font-bold text-slate-500 text-ellipsis overflow-hidden">{{item.name}}</p>
-          </div>
+        <div class="p-2" *ngIf="isCategory(item.type)">
+          <fa-layers class="text-7xl text-slate-300">
+            <fa-icon [icon]="['fas', 'folder']" [ngClass]="colorForItem(item)"></fa-icon>
+            <fa-layers-text content="{{item.items_count}}" class="text-white" transform="shrink-10"></fa-layers-text>
+          </fa-layers>
+          <p class="mt-2 text-sm font-bold text-slate-500 text-ellipsis overflow-hidden">{{item.name}}</p>
+        </div>
+        <div *ngIf="isFile(item.type)">
+          <fa-layers class="text-7xl text-slate-300">
+            <fa-icon [icon]="['fas', 'file']" [ngClass]="colorForItem(item)"></fa-icon>
+            <fa-layers-text class="text-white" transform="shrink-10"></fa-layers-text>
+          </fa-layers>
+          <p class="mt-2 text-sm font-bold text-slate-500 text-ellipsis overflow-hidden">{{item.name}}</p>
         </div>
       </div>
     </a>

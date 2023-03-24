@@ -4,11 +4,9 @@
     <li *ngFor="let item of items; let first = first; let i = index">
       <a (click)="selectItem(item)" class="cursor-pointer">
         <div class="flex items-center">
-          <div [ngSwitch]="item.type">
-            <fa-icon *ngSwitchCase="productTypeCatalog" [icon]="['fas', 'home']" class="text-gray-400"></fa-icon>
-            <fa-icon *ngSwitchCase="productTypeCategory" [icon]="['fas', 'folder']" class="text-gray-400"></fa-icon>
-            <fa-icon *ngSwitchCase="productTypeFile" [icon]="['fas', 'folder']" class="text-gray-400"></fa-icon>
-          </div>
+          <fa-icon *ngIf="isCatalog(item.type)" [icon]="['fas', 'home']" class="text-gray-500"></fa-icon>
+          <fa-icon *ngIf="isCategory(item.type)" [icon]="['fas', 'folder']" class="text-gray-400"></fa-icon>
+          <fa-icon *ngIf="isFile(item.type)" [icon]="['fas', 'file']" class="text-gray-400"></fa-icon>
           <span class="mx-1 text-sm font-medium text-gray-500 md:mx-2 dark:text-gray-400">{{item.name}}</span>
           <span *ngIf="item.items_count && item.items_count > 0"
             class="bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800 hidden sm:flex">
