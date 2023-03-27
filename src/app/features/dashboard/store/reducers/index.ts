@@ -9,9 +9,12 @@ import {
     getCategories,
     getCategoriesFailure,
     getCategoriesSuccess,
+<<<<<<< HEAD
     getProductDetail,
     getProductDetailFailure,
     getProductDetailSuccess,
+=======
+>>>>>>> 86bb3b56a4b768ef27ab52753653571ddee85ca2
     searchCatalog,
     selectCatalog,
     selectCategory
