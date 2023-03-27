@@ -1,5 +1,6 @@
 import { createReducer, on } from "@ngrx/store";
 import Utils from "src/app/core/utils";
+import { ProductType } from "src/app/shared/enums/product-type";
 import { Product } from "src/app/shared/interfaces/product";
 import {
     getCatalogs,
@@ -8,13 +9,14 @@ import {
     getCategories,
     getCategoriesFailure,
     getCategoriesSuccess,
-    getSubCategories,
-    getSubCategoriesFailure,
-    getSubCategoriesSuccess,
+    getProductDetail,
+    getProductDetailFailure,
+    getProductDetailSuccess,
     searchCatalog,
     selectCatalog,
     selectCategory
 } from "../actions";
+
 import { DashboardModel } from "../models";
 
 const initialState: DashboardModel = {
@@ -24,6 +26,7 @@ const initialState: DashboardModel = {
     filteredCatalogs: [],
     products: [],
     currentProduct: undefined,
+    currentProductDetail: undefined,
     error: undefined,
     navItems: []
 }
@@ -36,12 +39,15 @@ export const dashboardReducer = createReducer(
         loading: true,
     })),
 
-    on(getCatalogsSuccess, (state: DashboardModel, data) => ({
-        ...state,
-        loading: false,
-        catalogs: data.catalogs,
-        filteredCatalogs: data.catalogs,
-    })),
+    on(getCatalogsSuccess, (state: DashboardModel, data) => {
+        var dataCatalogs = data.catalogs.map((v) => ({ ...v, type: ProductType.Catalog }))
+        return {
+            ...state,
+            loading: false,
+            catalogs: dataCatalogs,
+            filteredCatalogs: dataCatalogs
+        }
+    }),
 
     on(getCatalogsFailure, (state: DashboardModel, data) => ({
         ...state,
@@ -51,8 +57,8 @@ export const dashboardReducer = createReducer(
     on(selectCatalog, (state: DashboardModel, data) => {
         return {
             ...state,
-            currentCatalog: data.product,
-            navItems: updateCatalogNavItems(state, data.product),
+            currentCatalog: data.catalog,
+            navItems: updateCatalogNavItems(state, data.catalog),
         };
     }),
 
@@ -73,6 +79,13 @@ export const dashboardReducer = createReducer(
     })),
 
     on(getCategoriesSuccess, (state: DashboardModel, data) => {
+        var navItems: Product[] = []
+        var lastItem: Product = {
+            ...navItems.at(-1)!,
+            //items_count: data.categories.length
+        }
+        navItems.push(lastItem)
+
         return {
             ...state,
             loading: false,
@@ -86,66 +99,43 @@ export const dashboardReducer = createReducer(
     })),
 
     on(selectCategory, (state: DashboardModel, data) => {
+        const newCategory: Product = {
+            ...data.category,
+            parent: state.navItems.at(-1)
+        }
         return {
             ...state,
-            currentCatalog: data.category,
-            navItems: updateCatalogNavItems(state, data.category),
+            currentProduct: newCategory,
+            navItems: updateCategoryNavItems(state, newCategory),
         };
     }),
 
-    on(getSubCategories, (state: DashboardModel) => ({
+    on(getProductDetail, (state: DashboardModel, data) => ({
         ...state,
         loading: true,
     })),
 
-    on(getSubCategoriesSuccess, (state: DashboardModel, data) => {
-        return {
-            ...state,
-            loading: false,
-            categories: data.categories,
-        };
-    }),
-
-    on(getSubCategoriesFailure, (state: DashboardModel, data) => ({
+    on(getProductDetailSuccess, (state: DashboardModel, data) => ({
         ...state,
         loading: false,
+        currentProductDetail: data.product_detail,
     })),
 
+    on(getProductDetailFailure, (state: DashboardModel, data) => ({
+        ...state,
+        loading: false,
+        currentProductDetail: undefined,
+    })),
 );
 
-
 function updateCatalogNavItems(state: DashboardModel, data: Product) {
-    var navItems: Product[] = []
-  
-    navItems.push(data)
-
-    console.log("---------------")
-    console.log(data.name)
-    console.log("---------------")
-
-    return navItems
+    return [data]
 }
 
 function updateCategoryNavItems(state: DashboardModel, data: Product) {
-    var navItems: Product[] = [...state.navItems]
-
-    navItems.push(data)
-
-    console.log("---------------")
-    console.log(data.name)
-    console.log("---------------")
-
-    return navItems
+    var navItems = [...state.navItems, data]
+    const filteredArray = navItems.filter((obj, index, self) => index === self.findIndex((t) => t.name === obj.name && t.id === obj.id))
+    const index = filteredArray.findIndex((obj) => obj.name === data.name && obj.id === data.id)
+    const resultArray = filteredArray.slice(0, index + 1)
+    return resultArray
 }
-
-/*
-function uniqForObject<T>(array: T[]): T[] {
-    const result: T[] = [];
-    for (const item of array) {
-        const found = result.some((value) => isEqual(value, item));
-        if (!found) {
-            result.push(item);
-        }
-    }
-    return result;
-}*/

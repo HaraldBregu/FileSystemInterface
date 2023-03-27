@@ -1,9 +1,9 @@
-<div *ngIf="catalogSubscription$ | async">
+<div *ngIf="selectedProductSubscription$ | async">
   <app-breadcrumb (onItemSelected)="selectBreadcrumbItem($event)" [items]="navitems"></app-breadcrumb>
-  <app-detail-form [title]="(catalogSubscription$ | async)?.name"></app-detail-form>
+  <app-detail-form [title]="(selectedProductSubscription$ | async)?.name" (onToggleAccordion)="toggleDetailProduct()" [properties]="properties"></app-detail-form>
   <app-data-filter (onItemSelected)="isTableList = !isTableList"></app-data-filter>
   <div [ngSwitch]="isTableList" *ngIf="items$ | async">
-    <app-data-list *ngSwitchDefault [data]="items" (onItemSelected)="selectCategory($event)"></app-data-list>
-    <app-data-grid *ngSwitchCase="false"  [data]="items"></app-data-grid>
+    <app-data-list *ngSwitchDefault [data]="items" (onItemSelected)="selectItem($event)"></app-data-list>
+    <app-data-grid *ngSwitchCase="false" [data]="items" (onItemSelected)="selectItem($event)"></app-data-grid>
   </div>
 </div>

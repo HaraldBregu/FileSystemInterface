@@ -1,7 +1,7 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
-import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
+import { ProductProperty } from '../../interfaces/product-detail';
 
 @Component({
   selector: 'app-detail-form',
@@ -10,12 +10,13 @@ import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
 })
 export class DetailFormComponent {
   @Input() title: string | undefined;
-  @Input() description?: string;
+  @Input() properties: ProductProperty[] | undefined;
+
+  @Output() onToggleAccordion = new EventEmitter();
 
   collapse = true;
 
-  constructor(library: FaIconLibrary) {
-    library.addIconPacks(fas, far);
-
+  toggleAccordion() {
+    this.onToggleAccordion.emit();
   }
 }

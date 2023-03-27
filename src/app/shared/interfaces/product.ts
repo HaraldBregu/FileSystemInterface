@@ -5,4 +5,5 @@ export interface Product {
     id: number
     name: string
     items_count: number
+    parent?: Product
 }

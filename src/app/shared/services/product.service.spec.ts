@@ -13,4 +13,13 @@ describe('ProductService', () => {
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
+
+  it('it should return product information with properties', () => {
+
+    service.get("CCN_LISTINO", 45).subscribe((res) => {
+      expect(res).toBeDefined();
+    })
+
+  });
+
 });

@@ -4,7 +4,18 @@ import { createEffect, ofType } from "@ngrx/effects";
 import { catchError, map, mergeMap, of } from "rxjs";
 import { CatalogService } from "src/app/shared/services/catalog.service";
 import { CategoryService } from "src/app/shared/services/category.service";
-import { getCatalogs, getCatalogsFailure, getCatalogsSuccess, getCategories, getCategoriesFailure, getCategoriesSuccess, getSubCategories, getSubCategoriesFailure, getSubCategoriesSuccess } from '../actions';
+import { ProductService } from "src/app/shared/services/product.service";
+import {
+    getCatalogs,
+    getCatalogsFailure,
+    getCatalogsSuccess,
+    getCategories,
+    getCategoriesFailure,
+    getCategoriesSuccess,
+    getProductDetail,
+    getProductDetailFailure,
+    getProductDetailSuccess
+} from '../actions';
 
 @Injectable()
 export class DashboardEffects {
@@ -12,7 +23,8 @@ export class DashboardEffects {
     constructor(
         private actions$: Actions,
         private catalogService: CatalogService,
-        private categoryService: CategoryService) { }
+        private categoryService: CategoryService,
+        private productService: ProductService) { }
 
     catalogList$ = createEffect(() =>
         this.actions$.pipe(
@@ -29,7 +41,7 @@ export class DashboardEffects {
     categoryList$ = createEffect(() =>
         this.actions$.pipe(
             ofType(getCategories),
-            mergeMap(({ catalog }) => this.categoryService.get(catalog.name).pipe(
+            mergeMap(({ catalog, category }) => this.categoryService.get(catalog.name, category?.id).pipe(
                 map(categories =>
                     getCategoriesSuccess({ categories: categories })),
                 catchError((error) =>
@@ -38,14 +50,15 @@ export class DashboardEffects {
         )
     );
 
-    subCategoryList$ = createEffect(() =>
+    
+    product$ = createEffect(() =>
         this.actions$.pipe(
-            ofType(getSubCategories),
-            mergeMap(({ catalog, category }) => this.categoryService.get(catalog.name, category.id).pipe(
-                map(categories =>
-                    getSubCategoriesSuccess({ category, categories })),
+            ofType(getProductDetail),
+            mergeMap(({ catalog, category }) => this.productService.get(catalog.name, category.id).pipe(
+                map(response =>
+                    getProductDetailSuccess({ product_detail: response })),
                 catchError((error) =>
-                    of(getSubCategoriesFailure({ error: error })))
+                    of(getProductDetailFailure({ error: error })))
             ))
         )
     );

@@ -1,8 +1,8 @@
 import { createAction, props } from "@ngrx/store";
 import { Product } from "src/app/shared/interfaces/product";
+import { ProductDetail } from "src/app/shared/interfaces/product-detail";
 
 export enum CatalogsTypes {
-
     GET_CATALOGS = '[CATALOG][GET]',
     GET_CATALOGS_SUCCESS = '[CATALOG][GET] success',
     GET_CATALOGS_FAILURE = '[CATALOG][GET] failure',
@@ -15,10 +15,9 @@ export enum CatalogsTypes {
 
     SELECT_CATEGORY = '[CATEOGORY][SELECT]',
 
-    GET_SUB_CATEGORIES = '[SUBCATEOGORIES][GET]',
-    GET_SUB_CATEGORIES_SUCCESS = '[SUBCATEOGORIES][GET] success',
-    GET_SUB_CATEGORIES_FAILURE = '[SUBCATEOGORIES][GET] failure',
-
+    GET_PRODUCT_DETAIL = '[PRODUCTDETAIL][GET]',
+    GET_PRODUCT_DETAIL_SUCCESS = '[PRODUCTDETAIL][GET] success',
+    GET_PRODUCT_DETAIL_FAILURE = '[PRODUCTDETAIL][GET] failure',
 }
 
 export const getCatalogs = createAction(
@@ -34,7 +33,7 @@ export const getCatalogsFailure = createAction(
 
 export const selectCatalog = createAction(
     CatalogsTypes.SELECT_CATALOG,
-    props<{ product: Product }>());
+    props<{ catalog: Product }>());
 
 export const searchCatalog = createAction(
     CatalogsTypes.SEARCH_CATALOG,
@@ -42,7 +41,7 @@ export const searchCatalog = createAction(
 
 export const getCategories = createAction(
     CatalogsTypes.GET_CATEGORIES,
-    props<{ catalog: Product }>());
+    props<{ catalog: Product, category?: Product }>());
 
 export const getCategoriesSuccess = createAction(
     CatalogsTypes.GET_CATEGORIES_SUCCESS,
@@ -56,14 +55,15 @@ export const selectCategory = createAction(
     CatalogsTypes.SELECT_CATEGORY,
     props<{ category: Product }>());
 
-export const getSubCategories = createAction(
-    CatalogsTypes.GET_SUB_CATEGORIES,
+export const getProductDetail = createAction(
+    CatalogsTypes.GET_PRODUCT_DETAIL,
     props<{ catalog: Product, category: Product }>());
 
-export const getSubCategoriesSuccess = createAction(
-    CatalogsTypes.GET_SUB_CATEGORIES_SUCCESS,
-    props<{ category: Product, categories: Product[] }>());
+export const getProductDetailSuccess = createAction(
+    CatalogsTypes.GET_PRODUCT_DETAIL_SUCCESS,
+    props<{ product_detail: ProductDetail }>());
 
-export const getSubCategoriesFailure = createAction(
-    CatalogsTypes.GET_SUB_CATEGORIES_FAILURE,
+export const getProductDetailFailure = createAction(
+    CatalogsTypes.GET_PRODUCT_DETAIL_FAILURE,
     props<{ error: any }>());
+    

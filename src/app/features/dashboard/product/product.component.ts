@@ -3,9 +3,10 @@ import { map, Observable } from 'rxjs';
 import { CategoryService } from 'src/app/shared/services/category.service';
 import { Store } from '@ngrx/store';
 import { dashboardDataSelector } from '../store/selectors';
-import { getCategories, getSubCategories } from '../store';
+import { getCategories, getProductDetail, selectCatalog, selectCategory } from '../store';
 import { Product } from 'src/app/shared/interfaces/product';
 import { ProductType } from 'src/app/shared/enums/product-type';
+import { ProductProperty } from 'src/app/shared/interfaces/product-detail';
 
 @Component({
   selector: 'app-product',
@@ -14,13 +15,16 @@ import { ProductType } from 'src/app/shared/enums/product-type';
 })
 export class ProductComponent {
   catalogSubscription$: Observable<Product | undefined> = new Observable()
+  selectedProductSubscription$: Observable<Product | undefined> = new Observable()
   items$: Observable<Product[]> = new Observable()
   items: Product[] = []
   navitems: Product[] = []
+  properties: ProductProperty[] | undefined
   currentCatalog: Product | undefined
+  currentProduct: Product | undefined
   isTableList: boolean = true
 
-  constructor(private store: Store, private categoryService: CategoryService) {
+  constructor(private store: Store) {
     const dashboardObservable$ = this.store.select(dashboardDataSelector);
 
     dashboardObservable$
@@ -31,30 +35,58 @@ export class ProductComponent {
     this.items$.subscribe(product => this.items = product)
 
     this.catalogSubscription$ = dashboardObservable$.pipe(map(data => data.currentCatalog))
-
     this.catalogSubscription$.subscribe(catalog => this.currentCatalog = catalog)
+
+    this.selectedProductSubscription$ = dashboardObservable$.pipe(map(data => data.navItems.at(-1)))
+    this.selectedProductSubscription$.subscribe(product => this.currentProduct = product)
+
+    const productDetail$ = dashboardObservable$.pipe(map(data => data.currentProductDetail))
+    const properties$ = dashboardObservable$.pipe(map(data => data.currentProductDetail?.properties))
+    properties$.subscribe(data => this.properties = data)
+    productDetail$.subscribe(data => console.log(data))
   }
 
   selectBreadcrumbItem(item: Product) {
     switch (item.type) {
       case ProductType.Catalog:
+        this.store.dispatch(selectCatalog({ catalog: item }))
         this.store.dispatch(getCategories({ catalog: item }))
         break
       case ProductType.Category:
-        //this.store.dispatch(getCategories({ catalog: item }))
+        if (this.currentCatalog == null)
+          return
+        this.store.dispatch(selectCategory({ category: item }));
+        this.store.dispatch(getCategories({
+          catalog: this.currentCatalog,
+          category: item,
+        }))
         break
       case ProductType.File:
     }
   }
 
-  selectCategory(item: Product) {
+  selectItem(item: Product) {
     if (this.currentCatalog == null)
       return
+    switch (item.type) {
+      case ProductType.Category:
+      case ProductType.CategoryVariant:
+        this.store.dispatch(selectCategory({ category: item }));
+        this.store.dispatch(getCategories({
+          catalog: this.currentCatalog,
+          category: item,
+        }))
+        break
+      case ProductType.File:
+      case ProductType.FileVariant:
 
-    this.store.dispatch(getSubCategories({
-      catalog: this.currentCatalog,
-      category: item,
-    }))
+    }
+  }
+
+  toggleDetailProduct() {
+    if (this.currentCatalog == null || this.currentProduct == null)
+      return
+    this.store.dispatch(getProductDetail({ catalog: this.currentCatalog, category: this.currentProduct }))
   }
 
 }
