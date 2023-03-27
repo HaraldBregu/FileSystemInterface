@@ -1,6 +1,5 @@
-import { NgModule, isDevMode } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { ReactiveFormsModule } from '@angular/forms';
 import { ComponentsModule } from './shared/components/components.module'
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -25,7 +24,6 @@ import { ErrorInterceptor } from './shared/interceptors/error.interceptor';
     HttpClientModule,
     ComponentsModule,
     DashboardModule,
-    ReactiveFormsModule,
     BrowserAnimationsModule,
     StoreModule.forRoot({}),
     EffectsModule.forRoot([]),

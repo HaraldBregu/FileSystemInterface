@@ -79,17 +79,11 @@ export const dashboardReducer = createReducer(
     })),
 
     on(getCategoriesSuccess, (state: DashboardModel, data) => {
-        var navItems: Product[] = []
-        var lastItem: Product = {
-            ...navItems.at(-1)!,
-            //items_count: data.categories.length
-        }
-        navItems.push(lastItem)
-
         return {
             ...state,
             loading: false,
             products: data.categories,
+            //navItems: navItems,
         };
     }),
 

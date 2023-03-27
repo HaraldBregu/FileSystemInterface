@@ -12,10 +12,8 @@
             [ngClass]="last ? 'text-gray-800' : 'text-gray-400'"></fa-icon>
           <span [ngClass]="last ? 'font-medium text-gray-800' : 'font-medium text-gray-400'"
             class="mx-1 text-sm md:mx-2 hover:text-gray-800">{{item.name}}</span>
-          <!-- *ngIf="item.items_count && item.items_count > 0 && last" -->
-
-          <span class="bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2 py-0.5 rounded hidden sm:flex">
-            34
+          <span *ngIf="item.items_count > 0 && last" class="bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2 py-0.5 rounded hidden sm:flex">
+            {{item.items_count}}
           </span>
         </div>
       </a>

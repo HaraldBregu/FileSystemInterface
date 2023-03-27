@@ -10,7 +10,7 @@ export interface ProductProperty {
 }
 
 export enum PropertFieldType {
-    Number,
+    Number = 0,
     BigNumber,
     Decimal,
     Double,
