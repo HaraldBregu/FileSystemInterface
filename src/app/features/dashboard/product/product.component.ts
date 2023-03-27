@@ -1,13 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { map, Observable } from 'rxjs';
-import { CategoryService } from 'src/app/shared/services/category.service';
 import { Store } from '@ngrx/store';
 import { dashboardDataSelector } from '../store/selectors';
-<<<<<<< HEAD
 import { getCategories, getProductDetail, selectCatalog, selectCategory } from '../store';
-=======
-import { getCategories, selectCatalog, selectCategory } from '../store';
->>>>>>> 86bb3b56a4b768ef27ab52753653571ddee85ca2
 import { Product } from 'src/app/shared/interfaces/product';
 import { ProductType } from 'src/app/shared/enums/product-type';
 import { ProductProperty } from 'src/app/shared/interfaces/product-detail';
@@ -42,16 +37,12 @@ export class ProductComponent {
     this.catalogSubscription$.subscribe(catalog => this.currentCatalog = catalog)
 
     this.selectedProductSubscription$ = dashboardObservable$.pipe(map(data => data.navItems.at(-1)))
-<<<<<<< HEAD
     this.selectedProductSubscription$.subscribe(product => this.currentProduct = product)
 
     const productDetail$ = dashboardObservable$.pipe(map(data => data.currentProductDetail))
     const properties$ = dashboardObservable$.pipe(map(data => data.currentProductDetail?.properties))
     properties$.subscribe(data => this.properties = data)
     productDetail$.subscribe(data => console.log(data))
-=======
-
->>>>>>> 86bb3b56a4b768ef27ab52753653571ddee85ca2
   }
 
   selectBreadcrumbItem(item: Product) {
