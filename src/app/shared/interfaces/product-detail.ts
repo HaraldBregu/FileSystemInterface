@@ -29,13 +29,11 @@ export interface PropertyField {
     datatype: PropertFieldType
     ismultilanguage: boolean
     isrequired: boolean
-    value?: string
+    isreadonly: boolean
+    value: string | undefined
+    language: string
+    options: []
     minlength: number
     maxlength: number
-    languagesvalue: PropertyFieldLang[]
 }
 
-export interface PropertyFieldLang {
-    language: string
-    value: string
-}

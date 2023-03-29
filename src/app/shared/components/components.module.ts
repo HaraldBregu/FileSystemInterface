@@ -8,7 +8,7 @@ import { DataFilterComponent } from './data-filter/data-filter.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { DetailFormComponent } from './detail-form/detail-form.component';
 import { BaseComponentsModule } from 'src/app/core/components/base-components.module';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -24,6 +24,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     FontAwesomeModule,
     BaseComponentsModule,
     ReactiveFormsModule,
+    FormsModule,
   ],
   exports: [
     NavbarComponent,

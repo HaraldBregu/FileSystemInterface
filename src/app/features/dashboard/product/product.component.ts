@@ -22,7 +22,7 @@ export class ProductComponent {
   currentCatalog: Product | undefined
   currentProduct: Product | undefined
   isTableList: boolean = true
-
+ 
   constructor(private store: Store) {
     const dashboardObservable$ = this.store.select(dashboardDataSelector);
 
@@ -46,6 +46,7 @@ export class ProductComponent {
   }
 
   selectBreadcrumbItem(item: Product) {
+
     switch (item.type) {
       case ProductType.Catalog:
         this.store.dispatch(selectCatalog({ catalog: item }))
@@ -67,6 +68,7 @@ export class ProductComponent {
   selectItem(item: Product) {
     if (this.currentCatalog == null)
       return
+
     switch (item.type) {
       case ProductType.Category:
       case ProductType.CategoryVariant:
