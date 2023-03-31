@@ -2,10 +2,10 @@ import { Component } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { dashboardDataSelector } from '../store/selectors';
-import { getCategories, getProductDetail, selectCatalog, selectCategory } from '../store';
+import { getCatalogProperties, getCategories, getProductDetail, selectCatalog, selectCategory, selectProduct } from '../store';
 import { Product } from 'src/app/shared/interfaces/product';
 import { ProductType } from 'src/app/shared/enums/product-type';
-import { ProductProperty } from 'src/app/shared/interfaces/product-detail';
+import { ProductDetail, ProductProperty } from 'src/app/shared/interfaces/product-detail';
 
 @Component({
   selector: 'app-product',
@@ -18,11 +18,16 @@ export class ProductComponent {
   items$: Observable<Product[]> = new Observable()
   items: Product[] = []
   navitems: Product[] = []
-  properties: ProductProperty[] | undefined
+  productDetail: ProductDetail | undefined
   currentCatalog: Product | undefined
   currentProduct: Product | undefined
+  ProductType = ProductType
   isTableList: boolean = true
- 
+  isFile: boolean = false
+  collapseForm: boolean = true
+
+  productDetailObserver$: Observable<ProductDetail | undefined> = new Observable()
+
   constructor(private store: Store) {
     const dashboardObservable$ = this.store.select(dashboardDataSelector);
 
@@ -37,15 +42,18 @@ export class ProductComponent {
     this.catalogSubscription$.subscribe(catalog => this.currentCatalog = catalog)
 
     this.selectedProductSubscription$ = dashboardObservable$.pipe(map(data => data.navItems.at(-1)))
-    this.selectedProductSubscription$.subscribe(product => this.currentProduct = product)
+    this.selectedProductSubscription$.subscribe(product => {
+      this.isFile = product?.type == ProductType.File || product?.type == ProductType.FileVariant
+      this.currentProduct = product
+    })
 
-    const productDetail$ = dashboardObservable$.pipe(map(data => data.currentProductDetail))
-    const properties$ = dashboardObservable$.pipe(map(data => data.currentProductDetail?.properties))
-    properties$.subscribe(data => this.properties = data)
-    productDetail$.subscribe(data => console.log(data))
+    this.productDetailObserver$ = dashboardObservable$.pipe(map(data => data.currentProductDetail))
+    this.productDetailObserver$.subscribe(data => this.productDetail = data)
   }
 
+  /// TO FIX
   selectBreadcrumbItem(item: Product) {
+    this.collapseForm = true
 
     switch (item.type) {
       case ProductType.Catalog:
@@ -62,10 +70,12 @@ export class ProductComponent {
         }))
         break
       case ProductType.File:
+        this.store.dispatch(selectProduct({ product: item }));
     }
   }
 
   selectItem(item: Product) {
+    this.collapseForm = true
     if (this.currentCatalog == null)
       return
 
@@ -80,14 +90,22 @@ export class ProductComponent {
         break
       case ProductType.File:
       case ProductType.FileVariant:
-
+        this.store.dispatch(selectProduct({ product: item }));
     }
   }
 
-  toggleDetailProduct() {
+  onToggle(event: ProductDetail) {
     if (this.currentCatalog == null || this.currentProduct == null)
       return
-    this.store.dispatch(getProductDetail({ catalog: this.currentCatalog, category: this.currentProduct }))
+
+    if (this.currentProduct.type == ProductType.Catalog) {
+      this.store.dispatch(getCatalogProperties({ catalog: this.currentCatalog }))
+    } else {
+      this.store.dispatch(getProductDetail({
+        catalog: this.currentCatalog,
+        category: this.currentProduct
+      }))
+    }
   }
 
 }

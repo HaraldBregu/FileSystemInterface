@@ -1,61 +1,37 @@
-import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
-import { ProductProperty, PropertFieldType } from '../../interfaces/product-detail';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { ProductDetail, ProductProperty, PropertFieldType } from '../../interfaces/product-detail';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import Utils from 'src/app/core/utils';
+import { Product } from '../../interfaces/product';
 
 @Component({
   selector: 'app-detail-form',
   templateUrl: './detail-form.component.html',
   styleUrls: ['./detail-form.component.scss']
 })
-export class DetailFormComponent {
-  @Input() title: string | undefined
-  @Output() onToggleAccordion = new EventEmitter()
+export class DetailFormComponent implements OnChanges {
+  @Input() currentProduct: Product | undefined
+  @Input() productDetail: ProductDetail | undefined
+  @Output() onToggleAccordion = new EventEmitter<ProductDetail>()
+  @Input() collapsed: boolean = true
 
-  detailFormGroup = new FormGroup({})
-
-  collapsed: boolean = true
-
-  @Input() set collapse(value: boolean) {
-    this.collapsed = value
-  }
-
-  get collapse(): boolean {
-    return this.collapsed;
-  }
-
+  detailFormGroup: FormGroup | undefined
   propertyType: PropertFieldType | undefined
-  prop: ProductProperty[] | undefined;
   PropertFieldType = PropertFieldType
   type: PropertFieldType = PropertFieldType.Text
 
-  @Input() set properties(properties: ProductProperty[] | undefined) {
-    this.prop = properties;
+  constructor() { }
 
-    /*
-        this.detailFormGroup.addControl("baseproperties", new FormGroup({
-          "firstname": new FormControl("nome"),
-          "lastname": new FormControl("cognome")
-        }))
-        this.detailFormGroup.addControl("customproperties", new FormGroup({
-          "firstname": new FormControl("nome 2"),
-          "lastname": new FormControl("cognome 2")
-        }))
-        */
-    this.prop?.forEach(property => {
+  ngOnChanges(changes: SimpleChanges) {
+
+    this.detailFormGroup = new FormGroup({});
+
+    this.productDetail?.properties?.forEach(property => {
       var tempFormGroup = new FormGroup({})
 
       property.childs.forEach(form => {
-        //var validators = []
-        //if (form.isrequired) { validators.push(Validators.required) }
-        //validators.push(Validators.minLength(form.minlength))
-        //validators.push(Validators.minLength(form.maxlength))
-        //var formControl = new FormControl(form.value, validators)
-
         var formControl = new FormControl(form.value)
-
         var controlKey = form.name
-
         if (form.ismultilanguage) {
           controlKey = form.name + form.language
         } else {
@@ -65,78 +41,19 @@ export class DetailFormComponent {
         tempFormGroup.addControl(controlKey, formControl);
       })
 
-      this.detailFormGroup.addControl(property.name, tempFormGroup)
+      this.detailFormGroup?.addControl(property.name, tempFormGroup)
     })
 
-
-    /*
-        this.prop?.forEach(property => {
-          var tempFormGroup = new FormGroup({})
-    
-          property.childs.forEach(form => {
-            var validators = []
-            if (form.isrequired) { validators.push(Validators.required) }
-            validators.push(Validators.minLength(form.minlength))
-            validators.push(Validators.minLength(form.maxlength))
-            var formControl = new FormControl(form.value, validators)
-    
-            var controlKey = form.name
-           
-            if (form.ismultilanguage) {
-              controlKey = form.language
-            } else {
-              controlKey = form.name
-            }
-            tempFormGroup.addControl(controlKey, formControl);
-          })
-          this.detailFormGroup.addControl(property.name, tempFormGroup)
-        })*/
-
-    /*
-    if (this.prop != null) {
-      for (var property of this.prop) {
-
-        for (var form of property.childs) {
-
-          var validators = []
-          if (form.isrequired) { validators.push(Validators.required) }
-          validators.push(Validators.minLength(form.minlength))
-          validators.push(Validators.minLength(form.maxlength))
-          var formControl = new FormControl(form.value, validators)
-
-          var controlKey = undefined
-          if (form.ismultilanguage) {
-            controlKey = form.language
-          } else {
-            controlKey = form.name
-          }
-
-          this.detailFormGroup.addControl(controlKey, formControl);
-        }
-      }
-    }*/
   }
 
-  get properties(): ProductProperty[] | undefined {
-    return this.prop;
-  }
-
-
-  constructor() {
-
-  }
-
-  toggleAccordion() {
-    this.collapse = !this.collapsed
-    this.onToggleAccordion.emit();
+  toggleAccordion(product: ProductDetail | undefined) {
+    this.collapsed = !this.collapsed
+    this.onToggleAccordion.emit(product);
+    this.detailFormGroup = undefined
   }
 
   onSubmit() {
     console.log(this.detailFormGroup)
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-
   }
 
   onSubmitForm(myform: any) {
@@ -147,4 +64,5 @@ export class DetailFormComponent {
   flagFromLang(lang: string) {
     return "fi fi-" + Utils.codeLanguagesToCountryCode(lang)
   }
+
 }

@@ -6,6 +6,7 @@ export interface ProductDetail {
 
 export interface ProductProperty {
     name: string
+    type: string
     childs: PropertyField[]
 }
 
@@ -23,6 +24,11 @@ export enum PropertFieldType {
     LongText
 }
 
+export interface PropertyFieldOption {
+    text: string
+    value: string
+}
+
 export interface PropertyField {
     name: string
     displayname: string
@@ -32,7 +38,7 @@ export interface PropertyField {
     isreadonly: boolean
     value: string | undefined
     language: string
-    options: []
+    options: PropertyFieldOption[]
     minlength: number
     maxlength: number
 }

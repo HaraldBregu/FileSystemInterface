@@ -3,6 +3,9 @@ import Utils from "src/app/core/utils";
 import { ProductType } from "src/app/shared/enums/product-type";
 import { Product } from "src/app/shared/interfaces/product";
 import {
+    getCatalogProperties,
+    getCatalogPropertiesFailure,
+    getCatalogPropertiesSuccess,
     getCatalogs,
     getCatalogsFailure,
     getCatalogsSuccess,
@@ -14,7 +17,8 @@ import {
     getProductDetailSuccess,
     searchCatalog,
     selectCatalog,
-    selectCategory
+    selectCategory,
+    selectProduct
 } from "../actions";
 
 import { DashboardModel } from "../models";
@@ -34,6 +38,9 @@ const initialState: DashboardModel = {
 export const dashboardReducer = createReducer(
     initialState,
 
+    /**
+     * CATALOGS AND FEATURES
+     */
     on(getCatalogs, (state: DashboardModel) => ({
         ...state,
         loading: true,
@@ -54,6 +61,7 @@ export const dashboardReducer = createReducer(
         loading: false,
     })),
 
+    /// SELECT CATALOG
     on(selectCatalog, (state: DashboardModel, data) => {
         return {
             ...state,
@@ -62,6 +70,7 @@ export const dashboardReducer = createReducer(
         };
     }),
 
+    /// SEARCH CATALOG LOACALLY
     on(searchCatalog, (state: DashboardModel, data) => {
         const filteredCatalogs = Utils.isBlankString(data.catalog_name) ?
             state.catalogs :
@@ -73,6 +82,27 @@ export const dashboardReducer = createReducer(
         };
     }),
 
+    /// GET CATALOG PROPERTIES
+    on(getCatalogProperties, (state: DashboardModel, data) => ({
+        ...state,
+        loading: true,
+    })),
+
+    on(getCatalogPropertiesSuccess, (state: DashboardModel, data) => ({
+        ...state,
+        loading: false,
+        currentProductDetail: data.catalog_properties,
+    })),
+
+    on(getCatalogPropertiesFailure, (state: DashboardModel, data) => ({
+        ...state,
+        loading: false,
+        currentProductDetail: undefined,
+    })),
+
+    /**
+     * CATEGORIES
+     */
     on(getCategories, (state: DashboardModel) => ({
         ...state,
         loading: true,
@@ -120,6 +150,19 @@ export const dashboardReducer = createReducer(
         loading: false,
         currentProductDetail: undefined,
     })),
+
+    on(selectProduct, (state: DashboardModel, data) => {
+        const newProduct: Product = {
+            ...data.product,
+            parent: state.navItems.at(-1)
+        }
+        return {
+            ...state,
+            currentProduct: newProduct,
+            navItems: updateCategoryNavItems(state, newProduct),
+        };
+    }),
+
 );
 
 function updateCatalogNavItems(state: DashboardModel, data: Product) {

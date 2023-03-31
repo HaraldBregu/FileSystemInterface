@@ -6,6 +6,9 @@ import { CatalogService } from "src/app/shared/services/catalog.service";
 import { CategoryService } from "src/app/shared/services/category.service";
 import { ProductService } from "src/app/shared/services/product.service";
 import {
+    getCatalogProperties,
+    getCatalogPropertiesFailure,
+    getCatalogPropertiesSuccess,
     getCatalogs,
     getCatalogsFailure,
     getCatalogsSuccess,
@@ -38,6 +41,18 @@ export class DashboardEffects {
         )
     );
 
+    catalogProperties$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(getCatalogProperties),
+            mergeMap(({ catalog }) => this.catalogService.getProperties(catalog.name).pipe(
+                map(response =>
+                    getCatalogPropertiesSuccess({ catalog_properties: response })),
+                catchError((error) =>
+                    of(getCatalogPropertiesFailure({ error: error })))
+            ))
+        )
+    );
+    
     categoryList$ = createEffect(() =>
         this.actions$.pipe(
             ofType(getCategories),
@@ -49,8 +64,8 @@ export class DashboardEffects {
             ))
         )
     );
-    
-    product$ = createEffect(() =>
+
+    categoryProperties$ = createEffect(() =>
         this.actions$.pipe(
             ofType(getProductDetail),
             mergeMap(({ catalog, category }) => this.productService.get(catalog.name, category.id).pipe(

@@ -2,12 +2,15 @@ import { createAction, props } from "@ngrx/store";
 import { Product } from "src/app/shared/interfaces/product";
 import { ProductDetail } from "src/app/shared/interfaces/product-detail";
 
-export enum CatalogsTypes {
+export enum DashboardActionTypes {
     GET_CATALOGS = '[CATALOG][GET]',
     GET_CATALOGS_SUCCESS = '[CATALOG][GET] success',
     GET_CATALOGS_FAILURE = '[CATALOG][GET] failure',
     SELECT_CATALOG = '[CATALOG][SELECT]',
     SEARCH_CATALOG = '[CATALOG][SEARCH]',
+    GET_CATALOG_PROPERTIES = '[CATALOGPROPERTIES][GET]',
+    GET_CATALOG_PROPERTIES_SUCCESS = '[CATALOGPROPERTIES][GET] success',
+    GET_CATALOG_PROPERTIES_FAILURE = '[CATALOGPROPERTIES][GET] failure',
 
     GET_CATEGORIES = '[CATEOGORIES][GET]',
     GET_CATEGORIES_SUCCESS = '[CATEOGORIES][GET] success',
@@ -18,52 +21,79 @@ export enum CatalogsTypes {
     GET_PRODUCT_DETAIL = '[PRODUCTDETAIL][GET]',
     GET_PRODUCT_DETAIL_SUCCESS = '[PRODUCTDETAIL][GET] success',
     GET_PRODUCT_DETAIL_FAILURE = '[PRODUCTDETAIL][GET] failure',
+
+    SELECT_PRODUCT = '[PRODUCT][SELECT]',
 }
 
+/// CATALOGS
 export const getCatalogs = createAction(
-    CatalogsTypes.GET_CATALOGS);
+    DashboardActionTypes.GET_CATALOGS);
 
 export const getCatalogsSuccess = createAction(
-    CatalogsTypes.GET_CATALOGS_SUCCESS,
+    DashboardActionTypes.GET_CATALOGS_SUCCESS,
     props<{ catalogs: Product[] }>());
 
 export const getCatalogsFailure = createAction(
-    CatalogsTypes.GET_CATALOGS_FAILURE,
+    DashboardActionTypes.GET_CATALOGS_FAILURE,
     props<{ error: any }>());
 
+/// CATALOG SELECT
 export const selectCatalog = createAction(
-    CatalogsTypes.SELECT_CATALOG,
+    DashboardActionTypes.SELECT_CATALOG,
     props<{ catalog: Product }>());
 
+/// CATALOG SEARCH
 export const searchCatalog = createAction(
-    CatalogsTypes.SEARCH_CATALOG,
+    DashboardActionTypes.SEARCH_CATALOG,
     props<{ catalog_name: string }>());
 
+/// CATALOG PROPERTIES
+export const getCatalogProperties = createAction(
+    DashboardActionTypes.GET_CATALOG_PROPERTIES,
+    props<{ catalog: Product }>());
+
+export const getCatalogPropertiesSuccess = createAction(
+    DashboardActionTypes.GET_CATALOG_PROPERTIES_SUCCESS,
+    props<{ catalog_properties: ProductDetail }>());
+
+export const getCatalogPropertiesFailure = createAction(
+    DashboardActionTypes.GET_CATALOG_PROPERTIES_FAILURE,
+    props<{ error: any }>());
+
+/// CATEGORIES
 export const getCategories = createAction(
-    CatalogsTypes.GET_CATEGORIES,
+    DashboardActionTypes.GET_CATEGORIES,
     props<{ catalog: Product, category?: Product }>());
 
 export const getCategoriesSuccess = createAction(
-    CatalogsTypes.GET_CATEGORIES_SUCCESS,
+    DashboardActionTypes.GET_CATEGORIES_SUCCESS,
     props<{ categories: Product[] }>());
 
 export const getCategoriesFailure = createAction(
-    CatalogsTypes.GET_CATEGORIES_FAILURE,
+    DashboardActionTypes.GET_CATEGORIES_FAILURE,
     props<{ error: any }>());
 
+/// CATEGORIES SELECT
 export const selectCategory = createAction(
-    CatalogsTypes.SELECT_CATEGORY,
+    DashboardActionTypes.SELECT_CATEGORY,
     props<{ category: Product }>());
 
+/// CATEGORIES AND PRODUCT PROPERTIES
 export const getProductDetail = createAction(
-    CatalogsTypes.GET_PRODUCT_DETAIL,
+    DashboardActionTypes.GET_PRODUCT_DETAIL,
     props<{ catalog: Product, category: Product }>());
 
 export const getProductDetailSuccess = createAction(
-    CatalogsTypes.GET_PRODUCT_DETAIL_SUCCESS,
+    DashboardActionTypes.GET_PRODUCT_DETAIL_SUCCESS,
     props<{ product_detail: ProductDetail }>());
 
 export const getProductDetailFailure = createAction(
-    CatalogsTypes.GET_PRODUCT_DETAIL_FAILURE,
+    DashboardActionTypes.GET_PRODUCT_DETAIL_FAILURE,
     props<{ error: any }>());
-    
+
+/**
+ * PRODUCT SELECT
+ */
+export const selectProduct = createAction(
+    DashboardActionTypes.SELECT_PRODUCT,
+    props<{ product: Product }>());
