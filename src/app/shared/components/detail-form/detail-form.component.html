@@ -1,119 +1,123 @@
-<div class="w-full mt-4 px-6 py-2 border border-gray-200 rounded-lg text-gray-700 bg-gray-100">
+<div class="w-full pl-4 pr-6 py-2 border border-gray-200 rounded-lg text-gray-700 bg-gray-100">
 
     <button *ngIf="productDetail?.properties" type="button" (click)="toggleAccordion(productDetail)"
         class="flex items-center justify-between w-full py-2 font-medium text-left">
-        <h5 class="text-md font-medium tracking-tight text-gray-900 dark:text-white">{{currentProduct?.name}}</h5>
+        <h5 class="text-sm font-medium tracking-tight text-gray-900">{{currentProduct?.name}}</h5>
         <fa-icon [icon]="['fas', 'chevron-right']" [ngClass]="!collapsed ? 'rotate-90' : ''"
             class="text-gray-600 transition-transform"></fa-icon>
     </button>
 
-    <form [formGroup]="detailFormGroup" (onSubmit)="onSubmit()" *ngIf="!collapsed && productDetail?.properties && detailFormGroup"
-        class="space-y-4 mt-4 mb-2">
-        <!-- <p>{{ detailFormGroup.value | json }}</p> -->
+    <form [formGroup]="detailFormGroup" (onSubmit)="onSubmit()"
+        *ngIf="!collapsed && productDetail?.properties && detailFormGroup" class="space-y-4 mt-4 mb-2 pb-4">
         <div *ngFor="let property of productDetail?.properties">
-            <div class="flex w-full py-5 font-medium text-left text-gray-500 border-b border-gray-200">
-                <span>{{property.name | titlecase}}</span>
-            </div>
-            <div [formGroupName]="property.name">
-                <div *ngFor="let field of property.childs" class="flex flex-wrap -mx-3 mb-6 mt-4">
-                    <div class="w-full px-3 mb-6 md:mb-0">
-                        <div [ngSwitch]="field.ismultilanguage">
-                            <div *ngSwitchCase="true">
+            <button type="button" (click)="toggleProperty(property.name)"
+                class="flex items-center w-full pb-2 font-medium text-left border-b border-gray-200">
+                <h5 class="font-normal tracking-tight text-gray-700">
+                    <span>{{property.name | titlecase}}</span>
+                </h5>
+                <fa-icon [icon]="['fas', 'chevron-right']" [ngClass]="isUnfolded(property.name) ? 'rotate-90' : ''"
+                    class="text-gray-600 transition-transform ml-2"></fa-icon>
+            </button>
+
+            <div *ngIf="isUnfolded(property.name)" [formGroupName]="property.name"
+                class="mx-auto grid max-w-6xl grid-cols-1 gap-6 pt-6 grid-cols-1 md:grid-cols-3">
+                <div *ngFor="let field of property.childs">
+                    <div [ngSwitch]="field.ismultilanguage">
+                        <div *ngSwitchCase="true">
+                            <label class="block uppercase tracking-wide text-gray-700 text-xs font-medium mb-2">
+                                <span [ngClass]="flagFromLang(field.language)"></span>
+                                {{field.displayname}} - {{field.language}}
+                            </label>
+                            <input type="text" [formControlName]="field.name + field.language"
+                                class="block w-full text-xs bg-gray-200 text-gray-700 border border-gray-200 rounded-md py-2 px-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                        </div>
+                        <div *ngSwitchCase="false" [ngSwitch]="field.datatype">
+                            <div *ngSwitchCase="PropertFieldType.Number">
                                 <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-                                    <span [ngClass]="flagFromLang(field.language)"></span>
-                                    {{field.displayname}} - {{field.language}}
+                                    {{field.displayname}}
                                 </label>
-                                <input type="text" [formControlName]="field.name + field.language"
-                                    class="block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-lg py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                                Number
                             </div>
-                            <div *ngSwitchCase="false" [ngSwitch]="field.datatype">
-                                <div *ngSwitchCase="PropertFieldType.Number">
-                                    <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-                                        {{field.displayname}}
-                                    </label>
-                                    Number
+                            <div *ngSwitchCase="PropertFieldType.BigNumber">
+                                <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                                    {{field.displayname}}
+                                </label>
+                                BigNumber
+                            </div>
+                            <div *ngSwitchCase=" PropertFieldType.Decimal">
+                                <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                                    {{field.displayname}}
+                                </label>
+                                Decimal
+                            </div>
+                            <div *ngSwitchCase="PropertFieldType.Double">
+                                <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                                    {{field.displayname}}
+                                </label>
+                                Double
+                            </div>
+                            <div *ngSwitchCase="PropertFieldType.Boolean">
+                                <div class="flex items-center mb-4">
+                                    <input type="checkbox" [formControlName]="field.name"
+                                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                    <label for="default-checkbox"
+                                        class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{field.displayname}}</label>
                                 </div>
-                                <div *ngSwitchCase="PropertFieldType.BigNumber">
-                                    <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-                                        {{field.displayname}}
-                                    </label>
-                                    BigNumber
-                                </div>
-                                <div *ngSwitchCase=" PropertFieldType.Decimal">
-                                    <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-                                        {{field.displayname}}
-                                    </label>
-                                    Decimal
-                                </div>
-                                <div *ngSwitchCase="PropertFieldType.Double">
-                                    <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-                                        {{field.displayname}}
-                                    </label>
-                                    Double
-                                </div>
-                                <div *ngSwitchCase="PropertFieldType.Boolean">
-                                    <div class="flex items-center mb-4">
-                                        <input id="default-checkbox" type="checkbox" [formControlName]="field.name"
-                                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                        <label for="default-checkbox"
-                                            class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{field.displayname}}</label>
-                                    </div>
-                                </div>
-                                <div *ngSwitchCase="PropertFieldType.Text">
-                                    <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-                                        {{field.displayname}}
-                                    </label>
-                                    <div *ngIf="!field.ismultilanguage">
-                                        <input type="text" [formControlName]="field.name"
-                                            class="block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-lg py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
-                                    </div>
-                                    <p *ngIf="detailFormGroup.invalid" class="text-sm text-red-500">error</p>
-                                </div>
-                                <div *ngSwitchCase="PropertFieldType.DateTime">
-                                    <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-                                        {{field.displayname}}
-                                    </label>
-                                    DateTime
-                                </div>
-                                <div *ngSwitchCase="PropertFieldType.MoneyCurrency">
-                                    <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-                                        {{field.displayname}}
-                                    </label>
-                                    <input type="number" [formControlName]="field.name"
+                            </div>
+                            <div *ngSwitchCase="PropertFieldType.Text">
+                                <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                                    {{field.displayname}}
+                                </label>
+                                <div *ngIf="!field.ismultilanguage">
+                                    <input type="text" [formControlName]="field.name"
                                         class="block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-lg py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
                                 </div>
-                                <div *ngSwitchCase="PropertFieldType.FileName">
-                                    <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-                                        {{field.displayname}}
-                                    </label>
-                                    FileName
-                                </div>
-                                <div *ngSwitchCase="PropertFieldType.MultipleChoice">
-                                    <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-                                        {{field.displayname}}
-                                    </label>
-                                    <select [formControlName]="field.name"
-                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                                        <option *ngFor="let value of field.options">{{value.text}}</option>
-                                    </select>
-                                </div>
-                                <div *ngSwitchCase="PropertFieldType.LongText">
-                                    <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-                                        {{field.displayname}}
-                                    </label>
-                                    LongText
-                                </div>
+                                <p *ngIf="detailFormGroup.invalid" class="text-sm text-red-500">error</p>
+                            </div>
+                            <div *ngSwitchCase="PropertFieldType.LongText">
+                                <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                                    {{field.displayname}}
+                                </label>
+                                <textarea rows="4" [formControlName]="field.name"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></textarea>
+                            </div>
+                            <div *ngSwitchCase="PropertFieldType.DateTime">
+                                <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                                    {{field.displayname}}
+                                </label>
+                                DateTime
+                            </div>
+                            <div *ngSwitchCase="PropertFieldType.MoneyCurrency">
+                                <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                                    {{field.displayname}}
+                                </label>
+                                <input type="number" [formControlName]="field.name"
+                                    class="block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-lg py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                            </div>
+                            <div *ngSwitchCase="PropertFieldType.FileName">
+                                <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                                    {{field.displayname}}
+                                </label>
+                                FileName
+                            </div>
+                            <div *ngSwitchCase="PropertFieldType.MultipleChoice">
+                                <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                                    {{field.displayname}}
+                                </label>
+                                <select [formControlName]="field.name"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                    <option *ngFor="let value of field.options">{{value.text}}</option>
+                                </select>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <div *ngIf="!collapsed" class="flex items-left pb-6">
+        <div  *ngIf="hasUnfoldedSections()" class="flex items-left pb-6">
             <button type="submit"
-                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                Modifica
+                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                Save changes
             </button>
         </div>
     </form>

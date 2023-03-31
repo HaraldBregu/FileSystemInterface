@@ -19,12 +19,13 @@ export class DetailFormComponent implements OnChanges {
   propertyType: PropertFieldType | undefined
   PropertFieldType = PropertFieldType
   type: PropertFieldType = PropertFieldType.Text
+  unfoldedProperties: string[] = []
 
   constructor() { }
 
   ngOnChanges(changes: SimpleChanges) {
-
     this.detailFormGroup = new FormGroup({});
+    this.unfoldedProperties = []
 
     this.productDetail?.properties?.forEach(property => {
       var tempFormGroup = new FormGroup({})
@@ -50,6 +51,26 @@ export class DetailFormComponent implements OnChanges {
     this.collapsed = !this.collapsed
     this.onToggleAccordion.emit(product);
     this.detailFormGroup = undefined
+  }
+
+  toggleProperty(propertyName: string) {
+    console.log(propertyName)
+    const index = this.unfoldedProperties.indexOf(propertyName)
+
+    if (index === -1) {
+      this.unfoldedProperties.push(propertyName);
+    } else {
+      this.unfoldedProperties.splice(index, 1);
+    }
+  }
+
+  isUnfolded(propertyName: string) {
+    const index = this.unfoldedProperties.indexOf(propertyName)
+    return index !== -1
+  }
+
+  hasUnfoldedSections() {
+    return this.unfoldedProperties.length > 0
   }
 
   onSubmit() {

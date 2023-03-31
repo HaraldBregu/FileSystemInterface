@@ -1,18 +1,20 @@
-<nav
-  class="mt-20 justify-between px-4 py-3 text-gray-700 border border-gray-200 rounded-lg sm:flex sm:px-5 bg-gray-100">
+<nav class="justify-between px-2 py-4 mb-4 text-gray-700 border border-gray-200 rounded-lg sm:flex bg-gray-100">
   <ol class="inline-flex items-center mb-3 space-x-1 md:space-x-3 sm:mb-0">
     <li *ngFor="let item of items; let first = first; let i = index; let last = last">
       <a (click)="selectItem(item)" class="cursor-pointer">
         <div class="flex items-center">
-          <fa-icon *ngIf="isCatalog(item.type)" [icon]="['fas', 'home']"
+          <!--
+             <fa-icon *ngIf="isCatalog(item.type)" [icon]="['fas', 'home']"
             [ngClass]="last ? 'text-gray-800' : 'text-gray-400'"></fa-icon>
+          -->
           <fa-icon *ngIf="isCategory(item.type)" [icon]="['fas', 'folder']"
             [ngClass]="last ? 'text-gray-800' : 'text-gray-400'"></fa-icon>
           <fa-icon *ngIf="isFile(item.type)" [icon]="['fas', 'file']"
             [ngClass]="last ? 'text-gray-800' : 'text-gray-400'"></fa-icon>
           <span [ngClass]="last ? 'font-medium text-gray-800' : 'font-medium text-gray-400'"
             class="mx-1 text-sm md:mx-2 hover:text-gray-800">{{item.name}}</span>
-          <span *ngIf="item.items_count > 0 && last" class="bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2 py-0.5 rounded hidden sm:flex">
+          <span *ngIf="item.items_count > 0 && last"
+            class="bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2 py-0.5 rounded hidden sm:flex">
             {{item.items_count}}
           </span>
         </div>
