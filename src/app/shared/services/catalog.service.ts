@@ -8,8 +8,8 @@ import { ProductDetail } from '../interfaces/product-detail';
   providedIn: 'root'
 })
 export class CatalogService {
-  
-  constructor(private httpClient: HttpClient) {}
+
+  constructor(private httpClient: HttpClient) { }
 
   getAll(): Observable<Product[]> {
     var path = "/CommerceWebApi/Api/Catalog/GetCatalogList"
@@ -21,4 +21,8 @@ export class CatalogService {
     return this.httpClient.get<ProductDetail>(path);
   }
 
+  saveProperties(data: any): Observable<any> {
+    var path = "/CommerceWebApi/Api/Catalog/SaveCatalogProperties"
+    return this.httpClient.post<any>(path, data);
+  }
 }

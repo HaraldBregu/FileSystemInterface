@@ -8,9 +8,13 @@ export enum DashboardActionTypes {
     GET_CATALOGS_FAILURE = '[CATALOG][GET] failure',
     SELECT_CATALOG = '[CATALOG][SELECT]',
     SEARCH_CATALOG = '[CATALOG][SEARCH]',
+
     GET_CATALOG_PROPERTIES = '[CATALOGPROPERTIES][GET]',
     GET_CATALOG_PROPERTIES_SUCCESS = '[CATALOGPROPERTIES][GET] success',
     GET_CATALOG_PROPERTIES_FAILURE = '[CATALOGPROPERTIES][GET] failure',
+    SAVE_CATALOG_PROPERTIES = '[CATALOGPROPERTIES][SAVE]',
+    SAVE_CATALOG_PROPERTIES_SUCCESS = '[CATALOGPROPERTIES][SAVE] success',
+    SAVE_CATALOG_PROPERTIES_FAILURE = '[CATALOGPROPERTIES][SAVE] failure',
 
     GET_CATEGORIES = '[CATEOGORIES][GET]',
     GET_CATEGORIES_SUCCESS = '[CATEOGORIES][GET] success',
@@ -18,11 +22,13 @@ export enum DashboardActionTypes {
 
     SELECT_CATEGORY = '[CATEOGORY][SELECT]',
 
-    GET_PRODUCT_DETAIL = '[PRODUCTDETAIL][GET]',
-    GET_PRODUCT_DETAIL_SUCCESS = '[PRODUCTDETAIL][GET] success',
-    GET_PRODUCT_DETAIL_FAILURE = '[PRODUCTDETAIL][GET] failure',
+    GET_CATEGORY_PROPERTIES = '[CATEGORYPROPERTIES][GET]',
+    GET_CATEGORY_PROPERTIES_SUCCESS = '[CATEGORYPROPERTIES][GET] success',
+    GET_CATEGORY_PROPERTIES_FAILURE = '[CATEGORYPROPERTIES][GET] failure',
+    SAVE_CATEGORY_PROPERTIES = '[CATEGORYPROPERTIES][SAVE]',
+    SAVE_CATEGORY_PROPERTIES_SUCCESS = '[CATEGORYPROPERTIES][SAVE] success',
+    SAVE_CATEGORY_PROPERTIES_FAILURE = '[CATEGORYPROPERTIES][SAVE] failure',
 
-    SELECT_PRODUCT = '[PRODUCT][SELECT]',
 }
 
 /// CATALOGS
@@ -47,7 +53,7 @@ export const searchCatalog = createAction(
     DashboardActionTypes.SEARCH_CATALOG,
     props<{ catalog_name: string }>());
 
-/// CATALOG PROPERTIES
+/// CATALOG PROPERTIES GET
 export const getCatalogProperties = createAction(
     DashboardActionTypes.GET_CATALOG_PROPERTIES,
     props<{ catalog: Product }>());
@@ -58,6 +64,19 @@ export const getCatalogPropertiesSuccess = createAction(
 
 export const getCatalogPropertiesFailure = createAction(
     DashboardActionTypes.GET_CATALOG_PROPERTIES_FAILURE,
+    props<{ error: any }>());
+
+/// CATALOG PROPERTIES SAVE
+export const saveCatalogProperties = createAction(
+    DashboardActionTypes.SAVE_CATALOG_PROPERTIES,
+    props<{ data: any }>());
+
+export const saveCatalogPropertiesSuccess = createAction(
+    DashboardActionTypes.SAVE_CATALOG_PROPERTIES_SUCCESS,
+    props<{ success: boolean }>());
+
+export const saveCatalogPropertiesFailure = createAction(
+    DashboardActionTypes.SAVE_CATALOG_PROPERTIES_FAILURE,
     props<{ error: any }>());
 
 /// CATEGORIES
@@ -78,22 +97,28 @@ export const selectCategory = createAction(
     DashboardActionTypes.SELECT_CATEGORY,
     props<{ category: Product }>());
 
-/// CATEGORIES AND PRODUCT PROPERTIES
-export const getProductDetail = createAction(
-    DashboardActionTypes.GET_PRODUCT_DETAIL,
-    props<{ catalog: Product, category: Product }>());
+/// GET CATEGORIES AND PRODUCT PROPERTIES
+export const getCategoryProperties = createAction(
+    DashboardActionTypes.GET_CATEGORY_PROPERTIES,
+    props<{ catalog_name: string, category_id: number }>());
 
-export const getProductDetailSuccess = createAction(
-    DashboardActionTypes.GET_PRODUCT_DETAIL_SUCCESS,
+export const getCategoryPropertiesSuccess = createAction(
+    DashboardActionTypes.GET_CATEGORY_PROPERTIES_SUCCESS,
     props<{ product_detail: ProductDetail }>());
 
-export const getProductDetailFailure = createAction(
-    DashboardActionTypes.GET_PRODUCT_DETAIL_FAILURE,
+export const getCategoryPropertiesFailure = createAction(
+    DashboardActionTypes.GET_CATEGORY_PROPERTIES_FAILURE,
     props<{ error: any }>());
 
-/**
- * PRODUCT SELECT
- */
-export const selectProduct = createAction(
-    DashboardActionTypes.SELECT_PRODUCT,
-    props<{ product: Product }>());
+/// SAVE CATEGORIES AND PRODUCT PROPERTIES
+export const saveCategoryProperties = createAction(
+    DashboardActionTypes.SAVE_CATEGORY_PROPERTIES,
+    props<{ data: any }>());
+
+export const saveCategoryPropertiesSuccess = createAction(
+    DashboardActionTypes.SAVE_CATEGORY_PROPERTIES_SUCCESS,
+    props<{ success: boolean }>());
+
+export const saveCategoryPropertiesFailure = createAction(
+    DashboardActionTypes.SAVE_CATEGORY_PROPERTIES_FAILURE,
+    props<{ error: any }>());

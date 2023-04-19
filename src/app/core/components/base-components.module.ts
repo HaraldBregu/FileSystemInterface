@@ -2,11 +2,13 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { InputComponent } from './input/input.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { DatepickerComponent } from './datepicker/datepicker.component';
 
 
 @NgModule({
   declarations: [
     InputComponent,
+    DatepickerComponent,
   ],
   imports: [
     CommonModule,
@@ -14,6 +16,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
   ],
   exports: [
     InputComponent,
+    DatepickerComponent,
   ]
 })
 export class BaseComponentsModule { }

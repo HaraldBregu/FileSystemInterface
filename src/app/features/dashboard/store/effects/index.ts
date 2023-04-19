@@ -4,7 +4,6 @@ import { createEffect, ofType } from "@ngrx/effects";
 import { catchError, map, mergeMap, of } from "rxjs";
 import { CatalogService } from "src/app/shared/services/catalog.service";
 import { CategoryService } from "src/app/shared/services/category.service";
-import { ProductService } from "src/app/shared/services/product.service";
 import {
     getCatalogProperties,
     getCatalogPropertiesFailure,
@@ -15,9 +14,15 @@ import {
     getCategories,
     getCategoriesFailure,
     getCategoriesSuccess,
-    getProductDetail,
-    getProductDetailFailure,
-    getProductDetailSuccess
+    getCategoryProperties,
+    getCategoryPropertiesFailure,
+    getCategoryPropertiesSuccess,
+    saveCatalogProperties,
+    saveCatalogPropertiesFailure,
+    saveCatalogPropertiesSuccess,
+    saveCategoryProperties,
+    saveCategoryPropertiesFailure,
+    saveCategoryPropertiesSuccess
 } from '../actions';
 
 @Injectable()
@@ -26,8 +31,7 @@ export class DashboardEffects {
     constructor(
         private actions$: Actions,
         private catalogService: CatalogService,
-        private categoryService: CategoryService,
-        private productService: ProductService) { }
+        private categoryService: CategoryService) { }
 
     catalogList$ = createEffect(() =>
         this.actions$.pipe(
@@ -41,7 +45,7 @@ export class DashboardEffects {
         )
     );
 
-    catalogProperties$ = createEffect(() =>
+    getCatalogProperties$ = createEffect(() =>
         this.actions$.pipe(
             ofType(getCatalogProperties),
             mergeMap(({ catalog }) => this.catalogService.getProperties(catalog.name).pipe(
@@ -52,7 +56,19 @@ export class DashboardEffects {
             ))
         )
     );
-    
+
+    saveCatalogProperties$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(saveCatalogProperties),
+            mergeMap(({ data }) => this.catalogService.saveProperties(data).pipe(
+                map(response =>
+                    saveCatalogPropertiesSuccess({ success: true })),
+                catchError((error) =>
+                    of(saveCatalogPropertiesFailure({ error: error })))
+            ))
+        )
+    );
+
     categoryList$ = createEffect(() =>
         this.actions$.pipe(
             ofType(getCategories),
@@ -65,14 +81,26 @@ export class DashboardEffects {
         )
     );
 
-    categoryProperties$ = createEffect(() =>
+    getCategoryProperties$ = createEffect(() =>
         this.actions$.pipe(
-            ofType(getProductDetail),
-            mergeMap(({ catalog, category }) => this.productService.get(catalog.name, category.id).pipe(
+            ofType(getCategoryProperties),
+            mergeMap(({ catalog_name, category_id }) => this.categoryService.getProperties(catalog_name, category_id).pipe(
                 map(response =>
-                    getProductDetailSuccess({ product_detail: response })),
+                    getCategoryPropertiesSuccess({ product_detail: response })),
                 catchError((error) =>
-                    of(getProductDetailFailure({ error: error })))
+                    of(getCategoryPropertiesFailure({ error: error })))
+            ))
+        )
+    );
+
+    saveCategoryProperties$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(saveCategoryProperties),
+            mergeMap(({ data }) => this.categoryService.saveProperties(data).pipe(
+                map(response =>
+                    saveCategoryPropertiesSuccess({ success: true })),
+                catchError((error) =>
+                    of(saveCategoryPropertiesFailure({ error: error })))
             ))
         )
     );

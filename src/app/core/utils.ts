@@ -1,3 +1,6 @@
+import { ProductDetail, ProductProperty } from "../shared/interfaces/product-detail";
+import { Variant, VariantPropertyField } from "../shared/interfaces/variant";
+
 export default class Utils {
 
     static isBlankString(str: string) {
@@ -57,5 +60,40 @@ export default class Utils {
             "zh-CN", //
             "zh-HK"
         ]
+    }
+
+    static variantsFromProductDetail(productDetail: ProductDetail | undefined) {
+        var variants: Variant[] = []
+
+        if (productDetail === undefined)
+            return variants
+
+        var variantProperties = productDetail.properties.filter(data => data.type === "Variant") ?? [];
+
+        variantProperties.forEach((property, index) => {
+            const properties: VariantPropertyField[] = []
+
+            properties.push({
+                name: "VariantId",
+                displayname: property.name,
+                value: property.name,
+                options: [],
+                readonly: true
+            })
+
+            property.childs.forEach(data => {
+                properties.push({
+                    name: data.name,
+                    displayname: data.displayname,
+                    value: data.value ?? "",
+                    options: data.options,
+                    readonly: data.isreadonly
+                })
+            })
+
+            variants.push({ properties: properties })
+        })
+
+        return variants
     }
 }

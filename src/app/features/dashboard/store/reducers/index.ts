@@ -12,13 +12,18 @@ import {
     getCategories,
     getCategoriesFailure,
     getCategoriesSuccess,
-    getProductDetail,
-    getProductDetailFailure,
-    getProductDetailSuccess,
+    getCategoryProperties,
+    getCategoryPropertiesFailure,
+    getCategoryPropertiesSuccess,
+    saveCatalogProperties,
+    saveCatalogPropertiesFailure,
+    saveCatalogPropertiesSuccess,
+    saveCategoryProperties,
+    saveCategoryPropertiesFailure,
+    saveCategoryPropertiesSuccess,
     searchCatalog,
     selectCatalog,
     selectCategory,
-    selectProduct
 } from "../actions";
 
 import { DashboardModel } from "../models";
@@ -31,6 +36,7 @@ const initialState: DashboardModel = {
     products: [],
     currentProduct: undefined,
     currentProductDetail: undefined,
+    propertiesLoading: false,
     error: undefined,
     navItems: []
 }
@@ -86,18 +92,37 @@ export const dashboardReducer = createReducer(
     on(getCatalogProperties, (state: DashboardModel, data) => ({
         ...state,
         loading: true,
+        propertiesLoading: true,
     })),
 
     on(getCatalogPropertiesSuccess, (state: DashboardModel, data) => ({
         ...state,
         loading: false,
         currentProductDetail: data.catalog_properties,
+        propertiesLoading: false,
     })),
 
     on(getCatalogPropertiesFailure, (state: DashboardModel, data) => ({
         ...state,
         loading: false,
         currentProductDetail: undefined,
+        propertiesLoading: false,
+    })),
+
+    /// SAVE CATALOG PROPERTIES
+    on(saveCatalogProperties, (state: DashboardModel, data) => ({
+        ...state,
+        propertiesLoading: true,
+    })),
+
+    on(saveCatalogPropertiesSuccess, (state: DashboardModel, data) => ({
+        ...state,
+        propertiesLoading: false,
+    })),
+
+    on(saveCatalogPropertiesFailure, (state: DashboardModel, data) => ({
+        ...state,
+        propertiesLoading: false,
     })),
 
     /**
@@ -113,7 +138,6 @@ export const dashboardReducer = createReducer(
             ...state,
             loading: false,
             products: data.categories,
-            //navItems: navItems,
         };
     }),
 
@@ -127,41 +151,57 @@ export const dashboardReducer = createReducer(
             ...data.category,
             parent: state.navItems.at(-1)
         }
+
+        var prs: Product[] = []
+        if (data.category.type !== ProductType.File &&
+            data.category.type !== ProductType.FileVariant) {
+            prs = state.products
+        }
+
         return {
             ...state,
+            products: prs,
             currentProduct: newCategory,
             navItems: updateCategoryNavItems(state, newCategory),
         };
     }),
 
-    on(getProductDetail, (state: DashboardModel, data) => ({
+    on(getCategoryProperties, (state: DashboardModel, data) => ({
         ...state,
         loading: true,
+        propertiesLoading: true,
     })),
 
-    on(getProductDetailSuccess, (state: DashboardModel, data) => ({
+    on(getCategoryPropertiesSuccess, (state: DashboardModel, data) => ({
         ...state,
         loading: false,
         currentProductDetail: data.product_detail,
+        propertiesLoading: false,
     })),
 
-    on(getProductDetailFailure, (state: DashboardModel, data) => ({
+    on(getCategoryPropertiesFailure, (state: DashboardModel, data) => ({
         ...state,
         loading: false,
         currentProductDetail: undefined,
+        propertiesLoading: false,
     })),
 
-    on(selectProduct, (state: DashboardModel, data) => {
-        const newProduct: Product = {
-            ...data.product,
-            parent: state.navItems.at(-1)
-        }
-        return {
-            ...state,
-            currentProduct: newProduct,
-            navItems: updateCategoryNavItems(state, newProduct),
-        };
-    }),
+    on(saveCategoryProperties, (state: DashboardModel, data) => ({
+        ...state,
+        propertiesLoading: true,
+    })),
+
+    on(saveCategoryPropertiesSuccess, (state: DashboardModel, data) => ({
+        ...state,
+        propertiesLoading: false,
+    })),
+
+    on(saveCategoryPropertiesFailure, (state: DashboardModel, data) => ({
+        ...state,
+        propertiesLoading: false,
+    })),
+
+
 
 );
 

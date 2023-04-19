@@ -9,6 +9,7 @@ import { ProductType } from '../../enums/product-type';
 })
 export class BreadcrumbComponent {
   @Input() items: Product[] = []
+  @Input() currentProducts: Product[] = []
   @Output() onItemSelected = new EventEmitter<Product>();
 
   selectItem(item: Product) {

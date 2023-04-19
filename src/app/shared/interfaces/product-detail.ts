@@ -21,7 +21,7 @@ export enum PropertFieldType {
     MoneyCurrency,
     FileName,
     MultipleChoice,
-    LongText
+    LongText,
 }
 
 export interface PropertyFieldOption {
@@ -39,7 +39,5 @@ export interface PropertyField {
     value: string | undefined
     language: string
     options: PropertyFieldOption[]
-    minlength: number
-    maxlength: number
 }
 

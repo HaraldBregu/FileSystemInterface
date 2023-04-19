@@ -8,3 +8,8 @@ export const dashboardDataSelector = createSelector(
         return dashboard;
     }
 );
+
+export const selectorExample = createSelector(
+    dashboardDataSelector,
+    (state) => state.currentCatalog !== null
+)

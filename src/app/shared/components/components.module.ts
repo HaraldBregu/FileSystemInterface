@@ -9,6 +9,8 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { DetailFormComponent } from './detail-form/detail-form.component';
 import { BaseComponentsModule } from 'src/app/core/components/base-components.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { VariantsTableComponent } from './variants-table/variants-table.component';
+import { PropertiesFormComponent } from './properties-form/properties-form.component';
 
 @NgModule({
   declarations: [
@@ -18,6 +20,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     DataGridComponent,
     DataFilterComponent,
     DetailFormComponent,
+    VariantsTableComponent,
+    PropertiesFormComponent,
   ],
   imports: [
     CommonModule,
@@ -33,6 +37,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     DataGridComponent,
     DataFilterComponent,
     DetailFormComponent,
+    VariantsTableComponent,
+    PropertiesFormComponent,
   ]
 })
 export class ComponentsModule { }

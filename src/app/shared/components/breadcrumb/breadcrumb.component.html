@@ -3,19 +3,15 @@
     <li *ngFor="let item of items; let first = first; let i = index; let last = last">
       <a (click)="selectItem(item)" class="cursor-pointer">
         <div class="flex items-center">
-          <!--
-             <fa-icon *ngIf="isCatalog(item.type)" [icon]="['fas', 'home']"
-            [ngClass]="last ? 'text-gray-800' : 'text-gray-400'"></fa-icon>
-          -->
           <fa-icon *ngIf="isCategory(item.type)" [icon]="['fas', 'folder']"
             [ngClass]="last ? 'text-gray-800' : 'text-gray-400'"></fa-icon>
           <fa-icon *ngIf="isFile(item.type)" [icon]="['fas', 'file']"
             [ngClass]="last ? 'text-gray-800' : 'text-gray-400'"></fa-icon>
           <span [ngClass]="last ? 'font-medium text-gray-800' : 'font-medium text-gray-400'"
             class="mx-1 text-sm md:mx-2 hover:text-gray-800">{{item.name}}</span>
-          <span *ngIf="item.items_count > 0 && last"
+          <span *ngIf="currentProducts.length > 0 && last"
             class="bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2 py-0.5 rounded hidden sm:flex">
-            {{item.items_count}}
+            {{currentProducts.length}}
           </span>
         </div>
       </a>

@@ -2,10 +2,19 @@ import { Component } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { dashboardDataSelector } from '../store/selectors';
-import { getCatalogProperties, getCategories, getProductDetail, selectCatalog, selectCategory, selectProduct } from '../store';
+import {
+  getCatalogProperties,
+  getCategories,
+  getCategoryProperties,
+  saveCatalogProperties,
+  saveCategoryProperties,
+  selectCatalog,
+  selectCategory
+} from '../store';
 import { Product } from 'src/app/shared/interfaces/product';
 import { ProductType } from 'src/app/shared/enums/product-type';
-import { ProductDetail, ProductProperty } from 'src/app/shared/interfaces/product-detail';
+import { ProductDetail } from 'src/app/shared/interfaces/product-detail';
+import { CatalogService } from 'src/app/shared/services/catalog.service';
 
 @Component({
   selector: 'app-product',
@@ -24,11 +33,10 @@ export class ProductComponent {
   ProductType = ProductType
   isTableList: boolean = true
   isFile: boolean = false
-  collapseForm: boolean = true
-
+  propertiesLoader: boolean = false
   productDetailObserver$: Observable<ProductDetail | undefined> = new Observable()
 
-  constructor(private store: Store) {
+  constructor(private store: Store, private catalogService: CatalogService) {
     const dashboardObservable$ = this.store.select(dashboardDataSelector);
 
     dashboardObservable$
@@ -48,64 +56,89 @@ export class ProductComponent {
     })
 
     this.productDetailObserver$ = dashboardObservable$.pipe(map(data => data.currentProductDetail))
-    this.productDetailObserver$.subscribe(data => this.productDetail = data)
+    this.productDetailObserver$.subscribe(data => {
+      this.productDetail = data
+    })
+
+    // Properties loader
+    dashboardObservable$.pipe(map(data => data.propertiesLoading)).subscribe(data => this.propertiesLoader = data)
   }
 
-  /// TO FIX
   selectBreadcrumbItem(item: Product) {
-    this.collapseForm = true
+    var catalog = this.currentCatalog
+    if (!catalog) return
 
     switch (item.type) {
       case ProductType.Catalog:
-        this.store.dispatch(selectCatalog({ catalog: item }))
-        this.store.dispatch(getCategories({ catalog: item }))
+        this.selectCatalog(item)
         break
       case ProductType.Category:
-        if (this.currentCatalog == null)
-          return
-        this.store.dispatch(selectCategory({ category: item }));
-        this.store.dispatch(getCategories({
-          catalog: this.currentCatalog,
-          category: item,
-        }))
-        break
+      case ProductType.CategoryVariant:
       case ProductType.File:
-        this.store.dispatch(selectProduct({ product: item }));
+      case ProductType.FileVariant:
+        this.selectCategory(catalog, item);
+        break
     }
   }
 
   selectItem(item: Product) {
-    this.collapseForm = true
-    if (this.currentCatalog == null)
-      return
+    var catalog = this.currentCatalog
+    if (!catalog) return
 
     switch (item.type) {
       case ProductType.Category:
       case ProductType.CategoryVariant:
-        this.store.dispatch(selectCategory({ category: item }));
-        this.store.dispatch(getCategories({
-          catalog: this.currentCatalog,
-          category: item,
-        }))
-        break
       case ProductType.File:
       case ProductType.FileVariant:
-        this.store.dispatch(selectProduct({ product: item }));
+        this.selectCategory(catalog, item);
     }
   }
 
-  onToggle(event: ProductDetail) {
-    if (this.currentCatalog == null || this.currentProduct == null)
-      return
+  showFormData(event: ProductDetail) {
+    var catalog = this.currentCatalog
+    if (!catalog) return
 
-    if (this.currentProduct.type == ProductType.Catalog) {
-      this.store.dispatch(getCatalogProperties({ catalog: this.currentCatalog }))
-    } else {
-      this.store.dispatch(getProductDetail({
-        catalog: this.currentCatalog,
-        category: this.currentProduct
-      }))
+    switch (this.currentProduct?.type) {
+      case ProductType.Catalog:
+        this.store.dispatch(getCatalogProperties({ catalog: catalog }))
+        break
+      case ProductType.Category:
+      case ProductType.CategoryVariant:
+      case ProductType.File:
+      case ProductType.FileVariant:
+        //if (this.currentProduct == null)
+        //return
+        this.store.dispatch(getCategoryProperties({ catalog_name: catalog.name, category_id: this.currentProduct.id, }))
+        break
     }
+
+  }
+
+  saveProductDetail(event: ProductDetail) {
+    switch (this.currentProduct?.type) {
+      case ProductType.Catalog:
+        this.store.dispatch(saveCatalogProperties({ data: event }))
+        break
+      case ProductType.Category:
+      case ProductType.CategoryVariant:
+      case ProductType.File:
+      case ProductType.FileVariant:
+        this.store.dispatch(saveCategoryProperties({ data: event }))
+        break
+    }
+  }
+
+
+  selectCatalog(item: Product) {
+    this.store.dispatch(selectCatalog({ catalog: item }))
+    this.store.dispatch(getCategories({ catalog: item }))
+    this.store.dispatch(getCatalogProperties({ catalog: item }))
+  }
+
+  selectCategory(catalog: Product, category: Product) {
+    this.store.dispatch(selectCategory({ category: category }));
+    this.store.dispatch(getCategories({ catalog: catalog, category: category, }))
+    this.store.dispatch(getCategoryProperties({ catalog_name: catalog.name, category_id: category.id, }))
   }
 
 }

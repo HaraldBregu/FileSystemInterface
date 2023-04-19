@@ -1,8 +1,12 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
-import { ProductDetail, ProductProperty, PropertFieldType } from '../../interfaces/product-detail';
+import { ProductDetail, ProductProperty, PropertFieldType, PropertyField } from '../../interfaces/product-detail';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { DatePipe } from '@angular/common';
 import Utils from 'src/app/core/utils';
 import { Product } from '../../interfaces/product';
+import { formatDate } from '@angular/common';
+import { text } from '@fortawesome/fontawesome-svg-core';
+import { Variant, VariantPropertyField } from '../../interfaces/variant';
 
 @Component({
   selector: 'app-detail-form',
@@ -12,78 +16,78 @@ import { Product } from '../../interfaces/product';
 export class DetailFormComponent implements OnChanges {
   @Input() currentProduct: Product | undefined
   @Input() productDetail: ProductDetail | undefined
+  @Input() loading: boolean = false
   @Output() onToggleAccordion = new EventEmitter<ProductDetail>()
+  @Output() onSaveProductDetail = new EventEmitter<ProductDetail>()
   @Input() collapsed: boolean = true
 
-  detailFormGroup: FormGroup | undefined
-  propertyType: PropertFieldType | undefined
-  PropertFieldType = PropertFieldType
-  type: PropertFieldType = PropertFieldType.Text
-  unfoldedProperties: string[] = []
+  baseProperties: ProductProperty[] = []
+  customProperties: ProductProperty[] = []
+  variants: Variant[] = []
 
-  constructor() { }
+  tabs: string[] = []
+  currentTab: string = ""
+
+  constructor(private datePipe: DatePipe) { }
 
   ngOnChanges(changes: SimpleChanges) {
-    this.detailFormGroup = new FormGroup({});
-    this.unfoldedProperties = []
+    this.tabs = []
 
-    this.productDetail?.properties?.forEach(property => {
-      var tempFormGroup = new FormGroup({})
+    this.baseProperties = this.productDetail?.properties.filter(data => data.type === "Base") ?? [];
+    this.addTab("BaseProperties", (this.baseProperties.length > 0))
 
-      property.childs.forEach(form => {
-        var formControl = new FormControl(form.value)
-        var controlKey = form.name
-        if (form.ismultilanguage) {
-          controlKey = form.name + form.language
-        } else {
-          controlKey = form.name
+    this.customProperties = this.productDetail?.properties.filter(data => data.type === "Custom") ?? []
+    this.addTab("CustomProperties", (this.customProperties.length > 0))
+
+    this.variants = Utils.variantsFromProductDetail(this.productDetail)
+    this.addTab("Variants", (this.variants.length > 0))
+  }
+
+  onSave(productDetail: ProductDetail) {
+    /*
+    this.productDetail = {
+      ...productDetail,
+      properties: productDetail.properties.map(property => {
+        const nestedFormGroup = this.detailFormGroup?.get(property.name) as FormGroup
+        return {
+          ...property,
+          childs: property.childs.map(data => {
+            return {
+              ...data,
+              value: nestedFormGroup.get(this.controlKeyProperty(data))?.value
+            }
+          })
         }
-
-        tempFormGroup.addControl(controlKey, formControl);
       })
+    }
 
-      this.detailFormGroup?.addControl(property.name, tempFormGroup)
-    })
+    this.onSaveProductDetail.emit(this.productDetail)
+    */
+  }
 
+  addTab(tabName: string, condition: boolean = true) {
+    if (!condition)
+      return
+
+    const index = this.tabs.indexOf(tabName)
+    if (index === -1) {
+      this.tabs.push(tabName);
+    }
+  }
+
+  selectTab(name: string) {
+    this.currentTab = name
   }
 
   toggleAccordion(product: ProductDetail | undefined) {
     this.collapsed = !this.collapsed
     this.onToggleAccordion.emit(product);
-    this.detailFormGroup = undefined
-  }
 
-  toggleProperty(propertyName: string) {
-    console.log(propertyName)
-    const index = this.unfoldedProperties.indexOf(propertyName)
-
-    if (index === -1) {
-      this.unfoldedProperties.push(propertyName);
-    } else {
-      this.unfoldedProperties.splice(index, 1);
+    if (this.collapsed) {
+      this.selectTab("")
+    } else if (!this.collapsed && this.tabs.length > 0) {
+      this.selectTab(this.tabs[0])
     }
-  }
-
-  isUnfolded(propertyName: string) {
-    const index = this.unfoldedProperties.indexOf(propertyName)
-    return index !== -1
-  }
-
-  hasUnfoldedSections() {
-    return this.unfoldedProperties.length > 0
-  }
-
-  onSubmit() {
-    console.log(this.detailFormGroup)
-  }
-
-  onSubmitForm(myform: any) {
-    console.log(myform)
-
-  }
-
-  flagFromLang(lang: string) {
-    return "fi fi-" + Utils.codeLanguagesToCountryCode(lang)
   }
 
 }

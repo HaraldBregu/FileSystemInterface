@@ -9,6 +9,7 @@ export interface DashboardModel {
     products: Product[]
     currentProduct: Product | undefined
     currentProductDetail: ProductDetail | undefined
+    propertiesLoading: boolean
     error: any
     navItems: Product[]
 }
