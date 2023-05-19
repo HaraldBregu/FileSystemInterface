@@ -7,38 +7,39 @@ import { DataGridComponent } from './data-grid/data-grid.component';
 import { DataFilterComponent } from './data-filter/data-filter.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { DetailFormComponent } from './detail-form/detail-form.component';
-import { BaseComponentsModule } from 'src/app/core/components/base-components.module';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { VariantsTableComponent } from './variants-table/variants-table.component';
-import { PropertiesFormComponent } from './properties-form/properties-form.component';
+import { CoreUIModule } from 'src/app/core/components/core-ui.module';
+import { StoreModule } from '@ngrx/store';
+import { MAIN_SELECTOR, dashboardReducer, hydrationMetaReducer } from 'src/app/store';
+import { SearchDataComponent } from './search-data/search-data.component';
 
 @NgModule({
   declarations: [
+  ],
+  imports: [
+    StoreModule.forFeature(
+      MAIN_SELECTOR,
+      dashboardReducer, {
+        metaReducers: [hydrationMetaReducer]
+      }
+    ),
     NavbarComponent,
-    BreadcrumbComponent,
+    CommonModule,
+    DetailFormComponent,
     DataListComponent,
     DataGridComponent,
     DataFilterComponent,
-    DetailFormComponent,
-    VariantsTableComponent,
-    PropertiesFormComponent,
-  ],
-  imports: [
-    CommonModule,
-    FontAwesomeModule,
-    BaseComponentsModule,
-    ReactiveFormsModule,
-    FormsModule,
+    BreadcrumbComponent,
+    SearchDataComponent,
+    CoreUIModule
   ],
   exports: [
     NavbarComponent,
-    BreadcrumbComponent,
+    DetailFormComponent,
     DataListComponent,
     DataGridComponent,
     DataFilterComponent,
-    DetailFormComponent,
-    VariantsTableComponent,
-    PropertiesFormComponent,
+    BreadcrumbComponent,
+    SearchDataComponent,
   ]
 })
 export class ComponentsModule { }

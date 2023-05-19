@@ -1,69 +1,71 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
-import { Location } from "@angular/common";
-import { faBars } from '@fortawesome/free-solid-svg-icons';
+import { Component, EventEmitter, Input, OnDestroy, Output, ViewChild } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
+import { CommonModule } from "@angular/common";
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { Store } from '@ngrx/store';
+import { getApiEnvironments, mainDataSelector, setApiEnv, toggleDashboardSideMenu } from 'src/app/store';
+import { Observable, Subscription, distinctUntilChanged, filter, map } from 'rxjs';
+import { ModalEnvironmentsComponent } from '../../modals/modal-environments/modal-environments.component';
+import { LocalService } from '../../services/local.service';
 
 @Component({
   selector: 'app-navbar',
+  standalone: true,
+  imports: [
+    CommonModule,
+    RouterModule,
+    FontAwesomeModule,
+    ModalEnvironmentsComponent,
+  ],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss']
 })
-export class NavbarComponent {
+
+export class NavbarComponent implements OnDestroy {
+  @ViewChild('modalEnvironment') modalEnvironment?: ModalEnvironmentsComponent
+
   @Input() navItems: any = [];
   @Output() clickMenu = new EventEmitter();
 
-  menu_icon = faBars
+  environmentsObservable$ = this.store.select(mainDataSelector)
+  currEnvironment$: Observable<string | undefined> = this.environmentsObservable$
+    .pipe(filter(data => data.apiEnvironment !== undefined))
+    .pipe(map(data => data.apiEnvironment))
+  subscription?: Subscription = this.environmentsObservable$
+    .pipe(filter(data => data.environments.length > 0))
+    .pipe(distinctUntilChanged((prev, curr) => prev.environments === curr.environments))
+    .pipe(map(data => data.environments))
+    .subscribe(data => {
+      this.modalEnvironment?.open(data)
+    })
 
-  menuToggle = false
-  visibilityMenuItem = false
-  currentNavItem = null;
-  // route: string = null;
-  collapsed: boolean = true;
-
-  // private firestore: AngularFirestore
-  constructor(private location: Location, private router: Router, private activatedRoute: ActivatedRoute) {
-
-    this.router.events.subscribe((val) => {
-      console.log('Route path is: ' + this.location.path());   //  56
-      // this.route = this.location.path();
-      //this.navItems.forEach(item => {
-      //   item.selected = false
-      //   if (item.route == this.route) {
-      //     item.selected = true
-      //   }
-      // })
-    });
-
-    // this.currentNavItem = this.navItems.find(element => {
-    //   return element.route == this.route;
-    // });
+  constructor(private router: Router, private store: Store, private localService: LocalService) {
 
   }
 
-  ngOnInit(): void {
-
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe()
   }
 
-  // navigatoToRoute(route) {
-  //   this.route = route
-  // }
-
-  menuon = false
-  onClickMenu() {
-    // this.menuon = !this.menuon;
-    console.log('menu button pressed');
-
-    // this.menuToggle = !this.menuToggle
-    // this.visibilityMenuItem = this.menuToggle
-    // this.clickMenu.emit();
+  toggleSideMenu() {
+    this.store.dispatch(toggleDashboardSideMenu())
   }
 
-  // scrollToElement($element): void {
-  //   console.log($element);
-  //   $element.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
-  // }
+  navigateToProductExplorer() {
+    this.store.dispatch(getApiEnvironments())
+  }
 
-  // toggle(): void {
-  //   this.collapsed = !this.collapsed;
-  // }
+  selectEnvironment($event: any) {
+    this.localService.setEnvironment($event)
+    this.store.dispatch(setApiEnv({ environment: $event }))
+    this.modalEnvironment?.close()
+
+    this.router.navigate([
+      '/dashboard', {
+        outlets: {
+          'dashboard-content': 'explorer'
+        }
+      }])
+  }
+
 }

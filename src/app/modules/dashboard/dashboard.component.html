@@ -1,0 +1,65 @@
+<app-navbar class="fixed top-0 z-50 w-full"></app-navbar>
+
+<aside [ngClass]="{
+    'w-14' : !(sideBarMenuOpened$ | async),
+    'w-64' : (sideBarMenuOpened$ | async),
+}"
+    class="fixed top-0 left-0 z-40 h-screen pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700">
+    <div class="h-full px-2 pb-4 overflow-y-auto bg-white dark:bg-gray-800 scrollbar-hide">
+        <ul class="space-y-2">
+            <li *ngIf="(selectedProductObserver$ | async) && (sideBarMenuOpened$ | async)">
+                <a (click)="navigateToProductDetailPage()"
+                    class="flex items-center py-1 px-3 text-sm font-normal text-gray-900 rounded-lg bg-gray-100 hover:bg-blu-300">
+                    <div class="flex-1 whitespace-nowrap">
+                        <h6 class="text-xs">Current selected product</h6>
+                        <p class="text-md">{{(selectedProductObserver$ | async)?.name}}</p>
+                    </div>
+                    <fa-icon [icon]="['fas', 'chevron-right']" class="text-gray-600 transition-transform"></fa-icon>
+                </a>
+            </li>
+            <li>
+                <button type="button" (click)="toggleCatalogs()"
+                    class="flex items-center justify-center w-full p-2 font-normal text-gray-800 text-base transition duration-75 rounded-lg group hover:bg-gray-100 dark:hover:bg-gray-700">
+                    <fa-icon [icon]="['fas', 'folder']" class="text-gray-600 text-lg"></fa-icon>
+                    <span *ngIf="(sideBarMenuOpened$ | async)" class="flex-1 ml-4 text-left whitespace-nowrap">Catalogs</span>
+                    <fa-icon *ngIf="(sideBarMenuOpened$ | async)" [icon]="['fas', 'chevron-right']" [ngClass]="showCatalogs ? 'rotate-90' : ''"
+                        class="text-gray-600 transition-transform text-lg"></fa-icon>
+                </button>
+                <ul *ngIf="showCatalogs && (menuItems$ | async) && (sideBarMenuOpened$ | async)" class="my-4 space-y-3">
+                    <li>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                <fa-icon [icon]="['fas', 'search']" class="text-gray-600 text-sm"></fa-icon>
+                            </div>
+                            <app-input #input inputType="search"
+                                inputClass="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                (onInput)="onInputType(input)">
+                            </app-input>
+                        </div>
+                    </li>
+                    <li *ngFor="let item of (menuItems$ | async)">
+                        <a (click)="selectCatalog(item)"
+                            [ngClass]="(currentCatalog$ | async)?.name == item.name ? 'bg-gray-200' : 'bg-gray-50'"
+                            class="flex items-center p-2 text-sm text-gray-900 rounded-lg hover:bg-gray-200 group hover:shadow">
+                            <span class="flex-1 ml-3 whitespace-nowrap">{{item.name}}</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a (click)="navigateToProductExplorer()"
+                    class="flex items-center justify-center p-2 text-base font-normal text-gray-900 rounded-lg hover:bg-gray-100">
+                    <fa-icon [icon]="['fas', 'search']" class="text-lg"></fa-icon>
+                    <span *ngIf="(sideBarMenuOpened$ | async)" class="flex-1 ml-4 whitespace-nowrap">Search</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</aside>
+
+<div [ngClass]="{
+    'ml-14' : (sideBarMenuOpened$ | async) === false,
+    'ml-64' : (sideBarMenuOpened$ | async) === true,
+}" class="mt-16">
+    <router-outlet name="dashboard-content"></router-outlet>
+</div>

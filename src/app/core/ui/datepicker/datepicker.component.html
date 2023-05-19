@@ -1,0 +1,19 @@
+<div class="d-flex">
+  <label *ngIf="datepickerLabel" [attr.for]="datepickerId">{{datepickerLabel}}
+    <span *ngIf="datepickerRequired" aria-hidden="true" class="required">*</span>
+  </label>
+</div>
+
+<div class="position-relative">
+  <input validation="date" type=”date” ngbDatepicker  #datepicker [attr.id]="datepickerId"
+    [attr.class]="((datepickerIsInvalid == true || invalidDate) ? 'is-invalid ' : '') + ' form-control'"
+    [attr.placeholder]="datepickerPlaceholder" [attr.name]="datepickerName" [value]="datepickerValueFormat"
+    [attr.required]="datepickerRequired ? '' : null" 
+    [attr.invalid-date]="invalidDate"
+     (change)="onChangeDate($event)"
+    (dateSelect)="onSelect($event, datepicker)">
+  <span class="feather icon-calendar"></span>
+</div>
+<div *ngIf="invalidDate" class="invalid-tooltip">
+  {{errorMessage}}
+</div>

@@ -1,0 +1,284 @@
+<div class="space-y-4 mt-6" *ngIf="(searchDataObservable$ | async) as dataSearch">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="col-span-1">
+            <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                Look In
+            </label>
+            <select (change)="selectLookIn($event)"
+                class="bg-gray-50 border border-gray-300 py-2 px-3 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full">
+                <option *ngIf="!dataSearch.lookinselected"></option>
+                <option *ngFor="let option of dataSearch.lookinoptions"
+                    [selected]="option.value === dataSearch.lookinselected">
+                    <span
+                        class="bg-gray-50 border border-gray-300 py-2 px-3 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full">
+                        {{option.text}}
+                    </span>
+                </option>
+            </select>
+        </div>
+        <div class="col-span-1">
+            <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                Look For
+            </label>
+            <select (change)="selectLookFor($event)"
+                class="bg-gray-50 border border-gray-300 py-2 px-3 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full">
+                <option *ngIf="!dataSearch.lookforselected"></option>
+                <option *ngFor="let option of dataSearch.lookforoptions"
+                    [selected]="option.value === dataSearch.lookforselected">
+                    <span
+                        class="bg-gray-50 border border-gray-300 py-2 px-3 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full">
+                        {{option.text}}
+                    </span>
+                </option>
+            </select>
+        </div>
+        <div class="col-span-1">
+            <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                Results per page
+            </label>
+            <select (change)="selectResultsPerPage($event)"
+                class="bg-gray-50 border border-gray-300 py-2 px-3 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full">
+                <option *ngIf="!dataSearch.resultperpageselected"></option>
+                <option *ngFor="let option of dataSearch.resultperpageoptions"
+                    [selected]="option.value === dataSearch.resultperpageselected">
+                    <span
+                        class="bg-gray-50 border border-gray-300 py-2 px-3 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full">
+                        {{option.text}}
+                    </span>
+                </option>
+            </select>
+        </div>
+        <div *ngIf="showSearchFields" class="col-start-1 col-span-4">
+            <div class="relative overflow-x-auto mt-6 border border-gray-200 sm:rounded-lg">
+                <table class="table-fixed w-full text-left text-gray-500">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-2 py-2 w-1/12 text-center">
+                                LOGIC
+                            </th>
+                            <th scope="col" class="px-2 py-2 w-4/12">
+                                FIELD
+                            </th>
+                            <th scope="col" class="px-2 py-2 w-3/12">
+                                CONDITION
+                            </th>
+                            <th scope="col" class="px-2 py-2 w-3/12">
+                                VALUE
+                            </th>
+                            <th scope="col" class="px-2 py-2 w-1/12 text-center">
+                                ACTION
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let data of searchDataPostFields; let first = first; let index = index"
+                            class="border-b bg-white hover:bg-gray-50">
+                            <td class="px-2 py-2">
+                                <select *ngIf="!first" (change)="selectOperator($event, data)"
+                                    class="bg-gray-50 border border-gray-300 py-2 px-1 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full">
+                                    <option *ngFor="let operator of operatorsForField(dataSearch, index)"
+                                        [value]="operator.value" [selected]="operator.value === data.logicaloperator">
+                                        <span
+                                            class="bg-gray-50 border border-gray-300 py-2 px-3 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full">
+                                            {{operator.text}}
+                                        </span>
+                                    </option>
+                                </select>
+                            </td>
+                            <td class="px-2 py-2">
+                                <select (change)="updateSelectedField(data, $event)"
+                                    class="bg-gray-50 border border-gray-300 py-2 px-3 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full">
+                                    <option *ngFor="let field of dataSearch.fields" [value]="field.fieldvalue"
+                                        [selected]="field.fieldtext === data.field">
+                                        <span
+                                            class="bg-gray-50 border border-gray-300 py-2 px-3 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full">
+                                            {{field.fieldtext}}
+                                        </span>
+                                    </option>
+                                </select>
+                            </td>
+                            <td class="px-2 py-2">
+                                <select (change)="selectCondition($event, data)"
+                                    class="bg-gray-50 border border-gray-300 py-2 px-3 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full">
+                                    <option></option>
+                                    <option *ngFor="let condition of conditionsForField(dataSearch, index)"
+                                        [value]="condition.value" [selected]="condition.value === data.condition">
+                                        <span
+                                            class="bg-gray-50 border border-gray-300 py-2 px-3 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full">
+                                            {{condition.text}}
+                                        </span>
+                                    </option>
+                                </select>
+                            </td>
+                            <td class="px-2 py-2">
+                                <input type="text" [value]="data.value" (input)="setConditionValue($event, data)"
+                                    [value]="data.value"
+                                    class="block w-full focus:outline-none focus:bg-white focus:border-gray-500 text-xs bg-gray-200 text-gray-700 border border-gray-200 rounded-md py-2 px-3 leading-tight">
+                            </td>
+                            <td class="px-2 py-2 text-center">
+                                <button type="button" (click)="removeCondition(index)"
+                                    class="w-6 h-6 text-red-700 border-2 border-red-700 hover:bg-red-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-full text-center inline-flex items-center justify-center">
+                                    <fa-icon [icon]="['fas', 'minus']" class="text-xs"></fa-icon>
+                                    <span class="sr-only">remove</span>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr class="border-b bg-white hover:bg-gray-50">
+                            <td class="px-2 py-2">
+                                <select *ngIf="searchDataPostFields.length > 0" [disabled]="!searchDataFieldSelected"
+                                    (change)="selectOperator($event, searchDataPostField)"
+                                    class="bg-gray-50 border border-gray-300 py-2 px-1 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full">
+                                    <option></option>
+                                    <option *ngFor="let operator of searchDataFieldSelected?.operators"
+                                        [value]="operator.value"
+                                        [selected]="operator.value === searchDataPostField.logicaloperator">
+                                        <span
+                                            class="bg-gray-50 border border-gray-300 py-2 px-3 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full">
+                                            {{operator.text}}
+                                        </span>
+                                    </option>
+                                </select>
+                            </td>
+                            <td class="px-2 py-2">
+                                <select (change)="selectField($event, dataSearch)"
+                                    class="bg-gray-50 border border-gray-300 py-2 px-3 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full">
+                                    <option></option>
+                                    <option *ngFor="let field of dataSearch.fields" [value]="field.fieldvalue"
+                                        [selected]="field.fieldtext === searchDataPostField.field">
+                                        <span
+                                            class="bg-gray-50 border border-gray-300 py-2 px-3 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full">
+                                            {{field.fieldtext}}
+                                        </span>
+                                    </option>
+                                </select>
+                            </td>
+                            <td class="px-2 py-2">
+                                <select [disabled]="!searchDataFieldSelected"
+                                    (change)="selectCondition($event, searchDataPostField)"
+                                    class="bg-gray-50 border border-gray-300 py-2 px-3 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full">
+                                    <option></option>
+                                    <option *ngFor="let field of searchDataFieldSelected?.conditions"
+                                        [value]="field.value"
+                                        [selected]="field.value === searchDataPostField.condition">
+                                        <span
+                                            class="bg-gray-50 border border-gray-300 py-2 px-3 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full">
+                                            {{field.text}}
+                                        </span>
+                                    </option>
+                                </select>
+                            </td>
+                            <td class="px-2 py-2">
+
+                                <div [ngSwitch]="searchDataPostField.fieldtype">
+                                    <div *ngSwitchCase="SearchFieldType.DateTime">
+                                        <input type="date" [disabled]="!searchDataFieldSelected"
+                                            (input)="setConditionValue($event, searchDataPostField)"
+                                            [value]="searchDataPostField.value"
+                                            class="block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-lg text-xs py-2 px-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                                    </div>
+                                    <div *ngSwitchDefault>
+                                        <input type="text" [disabled]="!searchDataFieldSelected"
+                                            (input)="setConditionValue($event, searchDataPostField)"
+                                            [value]="searchDataPostField.value"
+                                            class="block w-full focus:outline-none focus:bg-white focus:border-gray-500 text-xs bg-gray-200 text-gray-700 border border-gray-200 rounded-md py-2 px-3 leading-tight">
+                                    </div>
+                                </div>
+
+                            </td>
+                            <td class="px-2 py-2 text-center">
+                                <button type="button" (click)="addCondition(searchDataPostField)"
+                                    class="w-6 h-6 text-blue-700 border-2 border-blue-700 hover:bg-blue-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-center inline-flex items-center justify-center">
+                                    <fa-icon [icon]="['fas', 'plus']" class="text-xs"></fa-icon>
+                                    <span class="sr-only">remove</span>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-span-4">
+            <div class="flex">
+                <button type="button" *ngIf="!showSearchFields" (click)="addCondition(searchDataPostField)"
+                    class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-xs px-3 py-2 text-center mr-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">
+                    <fa-icon [icon]="['fas', 'filter']" class="text-xs mr-2"></fa-icon>
+                    Filter
+                </button>
+                <button type="button" (click)="searchProducts()" [ngClass]="{
+                'bg-blue-300 focus:outline-none' : !baseParamsAreCompleted(),
+                'bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300' : baseParamsAreCompleted()
+                }"
+                    class="text-white font-medium rounded-lg text-xs px-3 py-2 mr-2 mb-2">
+                    <fa-icon [icon]="['fas', 'search']" class="text-xs mr-2"></fa-icon>
+                    Search
+                </button>
+            </div>
+        </div>
+        <div *ngIf="(searchDataResultObservable$ | async) as resultList" class="col-start-1 col-span-4">
+            <div *ngIf="resultList.length > 0" class="relative overflow-x-auto border border-gray-200 sm:rounded-lg">
+                <table class="table-fixed w-full text-left text-gray-500">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-2 py-2 w-2/12">
+                                <div class="flex items-center cursor-pointer" (click)="toggleOrderByDisplayName()">
+                                    Display Name
+                                    <fa-icon *ngIf="!orderDisplayName" [icon]="['fas', 'sort']"
+                                        class="text-xs ml-2"></fa-icon>
+                                    <fa-icon *ngIf="orderDisplayName && !toggleOrderDisplayName"
+                                        [icon]="['fas', 'sort-up']" class="text-xs ml-2"></fa-icon>
+                                    <fa-icon *ngIf="orderDisplayName && toggleOrderDisplayName"
+                                        [icon]="['fas', 'sort-down']" class="text-xs ml-2"></fa-icon>
+                                </div>
+                            </th>
+                            <th scope="col" class="px-2 py-2 w-2/12">
+                                <div class="flex items-center cursor-pointer" (click)="toggleOrderByCategoryName()">
+                                    Category Name
+                                    <fa-icon *ngIf="!orderCategoryName" [icon]="['fas', 'sort']"
+                                        class="text-xs ml-2"></fa-icon>
+                                    <fa-icon *ngIf="orderCategoryName && !toggleOrderCategoryName"
+                                        [icon]="['fas', 'sort-up']" class="text-xs ml-2"></fa-icon>
+                                    <fa-icon *ngIf="orderCategoryName && toggleOrderCategoryName"
+                                        [icon]="['fas', 'sort-down']" class="text-xs ml-2"></fa-icon>
+                                </div>
+                            </th>
+                            <th scope="col" class="px-2 py-2 w-2/12">
+                                Product Id
+                            </th>
+                            <th scope="col" class="px-2 py-2 w-2/12">
+                                Variant Id
+                            </th>
+                            <th scope="col" class="px-2 py-2 w-2/12">
+                                Type
+                            </th>
+                            <th scope="col" class="px-2 py-2 w-2/12">
+                                Catalog Name
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let result of resultList" class="border-b bg-white hover:bg-gray-50 text-xs">
+                            <td class="px-2 py-2">
+                                {{result.displayname}}
+                            </td>
+                            <td class="px-2 py-2">
+                                {{result.categoryname}}
+                            </td>
+                            <td class="px-2 py-2">
+                                {{result.productid}}
+                            </td>
+                            <td class="px-2 py-2">
+                                {{result.variantid}}
+                            </td>
+                            <td class="px-2 py-2">
+                                {{result.type}}
+                            </td>
+                            <td class="px-2 py-2">
+                                {{result.catalogname}}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

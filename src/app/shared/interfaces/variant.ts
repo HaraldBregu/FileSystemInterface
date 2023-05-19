@@ -9,6 +9,7 @@ export interface VariantPropertyField {
     value: string
     options: VariantPropertyFieldOption[]
     readonly: boolean
+    maxlength: number
 }
 
 export interface Variant {

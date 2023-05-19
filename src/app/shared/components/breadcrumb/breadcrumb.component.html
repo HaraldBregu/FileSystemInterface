@@ -1,18 +1,49 @@
-<nav class="justify-between px-2 py-4 mb-4 text-gray-700 border border-gray-200 rounded-lg sm:flex bg-gray-100">
-  <ol class="inline-flex items-center mb-3 space-x-1 md:space-x-3 sm:mb-0">
+<nav *ngIf="(navItems$ | async) as items"
+  class="h-16 justify-between px-2 text-gray-700 border border-gray-300 rounded-lg flex bg-white">
+  <ol class="inline-flex items-center justify-center mb-3 sm:mb-0 text-sm">
+    <li>
+      <a class="cursor-pointer" (click)="getCatalogs()">
+        <div class="flex items-center mr-2">
+          <fa-icon [icon]="['fas', 'home']" class="text-gray-400 mx-2 text-sm"></fa-icon>
+          <span class="font-medium text-gray-400 hover:text-gray-800">
+            CATALOGS
+          </span>
+        </div>
+      </a>
+    </li>
     <li *ngFor="let item of items; let first = first; let i = index; let last = last">
       <a (click)="selectItem(item)" class="cursor-pointer">
-        <div class="flex items-center">
-          <fa-icon *ngIf="isCategory(item.type)" [icon]="['fas', 'folder']"
-            [ngClass]="last ? 'text-gray-800' : 'text-gray-400'"></fa-icon>
-          <fa-icon *ngIf="isFile(item.type)" [icon]="['fas', 'file']"
-            [ngClass]="last ? 'text-gray-800' : 'text-gray-400'"></fa-icon>
+        <div class="flex items-center justify-center mr-2">
+          <span class="mr-2">/</span>
+
+          <!--<span [ngSwitch]="item.type">
+            <fa-icon *ngSwitchCase="ProductType.Category" [icon]="['fas', 'folder']"
+              [ngClass]="last ? 'text-gray-800' : 'text-gray-400'">
+            </fa-icon>
+            <fa-icon *ngSwitchCase="ProductType.CategoryVariant" [icon]="['fas', 'folder']"
+              [ngClass]="last ? 'text-gray-800' : 'text-gray-400'">
+            </fa-icon>
+            <fa-icon *ngSwitchCase="ProductType.File" [icon]="['fas', 'file']"
+              [ngClass]="last ? 'text-gray-800' : 'text-gray-400'">
+            </fa-icon>
+            <fa-icon *ngSwitchCase="ProductType.FileVariant" [icon]="['fas', 'file']"
+              [ngClass]="last ? 'text-gray-800' : 'text-gray-400'">
+            </fa-icon>
+            <fa-icon *ngSwitchCase="ProductType.Catalog" [icon]="['fas', 'folder']"
+              [ngClass]="last ? 'text-gray-800' : 'text-gray-400'">
+            </fa-icon>
+          </span>-->
+
           <span [ngClass]="last ? 'font-medium text-gray-800' : 'font-medium text-gray-400'"
-            class="mx-1 text-sm md:mx-2 hover:text-gray-800">{{item.name}}</span>
-          <span *ngIf="currentProducts.length > 0 && last"
-            class="bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2 py-0.5 rounded hidden sm:flex">
-            {{currentProducts.length}}
+            class="hover:text-gray-800">
+            {{item.name}}
           </span>
+
+          <span *ngIf="(lastSelectedProducts$ | async) && (lastSelectedProducts$ | async)!.length > 0 && last"
+            class="bg-blue-100 text-blue-800 font-semibold ml-2 px-2 py-0.5 rounded sm:flex">
+            {{(lastSelectedProducts$ | async)!.length}}
+          </span>
+
         </div>
       </a>
     </li>

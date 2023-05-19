@@ -1,0 +1,8 @@
+<div class="relative p-14">
+    <app-page-loader *ngIf="(searchDataObservable$ | async) === undefined"></app-page-loader>
+
+    <div *ngIf="(searchDataObservable$ | async)">
+        <p class="text-lg font-bold text-gray-900 dark:text-white">Search products</p>
+        <app-search-data></app-search-data>
+    </div>
+</div>

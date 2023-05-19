@@ -1,55 +1,98 @@
-<div class="mt-6">
-    <div class="relative overflow-x-auto border border-gray-200 sm:rounded-lg">
-        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-            <thead class="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
+<div *ngIf="(products$ | async) as items">
+    <div *ngIf="items.length > 0"
+        class="flex flex-col items-center justify-between space-y-3 md:flex-row md:space-y-0 md:space-x-4">
+        <div class="w-full">
+            <form class="flex items-center">
+                <div class="relative w-full">
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <fa-icon [icon]="['fas', 'search']" class="text-md"></fa-icon>
+                    </div>
+                    <input #searchInput type="text" (input)="filterData($event)"
+                        class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 pr-8 py-2"
+                        placeholder="Filter data">
+                    <button *ngIf="searchInput.value.length > 0" type="button" (click)="clearFilteredData()"
+                        class="absolute inset-y-0 right-0 flex items-center pr-3">
+                        <fa-icon [icon]="['fas', 'xmark']" class="text-md"></fa-icon>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div *ngIf="items.length > 0" class="relative overflow-x-auto border border-gray-300 sm:rounded-lg mt-2">
+        <table class="table-auto w-full text-sm text-left text-gray-500">
+            <thead class="text-xs text-gray-700 uppercase bg-white border-b border-gray-100">
                 <tr>
-                    <th scope="col" class="px-6 py-4">
-                        Product name
-                    </th>
-                    <th scope="col" class="px-6 py-4">
-                        Type
-                    </th>
-                    <th scope="col" class="px-6 py-4">
-                        Data 1
-                    </th>
-                    <th scope="col" class="px-6 py-4">
-                        Data 2
-                    </th>
-                    <th scope="col" class="px-6 py-4">
-                        Content
-                    </th>
-                    <th scope="col" class="px-6 py-4">
-                        Action
+                    <th scope="col" class="px-4 py-4">
+                        <div class="flex items-center justify-between cursor-pointer" (click)="toggleOrderByProductName()">
+                            <span *ngIf="!(currentCatalogObservable$ | async)">
+                                Catalog list
+                            </span>
+                            <span *ngIf="(currentCatalogObservable$ | async)">
+                                Categories and products
+                            </span>
+                            <span [ngSwitch]="productOrder">
+                                <fa-icon *ngSwitchCase="ProductOrder.NONE" [icon]="['fas', 'sort']"
+                                    class="text-xs ml-2">
+                                </fa-icon>
+                                <fa-icon *ngSwitchCase="ProductOrder.AZ" [icon]="['fas', 'sort-up']"
+                                    class="text-xs ml-2">
+                                </fa-icon>
+                                <fa-icon *ngSwitchCase="ProductOrder.ZA" [icon]="['fas', 'sort-down']"
+                                    class="text-xs ml-2">
+                                </fa-icon>
+                            </span>
+                        </div>
                     </th>
                 </tr>
             </thead>
-            <tbody>
-                <tr *ngFor="let item of data" (click)="selectItem(item)"
-                    class="bg-white cursor-pointer border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                        <fa-icon *ngIf="isCategory(item.type)" [icon]="['fas', 'folder']" [ngClass]="colorForItem(item)"></fa-icon>
-                        <fa-icon *ngIf="isFile(item.type)" [icon]="['fas', 'file']" [ngClass]="colorForItem(item)"></fa-icon>
-                        <span class="ml-2">{{item.name}}</span>
-                    </th>
-                    <td class="px-6 py-4">
-                        <span *ngIf="isCategory(item.type)">Category</span>
-                        <span *ngIf="isFile(item.type)">File</span>
+            <tbody *ngIf="!(currentCatalogObservable$ | async)">
+                <tr *ngFor="let item of (filteredProducts$ | async) || items" (click)="selectCatalog(item)"
+                    class="bg-white cursor-pointer border-b hover:bg-gray-50">
+                    <td class="px-4 py-4 font-medium text-gray-900 whitespace-nowrap">
+                        <span [ngSwitch]="item.type">
+                            <fa-icon *ngSwitchCase="ProductType.Catalog" [icon]="['fas', 'folder']"
+                                class="text-blue-500">
+                            </fa-icon>
+                            <fa-icon *ngSwitchCase="ProductType.Category" [icon]="['fas', 'folder']"
+                                class="text-blue-500">
+                            </fa-icon>
+                            <fa-icon *ngSwitchCase="ProductType.CategoryVariant" [icon]="['fas', 'folder']"
+                                class="text-blue-500">
+                            </fa-icon>
+                            <fa-icon *ngSwitchCase="ProductType.File" [icon]="['fas', 'file']" class="text-rose-500">
+                            </fa-icon>
+                            <fa-icon *ngSwitchCase="ProductType.FileVariant" [icon]="['fas', 'file']"
+                                class="text-rose-500">
+                            </fa-icon>
+                        </span>
+                        <span class="ml-2 text-xs">{{item.name}}</span>
                     </td>
-                    <td class="px-6 py-4">
-                        -
-                    </td>
-                    <td class="px-6 py-4">
-                        -
-                    </td>
-                    <td class="px-6 py-4">
-                        {{ item.items_count || "-" }}
-                    </td>
-                    <td class="flex items-center px-6 py-4 space-x-3">
-                        <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+                </tr>
+            </tbody>
+            <tbody *ngIf="(currentCatalogObservable$ | async) as catalog">
+                <tr *ngFor="let item of (filteredProducts$ | async) || items" (click)="selectCategory(item, catalog)"
+                    class="bg-white cursor-pointer border-b hover:bg-gray-50">
+                    <td class="px-4 py-4 font-medium text-gray-900 whitespace-nowrap">
+                        <span [ngSwitch]="item.type">
+                            <fa-icon *ngSwitchCase="ProductType.Catalog" [icon]="['fas', 'folder']"
+                                class="text-blue-500">
+                            </fa-icon>
+                            <fa-icon *ngSwitchCase="ProductType.Category" [icon]="['fas', 'folder']"
+                                class="text-blue-500">
+                            </fa-icon>
+                            <fa-icon *ngSwitchCase="ProductType.CategoryVariant" [icon]="['fas', 'folder']"
+                                class="text-blue-500">
+                            </fa-icon>
+                            <fa-icon *ngSwitchCase="ProductType.File" [icon]="['fas', 'file']" class="text-rose-500">
+                            </fa-icon>
+                            <fa-icon *ngSwitchCase="ProductType.FileVariant" [icon]="['fas', 'file']"
+                                class="text-rose-500">
+                            </fa-icon>
+                        </span>
+                        <span class="ml-2 text-xs">{{item.name}}</span>
                     </td>
                 </tr>
             </tbody>
         </table>
     </div>
-
 </div>

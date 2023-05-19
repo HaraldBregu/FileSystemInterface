@@ -1,10 +1,19 @@
 import { Component, Input, SimpleChanges } from '@angular/core';
 import { ProductProperty, PropertFieldType, PropertyField } from '../../interfaces/product-detail';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import Utils from 'src/app/core/utils';
+import { CommonModule } from '@angular/common';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @Component({
   selector: 'app-properties-form',
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    FontAwesomeModule,
+  ],
   templateUrl: './properties-form.component.html',
   styleUrls: ['./properties-form.component.scss']
 })

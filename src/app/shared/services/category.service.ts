@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Product } from '../interfaces/product';
 import { ProductDetail } from '../interfaces/product-detail';
+import { ProductAssociation } from '../interfaces/product-association';
 
 @Injectable({
   providedIn: 'root'
@@ -29,6 +30,16 @@ export class CategoryService {
   saveProperties(data: any): Observable<any> {
     var path = "/CommerceWebApi/Api/Catalog/SaveEntityProperties"
     return this.httpClient.post<any>(path, data);
+  }
+
+  getAssociations(catalogName: string, categoryId: number): Observable<ProductAssociation> {
+    var path = "/CommerceWebApi/Api/Catalog/GetEntityAssociations?catalogName=" + catalogName + "&id=" + categoryId
+    return this.httpClient.get<ProductAssociation>(path);
+  }
+
+  saveAssociations(data: ProductAssociation): Observable<ProductAssociation> {
+    var path = "/CommerceWebApi/Api/Catalog/SaveEntityAssociation"    
+    return this.httpClient.post<ProductAssociation>(path, data);
   }
 
 }

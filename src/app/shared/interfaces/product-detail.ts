@@ -39,5 +39,6 @@ export interface PropertyField {
     value: string | undefined
     language: string
     options: PropertyFieldOption[]
+    maxlength: number
 }
 

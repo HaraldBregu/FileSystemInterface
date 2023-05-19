@@ -1,4 +1,4 @@
-import { ProductDetail, ProductProperty } from "../shared/interfaces/product-detail";
+import { ProductDetail, ProductProperty, PropertFieldType, PropertyField } from "../shared/interfaces/product-detail";
 import { Variant, VariantPropertyField } from "../shared/interfaces/variant";
 
 export default class Utils {
@@ -62,6 +62,75 @@ export default class Utils {
         ]
     }
 
+    static variantsFromVariantProperties(variantProperties: ProductProperty[]) {
+        var variants: Variant[] = []
+
+        variantProperties.forEach((property, index) => {
+            const properties: VariantPropertyField[] = []
+
+            properties.push({
+                name: "VariantId",
+                displayname: property.name,
+                value: property.name,
+                options: [],
+                readonly: true,
+                maxlength: 0,
+            })
+
+            property.childs.forEach(data => {
+                properties.push({
+                    name: data.name,
+                    displayname: data.displayname,
+                    value: data.value ?? "",
+                    options: data.options,
+                    readonly: data.isreadonly,
+                    maxlength: data.maxlength,
+                })
+            })
+
+            variants.push({ properties: properties })
+        })
+
+        return variants
+    }
+
+    static propertiesFromVariants(variants: Variant[]) {
+        var properties: ProductProperty[] = []
+
+        variants.forEach(variant => {
+            var name: string = ""
+            var childs: PropertyField[] = []
+
+            variant.properties.forEach((prop, index) => {
+                if (index === 0) {
+                    name = prop.displayname
+                } else {
+                    childs.push({
+                        name: prop.name,
+                        displayname: prop.displayname,
+                        datatype: (prop.options.length > 0) ? PropertFieldType.MultipleChoice : PropertFieldType.Text,
+                        ismultilanguage: false,
+                        isrequired: false,
+                        isreadonly: prop.readonly,
+                        value: prop.value,
+                        language: "",
+                        options: prop.options,
+                        maxlength: prop.maxlength,
+                    })
+
+                }
+            })
+
+            properties.push({
+                name: name,
+                type: "Variant",
+                childs: childs
+            })
+        })
+
+        return properties
+    }
+
     static variantsFromProductDetail(productDetail: ProductDetail | undefined) {
         var variants: Variant[] = []
 
@@ -78,7 +147,8 @@ export default class Utils {
                 displayname: property.name,
                 value: property.name,
                 options: [],
-                readonly: true
+                readonly: true,
+                maxlength: 0,
             })
 
             property.childs.forEach(data => {
@@ -87,7 +157,8 @@ export default class Utils {
                     displayname: data.displayname,
                     value: data.value ?? "",
                     options: data.options,
-                    readonly: data.isreadonly
+                    readonly: data.isreadonly,
+                    maxlength: data.maxlength,
                 })
             })
 

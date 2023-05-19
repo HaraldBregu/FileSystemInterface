@@ -1,0 +1,57 @@
+<form *ngIf="(productAssociationObservable$ | async) as prod" [formGroup]="formGroup" class="space-y-4 mt-4 mb-2 pb-4">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="col-span-1">
+            <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                Primary category
+            </label>
+            <select *ngIf="prod?.catalogname as catName" [formControlName]="catName"
+                class="bg-gray-50 border border-gray-300 py-2 px-3 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full">
+                <option *ngFor="let value of prod?.options">
+                    <span
+                        class="bg-gray-50 border border-gray-300 py-2 px-3 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full">
+                        {{value.text}}
+                    </span>
+                </option>
+            </select>
+        </div>
+    </div>
+</form>
+
+<div *ngIf="hasParentAndChild" class="flex mt-4 mb-2">
+    <div class="flex items-center mr-4">
+        <input id="inline-radio" type="radio" [checked]="selectedcategory === 'parentcategories'"
+            (click)="selectedcategory = 'parentcategories'" name="inline-radio-group"
+            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+        <label for="inline-radio" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Parent
+            categories</label>
+    </div>
+    <div class="flex items-center mr-4">
+        <input id="inline-2-radio" type="radio" [checked]="selectedcategory === 'childcategories'"
+            (click)="selectedcategory = 'childcategories'" name="inline-radio-group"
+            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+        <label for="inline-2-radio" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Child
+            categories</label>
+    </div>
+</div>
+
+<app-association-data-table title="Association Parent Categories" [ngClass]="{
+    'hidden' : selectedcategory === 'childcategories' }"
+    [dataList]="(productAssociationObservable$ | async)?.parentcategories"
+    [columns]="['Catalog Name', 'Display Name', 'Actions']" (onDataListChanges)="updateParentDataList($event)"
+    (onAddNewData)="addNewData()">
+</app-association-data-table>
+
+<app-association-data-table title="Association Child Categories" [ngClass]="{
+    'hidden' : selectedcategory === 'parentcategories' }"
+    [dataList]="(productAssociationObservable$ | async)?.childcategories"
+    [columns]="['Catalog Name', 'Display Name', 'Actions']" (onDataListChanges)="updateChildDataList($event)"
+    (onAddNewData)="addNewData()">
+</app-association-data-table>
+
+<app-association-data-table title="Association Products" [ngClass]="{
+    'hidden' : ((productAssociationObservable$ | async)?.products?.length === 0) }"
+    [dataList]="(productAssociationObservable$ | async)?.products" [columns]="['Product ID', 'Display Name', 'Actions']"
+    (onDataListChanges)="updateProductDataList($event)" (onAddNewData)="addNewData()">
+</app-association-data-table>
+
+<app-modal-search #modalSearch></app-modal-search>

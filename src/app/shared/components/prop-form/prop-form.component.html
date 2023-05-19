@@ -1,0 +1,249 @@
+<form [formGroup]="propertiesFormGroup" class="space-y-4 mt-4 mb-2 pb-4">
+
+    <div *ngFor="let property of singleLanguageProperties">
+        <div [formGroupName]="property.name" class="grid grid-cols-1 md:grid-cols-4 gap-6 pt-6">
+
+            <!-- Simple TEXT -->
+            <div class="col-span-4" *ngIf="isPropertType(property, PropertFieldType.Text)">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div *ngFor="let field of childsDataType(property, PropertFieldType.Text)" class="col-span-1">
+                        <label class="block uppercase tracking-wide text-gray-700 text-xs font-medium mb-2">
+                            {{field.displayname}}
+                            <span *ngIf="field.isrequired">*</span>
+                        </label>
+                        <input type="text" [readonly]="field.isreadonly" [formControlName]="controlKeyProperty(field)"
+                            [ngClass]="field.isreadonly ? 'outline-none' : 'focus:outline-none focus:bg-white focus:border-gray-500'"
+                            class="block w-full text-xs bg-gray-200 text-gray-700 border border-gray-200 rounded-md py-2 px-3 leading-tight">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Simple TEXTAREA -->
+            <div class="col-span-4" *ngIf="isPropertType(property, PropertFieldType.LongText)">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div *ngFor="let field of childsDataType(property, PropertFieldType.LongText)" class="col-span-4">
+                        <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                            <span *ngIf="field.ismultilanguage" [ngClass]="flagFromLang(field.language)"></span>
+                            {{field.displayname}}
+                            <span *ngIf="field.isrequired">*</span>
+                        </label>
+                        <textarea [readonly]="field.isreadonly" rows="4" [formControlName]="controlKeyProperty(field)"
+                            [ngClass]="field.isreadonly ? 'outline-none' : 'focus:outline-none focus:bg-white focus:border-gray-500'"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg text-xs py-2 px-3 block w-full"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FileName type -->
+            <div class="col-span-4" *ngIf="isPropertType(property, PropertFieldType.FileName)">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div *ngFor="let field of childsDataType(property, PropertFieldType.FileName)" class="col-span-1">
+                        <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                            {{field.displayname}}
+                            <span *ngIf="field.isrequired">*</span>
+                        </label>
+                        <input type="text" [readonly]="field.isreadonly" [formControlName]="controlKeyProperty(field)"
+                            [ngClass]="field.isreadonly ? 'outline-none' : 'focus:outline-none focus:bg-white focus:border-gray-500'"
+                            class="block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-lg text-xs py-2 px-3 leading-tight">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Number type -->
+            <div class="col-span-4" *ngIf="isPropertType(property, PropertFieldType.Number)">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div *ngFor="let field of childsDataType(property, PropertFieldType.Number)" class="col-span-1">
+                        <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                            {{field.displayname}}
+                            <span *ngIf="field.isrequired">*</span>
+                        </label>
+                        <input type="number" [readonly]="field.isreadonly" step="0.01"
+                            [formControlName]="controlKeyProperty(field)"
+                            [ngClass]="field.isreadonly ? 'outline-none' : 'focus:outline-none focus:bg-white focus:border-gray-500'"
+                            class="block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-lg text-xs py-2 px-3 leading-tight">
+                    </div>
+                </div>
+            </div>
+
+            <!-- BigNumber type-->
+            <div class="col-span-4" *ngIf="isPropertType(property, PropertFieldType.BigNumber)">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div *ngFor="let field of childsDataType(property, PropertFieldType.BigNumber)" class="col-span-1">
+                        <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                            {{field.displayname}}
+                            <span *ngIf="field.isrequired">*</span>
+                        </label>
+                        <input type="number" [readonly]="field.isreadonly" step="0.01"
+                            [formControlName]="controlKeyProperty(field)"
+                            [ngClass]="field.isreadonly ? 'outline-none' : 'focus:outline-none focus:bg-white focus:border-gray-500'"
+                            class="block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-lg text-xs py-2 px-3 leading-tight">
+                    </div>
+                </div>
+            </div>
+
+            <!--- Decimal Type -->
+            <div class="col-span-4" *ngIf="isPropertType(property, PropertFieldType.Decimal)">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div *ngFor="let field of childsDataType(property, PropertFieldType.Decimal)" class="col-span-1">
+                        <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                            {{field.displayname}}
+                            <span *ngIf="field.isrequired">*</span>
+                        </label>
+                        <input type="number" [readonly]="field.isreadonly" step="0.01"
+                            [formControlName]="controlKeyProperty(field)"
+                            [ngClass]="field.isreadonly ? 'outline-none' : 'focus:outline-none focus:bg-white focus:border-gray-500'"
+                            class="block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-lg text-xs py-2 px-3 leading-tight">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Double type -->
+            <div class="col-span-4" *ngIf="isPropertType(property, PropertFieldType.Double)">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div *ngFor="let field of childsDataType(property, PropertFieldType.Double)" class="col-span-1">
+                        <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                            {{field.displayname}}
+                            <span *ngIf="field.isrequired">*</span>
+                        </label>
+                        <input type="number" [readonly]="field.isreadonly" step="0.01"
+                            [formControlName]="controlKeyProperty(field)"
+                            [ngClass]="field.isreadonly ? 'outline-none' : 'focus:outline-none focus:bg-white focus:border-gray-500'"
+                            class="block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-lg text-xs py-2 px-3 leading-tight">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Boolean type -->
+            <div class="col-span-4" *ngIf="isPropertType(property, PropertFieldType.Boolean)">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div *ngFor="let field of childsDataType(property, PropertFieldType.Boolean)" class="col-span-4">
+                        <div class="flex items-center mb-4">
+                            <input type="checkbox" [readonly]="field.isreadonly"
+                                [formControlName]="controlKeyProperty(field)"
+                                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
+                            <label for="default-checkbox"
+                                class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{field.displayname}}</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DateTime type -->
+            <div class="col-span-4" *ngIf="isPropertType(property, PropertFieldType.DateTime)">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div *ngFor="let field of childsDataType(property, PropertFieldType.DateTime)" class="col-span-1">
+                        <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                            {{field.displayname}}
+                            <span *ngIf="field.isrequired">*</span>
+                        </label>
+                        <input type="date" [readonly]="field.isreadonly" [formControlName]="controlKeyProperty(field)"
+                            [ngClass]="field.isreadonly ? 'outline-none' : 'focus:outline-none focus:bg-white focus:border-gray-500'"
+                            class="block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-lg text-xs py-2 px-3 leading-tight">
+                    </div>
+                </div>
+            </div>
+
+            <!--MoneyCurrency type-->
+            <div class="col-span-4" *ngIf="isPropertType(property, PropertFieldType.MoneyCurrency)">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div *ngFor="let field of childsDataType(property, PropertFieldType.MoneyCurrency)"
+                        class="col-span-1">
+                        <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                            {{field.displayname}}
+                            <span *ngIf="field.isrequired">*</span>
+                        </label>
+                        <input type="number" [readonly]="field.isreadonly" [formControlName]="controlKeyProperty(field)"
+                            [ngClass]="field.isreadonly ? 'outline-none' : 'focus:outline-none focus:bg-white focus:border-gray-500'"
+                            class="block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-lg text-xs py-2 px-3 leading-tight ">
+                    </div>
+                </div>
+            </div>
+
+            <!-- MULTICHOICE input -->
+            <div class="col-span-4" *ngIf="isPropertType(property, PropertFieldType.MultipleChoice)">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div *ngFor="let field of childsDataType(property, PropertFieldType.MultipleChoice)"
+                        class="col-span-1">
+                        <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                            {{field.displayname}}
+                            <span *ngIf="field.isrequired">*</span>
+                        </label>
+                        <select [formControlName]="controlKeyProperty(field)"
+                            class="bg-gray-50 border border-gray-300 py-2 px-3 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full">
+                            <option *ngFor="let value of field.options">
+                                <span
+                                    class="bg-gray-50 border border-gray-300 py-2 px-3 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full">
+                                    {{value.text}}
+                                </span>
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div *ngFor="let property of multiLanguageProperties; let index = index">
+        <div [formGroupName]="property.name" class="grid grid-cols-1 md:grid-cols-4 gap-6"
+            [ngClass]="index===0 ? 'pt-8' : ''">
+
+            <!--Multi language TEXT -->
+            <div class="col-span-4" *ngIf="isPropertType(property, PropertFieldType.Text, true)">
+                <button type="button"
+                    (click)="toggleProperty(property.name + getNameOfProperty(property) + PropertFieldType.Text)"
+                    class="flex items-center w-full font-medium text-left">
+                    <h5 class="font-normal tracking-tight text-gray-700">
+                        <span>{{getNameOfProperty(property)}}</span>
+                    </h5>
+                    <fa-icon [icon]="['fas', 'chevron-right']"
+                        [ngClass]="isUnfolded(property.name + getNameOfProperty(property)+ PropertFieldType.Text) ? 'rotate-90' : ''"
+                        class="text-gray-600 transition-transform ml-2"></fa-icon>
+                </button>
+            </div>
+            <div *ngFor="let field of childsDataType(property, PropertFieldType.Text, true)" class="col-span-1"
+                [ngClass]="isUnfolded(property.name + getNameOfProperty(property) + PropertFieldType.Text)? '' : 'hidden'">
+                <label class="block uppercase tracking-wide text-gray-700 text-xs font-medium mb-2">
+                    <span [ngClass]="flagFromLang(field.language)"></span>
+                    {{field.language}}
+                    <span *ngIf="field.isrequired">*</span>
+                </label>
+                <input type="text" [readonly]="field.isreadonly" [formControlName]="controlKeyProperty(field)"
+                    [ngClass]="field.isreadonly ? 'outline-none' : 'focus:outline-none focus:bg-white focus:border-gray-500'"
+                    class="block w-full text-xs bg-gray-200 text-gray-700 border border-gray-200 rounded-md py-2 px-3 leading-tight">
+            </div>
+
+            <!--Multi language TEXTAREA -->
+            <div class="col-span-4" *ngIf="isPropertType(property, PropertFieldType.LongText, true)">
+                <button type="button"
+                    (click)="toggleProperty(property.name + getNameOfProperty(property) + PropertFieldType.LongText)"
+                    class="flex items-center w-full font-medium text-left">
+                    <h5 class="font-normal tracking-tight text-gray-700">
+                        <span>{{getNameOfProperty(property)}}</span>
+                    </h5>
+                    <fa-icon [icon]="['fas', 'chevron-right']"
+                        [ngClass]="isUnfolded(property.name + getNameOfProperty(property)+ PropertFieldType.LongText) ? 'rotate-90' : ''"
+                        class="text-gray-600 transition-transform ml-2"></fa-icon>
+                </button>
+            </div>
+            <div *ngFor="let field of childsDataType(property, PropertFieldType.LongText, true)" class="col-span-1"
+                [ngClass]="isUnfolded(property.name + getNameOfProperty(property) + PropertFieldType.LongText)? '' : 'hidden'">
+                <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                    <span [ngClass]="flagFromLang(field.language)"></span>
+                    {{field.language}}
+                    <span *ngIf="field.isrequired">*</span>
+                </label>
+                <textarea [readonly]="field.isreadonly" rows="4" [formControlName]="controlKeyProperty(field)"
+                    [ngClass]="field.isreadonly ? 'outline-none' : 'focus:outline-none focus:bg-white focus:border-gray-500'"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg text-xs py-2 px-3 block w-full"></textarea>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="py-4">
+        <button (click)="saveProperties()" type="submit"
+            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Save
+            Changes</button>
+    </div>
+
+</form>

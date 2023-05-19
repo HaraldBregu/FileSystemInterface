@@ -1,9 +1,16 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ProductType } from '../../enums/product-type';
 import { Product } from '../../interfaces/product';
+import { CommonModule } from '@angular/common';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @Component({
   selector: 'app-data-grid',
+  standalone: true,
+  imports: [
+    CommonModule,
+    FontAwesomeModule,
+  ],
   templateUrl: './data-grid.component.html',
   styleUrls: ['./data-grid.component.scss']
 })

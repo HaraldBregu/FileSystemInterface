@@ -5,6 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:iis": "ng build --base-href /CatalogEditor/",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lite": "lite-server --baseDir='dist/commerce-editor'"
@@ -29,8 +30,13 @@
     "@ngrx/schematics": "^15.4.0",
     "@ngrx/store": "^15.4.0",
     "@ngrx/store-devtools": "^15.4.0",
+    "@popperjs/core": "^2.11.6",
+    "angular-moment": "^1.3.0",
+    "bootstrap": "^5.2.3",
     "express": "^4.15.2",
     "flag-icons": "^6.6.6",
+    "lodash.range": "^3.2.0",
+    "moment": "^2.29.4",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.12.0"
@@ -39,7 +45,9 @@
     "@angular-devkit/build-angular": "^15.2.2",
     "@angular/cli": "~15.2.2",
     "@angular/compiler-cli": "^15.2.0",
+    "@angular/localize": "^15.2.0",
     "@types/jasmine": "~4.3.0",
+    "@types/lodash.range": "^3.2.7",
     "autoprefixer": "^10.4.14",
     "jasmine-core": "~4.5.0",
     "karma": "~6.4.0",
@@ -47,8 +55,8 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.0.0",
-    "postcss": "^8.4.21",
-    "tailwindcss": "^3.2.7",
+    "postcss": "^8.4.23",
+    "tailwindcss": "^3.3.2",
     "typescript": "~4.9.4"
   }
 }

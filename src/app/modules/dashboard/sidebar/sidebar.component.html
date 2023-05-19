@@ -1,0 +1,103 @@
+<aside id="logo-sidebar"
+   class="fixed top-0 left-0 z-40 w-72 h-screen pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700"
+   aria-label="Sidebar">
+   <div class="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
+      <ul class="space-y-2">
+         <li class="mt-2" *ngIf="(selectedProductObserver$ | async)">
+            <a routerLink="/dashboard/product-detail"
+               class="flex items-center py-1 px-3 text-sm font-normal text-gray-900 rounded-lg bg-blue-100 hover:bg-gray-100">
+               <fa-icon [icon]="['fas', 'pager']" class="text-gray-600 text-xl"></fa-icon>
+               <div class="flex-1 ml-4 whitespace-nowrap">
+                  <h6 class="text-xs">Selected product</h6>
+                  <p class="text-md">{{(selectedProductObserver$ | async)?.name}}</p>   
+               </div>
+               <fa-icon [icon]="['fas', 'chevron-right']" class="text-gray-600 text-sm"></fa-icon>
+            </a>
+         </li>
+         <li>
+            <button type="button" (click)="toggleCatalogs()" routerLink="/dashboard"
+               class="flex items-center w-full p-2 text-sm font-normal text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:hover:bg-gray-700">
+               <fa-icon [icon]="['fas', 'folder']" class="text-gray-600"></fa-icon>
+               <span class="flex-1 ml-3 text-left whitespace-nowrap">Catalogs</span>
+               <fa-icon [icon]="['fas', 'chevron-right']" [ngClass]="showCatalogs ? 'rotate-90' : ''"
+                  class="text-gray-600 transition-transform"></fa-icon>
+            </button>
+
+            <ul *ngIf="showCatalogs && (menuItems$ | async)" class="my-4 space-y-3">
+               <li>
+                  <div class="relative">
+                     <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <fa-icon [icon]="['fas', 'search']" class="text-gray-600 text-sm"></fa-icon>
+                     </div>
+                     <app-input #input inputType="search"
+                        inputClass="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        (onInput)="onInputType(input)">
+                     </app-input>
+                  </div>
+               </li>
+               <li *ngFor="let item of (menuItems$ | async)">
+                  <a (click)="selectCatalog(item)" [ngClass]="(currentCatalog$ | async)?.name == item.name ? 'bg-gray-200' : 'bg-gray-50'"
+                     class="flex items-center p-2 text-sm text-gray-900 rounded-lg hover:bg-gray-200 group hover:shadow">
+                     <span class="flex-1 ml-3 whitespace-nowrap">{{item.name}}</span>
+                  </a>
+               </li>
+            </ul>
+         </li>
+         <li>
+            <a href="#"
+               class="flex items-center p-2 text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-100">
+               <fa-icon [icon]="['fas', 'search']" class="text-sm"></fa-icon>
+               <span class="flex-1 ml-3 whitespace-nowrap">Search</span>
+               <span
+                  class="inline-flex items-center justify-center px-2 ml-3 text-sm font-medium text-gray-800 bg-gray-200 rounded-full dark:bg-gray-700 dark:text-gray-300">Pro</span>
+            </a>
+         </li>
+         <li>
+            <a href="#"
+               class="flex items-center p-2 text-sm font-normal text-gray-900 rounded-lg hover:bg-gray-100">
+               <fa-icon [icon]="['fas', 'file-circle-plus']" class="text-gray-600 text-sm"></fa-icon>
+               <span class="flex-1 ml-3 whitespace-nowrap">Create product</span>
+               <span
+                  class="inline-flex items-center justify-center px-2 ml-3 text-sm font-medium text-gray-800 bg-gray-200 rounded-full dark:bg-gray-700 dark:text-gray-300">Pro</span>
+            </a>
+         </li>
+      </ul>
+      <ul class="pt-4 mt-4 space-y-2 border-t border-gray-200 dark:border-gray-700">
+         <li>
+            <a href="#"
+               class="flex items-center p-2 text-sm font-normal text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 group">
+               <fa-icon [icon]="['fas', 'cog']" class="text-gray-600 text-sm"></fa-icon>
+               <span class="ml-4">Settings & Management</span>
+            </a>
+         </li>
+         <li>
+            <a href="#"
+               class="flex items-center p-2 text-sm font-normal text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 group">
+               <fa-icon [icon]="['fas', 'users']" class="text-gray-600 text-sm"></fa-icon>
+               <span class="ml-4">Users</span>
+            </a>
+         </li>
+         <li>
+            <a href="#"
+               class="flex items-center p-2 text-sm font-normal text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 group">
+               <fa-icon [icon]="['far', 'folder-open']" class="text-gray-600 text-sm"></fa-icon>
+               <span class="ml-3">Documentation</span>
+            </a>
+         </li>
+         <li>
+            <a href="#"
+               class="flex items-center p-2 text-sm font-normal text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 group">
+               <fa-icon [icon]="['fas', 'chart-simple']" class="text-gray-600 text-sm"></fa-icon>
+               <span class="ml-3">Components</span>
+            </a>
+         </li>
+         <li>
+            <a href="#"
+               class="flex items-center p-2 text-sm font-normal text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 group">
+               <fa-icon [icon]="['fas', 'circle-info']" class="text-gray-600 text-sm"></fa-icon>
+               <span class="ml-3">Help</span>
+            </a>
+         </li>
+      </ul>
+   </div>
+</aside>
