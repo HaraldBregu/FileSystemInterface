@@ -1,7 +1,0 @@
-{
-    "/CommerceWebApi": {
-      "target": "http://ktb170/",
-      "secure": false,
-      "logLevel": "debug"
-    }
-  }
