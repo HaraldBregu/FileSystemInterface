@@ -3,8 +3,6 @@ import { CommonModule } from '@angular/common';
 import { AssociationData } from '../../interfaces/product-association';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { CoreUIModule } from 'src/app/core/components/core-ui.module';
-import { ModalComponent } from 'src/app/core/components/modal/modal.component';
-import { ModalConfig, ModalConfigSize } from 'src/app/core/interfaces/modal-config';
 
 @Component({
   selector: 'app-association-data-table',
@@ -18,12 +16,13 @@ import { ModalConfig, ModalConfigSize } from 'src/app/core/interfaces/modal-conf
   styleUrls: ['./association-data-table.component.scss']
 })
 export class AssociationDataTableComponent implements OnInit, OnChanges {
-  @ViewChild('searchInput') searchInput: ElementRef = new ElementRef('');
+  @ViewChild('searchInput') searchInput: ElementRef = new ElementRef('')
+  @Input() disable: boolean = false
   @Input() title?: string
   @Input() dataList?: AssociationData[]
   @Input() columns?: string[]
   @Output() onDataListChanges = new EventEmitter<AssociationData[]>()
-  @Output() onAddNewData = new EventEmitter()
+  @Output() onAddClicked = new EventEmitter()
 
   dataListFiltered?: AssociationData[]
   currentPage = 1
@@ -32,6 +31,10 @@ export class AssociationDataTableComponent implements OnInit, OnChanges {
   itemsPerPage = 10
   itemsPerPageList = [10, 20, 30]
   showItemsPerPage = false
+
+  constructor() {
+
+  }
 
   ngOnInit(): void {
     this.showItemsPerPage = false
@@ -97,12 +100,21 @@ export class AssociationDataTableComponent implements OnInit, OnChanges {
     if (!datalist) return
 
     var tmpChildCategories = [...datalist]
-    let indexToUpdate = tmpChildCategories.findIndex(item =>
-      item.oid === data.oid &&
-      item.childoid === data.childoid &&
-      item.code === data.code);
 
-    tmpChildCategories[indexToUpdate] = { ...data, status: "D" }
+    if (data.status === 'N') {
+
+      const index = tmpChildCategories.indexOf(data);
+
+      if (index !== -1) {
+        tmpChildCategories.splice(index, 1);
+      }
+    } else {
+      let indexToUpdate = tmpChildCategories.findIndex(item =>
+        item.oid === data.oid &&
+        item.childoid === data.childoid &&
+        item.code === data.code);
+      tmpChildCategories[indexToUpdate] = { ...data, status: "D" }
+    }
 
     return tmpChildCategories.slice().sort((a, b) => b.status.localeCompare(a.status))
   }
@@ -121,8 +133,8 @@ export class AssociationDataTableComponent implements OnInit, OnChanges {
     return tmpChildCategories.slice().sort((a, b) => b.status.localeCompare(a.status))
   }
 
-  addNewProduct() {
-    this.onAddNewData.emit()
+  searchAndAddNewProduct() {
+    this.onAddClicked.emit()
   }
 
 }

@@ -10,6 +10,18 @@ export interface SearchData {
     postfields: SearchPostField[]
 }
 
+export const searchDataInitial: SearchData = {
+    id: 0,
+    lookinselected: "",
+    lookinoptions: [],
+    lookforselected: "",
+    lookforoptions: [],
+    resultperpageselected: "",
+    resultperpageoptions: [],
+    fields: [],
+    postfields: [],
+}
+
 export interface SearchDataField {
     fieldvalue: string
     fieldtext: string
@@ -44,12 +56,14 @@ export enum SearchFieldType {
     FileName,
     MultipleChoice,
     LongText,
+
+    NoType = 999,
 }
 
-export const SearchDataPostFieldInitial: SearchPostField = {
-    logicaloperator: "",
+export const searchDataPostFieldEmpty: SearchPostField = {
+    logicaloperator: "AND",
     field: "",
-    fieldtype: 0,
+    fieldtype: SearchFieldType.NoType,
     condition: "",
     value: "",
 }

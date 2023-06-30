@@ -1,28 +1,45 @@
-<div class="fixed top-[64px] left-[56px] bg-gray-100 right-0 bottom-0 p-2" [ngClass]="{
-    'left-[56px]' : (sideBarMenuOpened$ | async) === false,
-    'left-64' : (sideBarMenuOpened$ | async) === true,
-}">
-    <app-breadcrumb class="relative p-0 z-40 right-0 bg-gray-100"></app-breadcrumb>
-
-    <app-data-list class="absolute p-0 right-0 top-[80px] left-2 bottom-0 overflow-auto scrollbar-hide" [ngClass]="{
-        'w-[384px]' : (sideBarMenuOpened$ | async) === false,
-        'w-[288px]' : (sideBarMenuOpened$ | async) === true,
+<div class="background fixed top-[64px] left-[56px] right-0 bottom-0 p-0" [ngClass]="{
+        'left-64' : (sideBarMenuOpened$ | async) === true,
+        'left-[56px]' : (sideBarMenuOpened$ | async) === false
     }">
+
+    <!-- NAVIGATION BREADCRUMB -->
+    <app-breadcrumb class="relative z-30 p-0 right-0 bg-gray-100" [navigationList$]="navigationList$"
+        [childsCount$]="childsCount$" [loading]="(productStateLoading$ | async) ?? false"
+        [hasSearchResults]="(searchDataSelectedResult$ | async) !== undefined"
+        (onBackToSearchResult)="backToSearchResult()" (onGetCatalogs)="getCatalogs()"
+        (onSelectProduct)="selectNavigationItem($event)">
+    </app-breadcrumb>
+
+    <!-- PRODUCT LIST -->
+    <app-data-list *ngIf="!(productListIsEmpty$ | async)"
+        class="absolute p-0 right-0 top-14 left-0 bottom-0 pb-2 overflow-auto scrollbar-hide border-r border-gray-400 dark:border-gray-700"
+        [ngClass]="{
+             'w-[288px]': (sideBarMenuOpened$ | async),
+             'w-[384px]': !(sideBarMenuOpened$ | async),
+        }" [loading]="(dataListLoading$ | async) ?? false" (onSelectItem)="selectProduct($event)"
+        [selectedProductType$]="selectedProductType$" [selectedProductName$]="selectedProductName$"
+        [selectedProductId$]="selectedProductId$" [productList$]="productList$"
+        [productListIsEmpty$]="productListIsEmpty$" [isCatalogList$]="isCatalogList$">
     </app-data-list>
 
-    <div *ngIf="(navItemsObserver$ | async) as navItems"
-        class="absolute top-[80px] right-2 bottom-0 pl-2 pb-2 overflow-auto scrollbar-hide" [ngClass]="{
-        'left-[392px]' : (sideBarMenuOpened$ | async) === false,
-        'left-[296px]' : (sideBarMenuOpened$ | async) === true,
+    <!-- PRODUCT DETAIL -->
+    <app-product-detail *ngIf="(hasProductDetail$ | async)"
+        class="absolute top-14 bottom-0 pb-2 left-0 right-0 overflow-auto scrollbar-hide" [ngClass]="{
+        'left-[296px]': (sideBarMenuOpened$ | async) === true && (productListIsEmpty$ | async) === false,
+        'left-[384px]': (sideBarMenuOpened$ | async) === false && (productListIsEmpty$ | async) === false,
     }">
-        <app-detail-form *ngIf="navItems.length > 0" [framed]="true" [unfolded]="true"></app-detail-form>
+    </app-product-detail>
 
-        <div *ngIf="navItems.length === 0"
-            class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
-            <div class="flex items-center justify-center h-48 rounded bg-gray-50 dark:bg-gray-800">
-                <p class="text-2xl text-gray-400 dark:text-gray-500">Select a catalog</p>
+    <!-- PRODUCT DETAIL EMPTY 
+    <div *ngIf="!(hasProductDetail$ | async)"
+        class="absolute top-[80px] right-2 bottom-0 pl-2 pb-2 overflow-auto scrollbar-hide"
+        [ngClass]="(sideBarMenuOpened$ | async) ? 'left-[296px]' : 'left-[392px]'">
+        <div class="p-4 border-2 border-gray-400 border-dashed rounded-lg dark:border-gray-700">
+            <div class="flex items-center justify-center h-48 rounded  dark:bg-gray-800">
+                <p class="text-2xl text-gray-500 dark:text-gray-500">Select a catalog</p>
             </div>
         </div>
-    </div>
+    </div>-->
 
 </div>

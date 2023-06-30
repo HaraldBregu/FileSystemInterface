@@ -4,19 +4,27 @@ export interface AssociationFieldOption {
 }
 
 export interface AssociationData {
-    oid :number,
+    oid: number
     childoid: number
     code: string
-    displayname :string
-    status :string
+    displayname: string
+    status: string
 }
 
 export interface ProductAssociation {
     id: number
     catalogname: string
     primarycategory: string
-    options: AssociationFieldOption[]
     parentcategories: AssociationData[]
     childcategories: AssociationData[]
     products: AssociationData[]
+}
+
+export const productAssociationInitial: ProductAssociation = {
+    id: 0,
+    catalogname: "",
+    primarycategory: "",
+    parentcategories: [],
+    childcategories: [],
+    products: [],
 }

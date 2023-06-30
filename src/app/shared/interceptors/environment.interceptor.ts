@@ -21,7 +21,7 @@ export class EnvironmentInterceptor implements HttpInterceptor {
       return next.handle(request)
     }
 
-    const currEnv = this.localService.getEnvironment() ?? ""
+    const currEnv = this.localService.getEnvironment() ?? "PRE"
 
     const modifiedReq = request.clone({
       headers: request.headers.set('api_env', currEnv),

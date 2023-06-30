@@ -1,12 +1,11 @@
-import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { ProductType } from '../../enums/product-type';
 import { Product } from '../../interfaces/product';
 import { CommonModule } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { Store } from '@ngrx/store';
-import { dashboardDataSelector, getCatalogProperties, getCategories, getCategoryProperties, selectCatalog, selectCategory } from 'src/app/store';
 import { Observable, map } from 'rxjs';
 import { ProductOrder } from '../../enums/product-order';
+import { CoreUIModule } from 'src/app/core/components/core-ui.module';
 
 @Component({
   selector: 'app-data-list',
@@ -14,62 +13,52 @@ import { ProductOrder } from '../../enums/product-order';
   imports: [
     CommonModule,
     FontAwesomeModule,
+    CoreUIModule,
   ],
   templateUrl: './data-list.component.html',
   styleUrls: ['./data-list.component.scss']
 })
-export class DataListComponent {
+export class DataListComponent implements OnInit {
+  @Input() loading: boolean = false
+  @Input() selectedProductType$: Observable<ProductType | undefined> = new Observable()
+  @Input() selectedProductName$: Observable<string | undefined> = new Observable()
+  @Input() selectedProductId$: Observable<number | undefined> = new Observable()
+  @Input() productList$: Observable<Product[]> = new Observable()
+  @Input() productListIsEmpty$: Observable<boolean> = new Observable()
+  @Input() isCatalogList$: Observable<boolean> = new Observable()// = this.store.pipe(select(isCatalogList))
+  @Output() onSelectItem = new EventEmitter<Product>();
   @ViewChild('searchInput') searchInput: ElementRef = new ElementRef('')
-
-  dashboardObservable$ = this.store.select(dashboardDataSelector)
-
-  products$: Observable<Product[]> = this.dashboardObservable$
-    .pipe(map(data => {
-      return (data.products.length > 0) ? data.products : data.catalogs
-    }))
-  filteredProducts$: Observable<Product[]> = this.dashboardObservable$
-    .pipe(map(data => {
-      return (data.products.length > 0) ? data.products : data.catalogs
-    }))
-
-  currentCatalogObservable$: Observable<Product | undefined> = this.dashboardObservable$
-    .pipe(map(data => data.currentCatalog))
-
   ProductType = ProductType
   productOrder: ProductOrder = ProductOrder.NONE
   ProductOrder = ProductOrder
+  filteredProductList$ = this.productList$
 
-  constructor(private store: Store) { }
+  constructor() { }
 
-  selectCatalog(catalog: Product) {
-    this.clearFilteredData()
-    this.store.dispatch(selectCatalog({ catalog: catalog }))
-    this.store.dispatch(getCatalogProperties({ catalog: catalog }))
-    this.store.dispatch(getCategories({ catalog: catalog }))
+  ngOnInit(): void {
+    this.filteredProductList$ = this.productList$
   }
 
-  selectCategory(category: Product, catalog: Product) {
+  selectProduct(product: Product) {
     this.clearFilteredData()
-    this.store.dispatch(selectCategory({ category: category }));
-    this.store.dispatch(getCategoryProperties({ catalog_name: catalog.name, category_id: category.id }))
-    this.store.dispatch(getCategories({ catalog: catalog, category: category }))
+    this.onSelectItem.emit(product)
   }
 
   toggleOrderByProductName() {
     switch (this.productOrder) {
       case ProductOrder.NONE:
         this.productOrder = ProductOrder.AZ
-        this.filteredProducts$ = this.products$
+        this.filteredProductList$ = this.productList$
           .pipe(map(data => data.slice().sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))))
         break
       case ProductOrder.AZ:
         this.productOrder = ProductOrder.ZA
-        this.filteredProducts$ = this.products$
+        this.filteredProductList$ = this.productList$
           .pipe(map(data => data.slice().sort((a, b) => b.name.toLowerCase().localeCompare(a.name.toLowerCase()))))
         break
       case ProductOrder.ZA:
         this.productOrder = ProductOrder.NONE
-        this.filteredProducts$ = this.products$
+        this.filteredProductList$ = this.productList$
     }
   }
 
@@ -77,17 +66,16 @@ export class DataListComponent {
     this.productOrder = ProductOrder.NONE
     const inputValue = $event.target.value
 
-    this.filteredProducts$ = this.products$
+    this.filteredProductList$ = this.productList$
       .pipe(map(data => data
         .filter(content => content.name.toLowerCase()
           .includes(inputValue.toLowerCase()))
-        .slice(0, 15)
       ))
   }
 
   clearFilteredData() {
     this.searchInput.nativeElement.value = ''
-    this.filteredProducts$ = this.products$
+    this.filteredProductList$ = this.productList$
   }
 
 }

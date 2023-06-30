@@ -2,6 +2,8 @@ import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ModalConfig } from 'src/app/core/interfaces/modal-config';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { Store } from '@ngrx/store';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-modal-environments',
@@ -18,8 +20,8 @@ export class ModalEnvironmentsComponent {
   visible: boolean = false
   environments: string[] = []
   
-  constructor() {
-
+  constructor(private store: Store) {
+    
   }
 
   open(environments: string[]) {

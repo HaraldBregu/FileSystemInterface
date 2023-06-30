@@ -1,15 +1,13 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { Store } from '@ngrx/store';
-import { DashboardModelState, dashboardDataSelector, getSearchFilters } from 'src/app/store';
-import { Observable, distinctUntilChanged, filter, from, map } from 'rxjs';
+import { Observable } from 'rxjs';
 import { AssociationData, ProductAssociation } from '../../interfaces/product-association';
 import { AssociationDataTableComponent } from '../association-data-table/association-data-table.component';
 import { CoreUIModule } from 'src/app/core/components/core-ui.module';
 import { ModalSearchComponent } from '../../modals/modal-search/modal-search.component';
-import { Product } from '../../interfaces/product';
+
 
 @Component({
   selector: 'app-association-data',
@@ -26,113 +24,66 @@ import { Product } from '../../interfaces/product';
   templateUrl: './association-data.component.html',
   styleUrls: ['./association-data.component.scss']
 })
-export class AssociationDataComponent implements OnInit {
-  @Output() onDataChanges = new EventEmitter<ProductAssociation>()
-  @ViewChild('modalSearch') modalSearch?: ModalSearchComponent
+export class AssociationDataComponent {
+  @Input() disable: boolean = false
+  @Input() productAssociation$: Observable<ProductAssociation> = new Observable()
+  @Input() currentProductIsFile$: Observable<boolean> = new Observable()
+  @Output() onSelectItemType = new EventEmitter<string>()
+  @Output() onSetPrimaryCategory = new EventEmitter<string>()
+  @Output() onSearchDataForSelectedProduct = new EventEmitter<string>()
+  @Output() onProductAssociationChanged = new EventEmitter<ProductAssociation>()
 
   formGroup: FormGroup = new FormGroup({})
-  dashboardObservable$: Observable<DashboardModelState> =
-    this.store.select(dashboardDataSelector)
-  productAssociationObservable$: Observable<ProductAssociation | undefined> =
-    this.dashboardObservable$
-      .pipe(filter(data => data.currentProductAssociation !== undefined || data.currentProductAssociation !== null))
-      .pipe(map(data => data.currentProductAssociation))
-  navItemsObservable$: Observable<Product[]> =
-    this.dashboardObservable$
-      .pipe(filter(data => data.navItems.length > 1))
-      .pipe(map(data => data.navItems))
+  selectedcategory: string = "parentcategories"
 
-
-  currentCatalogName?: string
-  currentProductId?: number
-
-  productAssociation?: ProductAssociation
-  parentCategories?: AssociationData[]
-  childCategories?: AssociationData[]
-  products?: AssociationData[]
-  selectedcategory: string = ""
-  hasParentAndChild: boolean = false
-
-  constructor(private store: Store) {
-
-    this.productAssociationObservable$.subscribe(data => {
-      if (!data) return
-
-      this.productAssociation = data
-
-      this.formGroup.addControl(data.catalogname, new FormControl(data.primarycategory))
-
-      this.parentCategories = data.parentcategories
-      this.childCategories = data.childcategories
-      this.products = data.products
-
-      const hasParent = this.parentCategories.length > 0
-      const hasChild = this.childCategories.length > 0
-
-      this.hasParentAndChild = hasParent && hasChild
-      this.selectedcategory = ""
-      if (hasParent) {
-        this.selectedcategory = "parentcategories"
-      } else if (hasChild) {
-        this.selectedcategory = "childcategories"
-      }
-
+  constructor() {
+    this.productAssociation$.subscribe(productAssociation => {
+      this.formGroup.addControl('PRIMARY_CATEGORY', new FormControl(productAssociation.primarycategory ?? ""))
     })
-
-    this.navItemsObservable$.subscribe(data => {
-      this.currentCatalogName = data[0].name
-      this.currentProductId = data.at(data.length - 1)?.id
-    })
-
   }
 
-  ngOnInit(): void {
-
+  hasPrimaryCategoryControl() {
+    return this.formGroup.get('PRIMARY_CATEGORY') ?? false
   }
 
-  updateParentDataList(dataList: AssociationData[]) {
-    if (!this.productAssociation)
+  selectPrimaryCategory($event: any) {
+    const value = $event.target.value
+    this.onSetPrimaryCategory.emit(value)
+  }
+
+  addItemsTo(itemType: string, type: string) {
+    this.onSelectItemType.emit(itemType)
+    this.onSearchDataForSelectedProduct.emit(type)
+  }
+
+  updateParentDataList(productAssociation: ProductAssociation | undefined, dataList: AssociationData[]) {
+    if (!productAssociation)
       return
 
-    this.productAssociation = {
-      ...this.productAssociation,
+    this.onProductAssociationChanged.emit({
+      ...productAssociation,
       parentcategories: dataList
-    }
-
-    this.onDataChanges.emit(this.productAssociation)
+    })
   }
 
-  updateChildDataList(dataList: AssociationData[]) {
-    if (!this.productAssociation)
+  updateChildDataList(productAssociation: ProductAssociation | undefined, dataList: AssociationData[]) {
+    if (!productAssociation)
       return
 
-    this.productAssociation = {
-      ...this.productAssociation,
+    this.onProductAssociationChanged.emit({
+      ...productAssociation,
       childcategories: dataList
-    }
-
-    this.onDataChanges.emit(this.productAssociation)
+    })
   }
 
-  updateProductDataList(dataList: AssociationData[]) {
-    if (!this.productAssociation)
+  updateProductDataList(productAssociation: ProductAssociation | undefined, dataList: AssociationData[]) {
+    if (!productAssociation)
       return
 
-    this.productAssociation = {
-      ...this.productAssociation,
+    this.onProductAssociationChanged.emit({
+      ...productAssociation,
       products: dataList
-    }
-
-    this.onDataChanges.emit(this.productAssociation)
-  }
-
-  addNewData() {
-    this.store.dispatch(getSearchFilters({
-      catalog_name: this.currentCatalogName,
-      category_id: this.currentProductId
-    }))
-    
-    this.modalSearch?.open()
+    })
   }
 
 }

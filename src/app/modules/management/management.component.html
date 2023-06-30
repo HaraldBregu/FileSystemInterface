@@ -1,0 +1,28 @@
+<app-navbar class="fixed z-40 top-0 w-full"></app-navbar>
+
+<aside class="sidebar fixed top-0 left-0 w-14 h-screen pt-16 transition-transform -translate-x-full sm:translate-x-0">
+    <div class="h-full overflow-y-auto scrollbar-hide">
+        <ul *ngIf="currentRoute as route">
+            <li>
+                <a (click)="navigateToPartnerListPage()" [ngClass]="{
+                    'selected' : route === 'partner-detail'
+                }" class="item flex items-center justify-center px-3 py-2 text-base font-normal">
+                    <fa-icon [icon]="['fas', 'users']" class="icon text-lg"></fa-icon>
+                </a>
+            </li>
+            <li>
+                <a (click)="navigateToRolesPage()" [ngClass]="{
+                    'selected' : route === 'roles-registry'
+                }" class="item flex items-center justify-center px-3 py-2 text-base font-normal">
+                    <fa-icon [icon]="['fas', 'user']" class="icon text-lg"></fa-icon>
+                </a>
+            </li>
+        </ul>
+    </div>
+</aside>
+
+<div class="fixed top-[64px] right-0 bottom-0 left-14">
+    <router-outlet name="management-content"></router-outlet>
+</div>
+
+<app-modal-organisations #modalOrganizations></app-modal-organisations>

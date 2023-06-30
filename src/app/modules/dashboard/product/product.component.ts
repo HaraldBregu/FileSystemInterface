@@ -1,74 +1,61 @@
-import { Component, OnInit } from '@angular/core';
-import { filter, map, Observable } from 'rxjs';
-import { Store } from '@ngrx/store';
-import {
-  dashboardDataSelector,
-  getCatalogProperties,
-  getCategories,
-  getCategoryAssociations,
-  getCategoryProperties,
-  getSearchFilters,
-  saveCatalogProperties,
-  saveCategoryProperties,
-  selectCatalog,
-  selectCategory
-} from 'src/app/store';
+import { Component } from '@angular/core';
+import { Store, select } from '@ngrx/store';
+import { hasProductDetail, isCatalogList, productList, productListCount, productListIsEmpty, productLoading, searchDataSelectedResult, selectedProductId, selectedProductList, selectedProductName, selectedProductType, sideMenuOpened } from '../store/selectors';
+import { getCatalogs, selectProduct } from '../store/actions/actions';
+import { NavigationItem } from 'src/app/shared/interfaces/navigation-item';
 import { Product } from 'src/app/shared/interfaces/product';
-import { ProductType } from 'src/app/shared/enums/product-type';
-import { ProductDetail } from 'src/app/shared/interfaces/product-detail';
+import { getNavigationItemsFromProduct, selectNavigationItem } from '../store/actions/navigation.actions';
 import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-product',
   templateUrl: './product.component.html',
   styleUrls: ['./product.component.scss']
 })
-export class ProductComponent implements OnInit {
-  productDetail: ProductDetail | undefined
-  currentCatalog: Product | undefined
-  currentProduct: Product | undefined
+export class ProductComponent {
+  sideBarMenuOpened$ = this.store.pipe(select(sideMenuOpened))
+  navItemsObserver$ = this.store.pipe(select(selectedProductList))
+  hasProductDetail$ = this.store.pipe(select(hasProductDetail))
 
-  dashboardObservable$ = this.store.select(dashboardDataSelector);
-  catalogSubscription$ = this.dashboardObservable$
-    .pipe(map(data => data.currentCatalog))
-  sideBarMenuOpened$: Observable<boolean> = this.dashboardObservable$
-    .pipe(map(data => data.dashboardSideMenuOpened))
-  navItemsObserver$: Observable<Product[]> = this.dashboardObservable$
-    .pipe(map(data => data.navItems))
+  dataListLoading$ = this.store.pipe(select(productLoading))
+
+  selectedProductName$ = this.store.pipe(select(selectedProductName))
+  selectedProductType$ = this.store.pipe(select(selectedProductType))
+  selectedProductId$ = this.store.pipe(select(selectedProductId))
+
+  productList$ = this.store.pipe(select(productList))
+  productListIsEmpty$ = this.store.pipe(select(productListIsEmpty))
+  isCatalogList$ = this.store.pipe(select(isCatalogList))
+
+  navigationList$ = this.store.pipe(select(selectedProductList))
+  childsCount$ = this.store.pipe(select(productListCount))
+  productStateLoading$ = this.store.pipe(select(productLoading))
+
+  searchDataSelectedResult$ = this.store.pipe(select(searchDataSelectedResult))
 
   constructor(private store: Store, private router: Router) {
-    this.catalogSubscription$.subscribe(catalog => this.currentCatalog = catalog)
   }
 
-  ngOnInit(): void {
-
+  getCatalogs() {
+    this.store.dispatch(getCatalogs())
   }
 
-  selectItem(item: Product) {
-    var catalog = this.currentCatalog
-    if (!catalog) return
-
-    switch (item.type) {
-      case ProductType.Category:
-      case ProductType.CategoryVariant:
-      case ProductType.File:
-      case ProductType.FileVariant:
-      // this.selectCategory(catalog, item);
-    }
+  selectNavigationItem(item: NavigationItem) {
+    this.store.dispatch(selectNavigationItem({ item: item }))
   }
 
-  saveProductDetail(productDetail: ProductDetail) {
-    switch (this.currentProduct?.type) {
-      case ProductType.Catalog:
-        this.store.dispatch(saveCatalogProperties({ data: productDetail }))
-        break
-      case ProductType.Category:
-      case ProductType.CategoryVariant:
-      case ProductType.File:
-      case ProductType.FileVariant:
-        this.store.dispatch(saveCategoryProperties({ data: productDetail }))
-        break
-    }
+  selectProduct(product: Product) {
+    this.store.dispatch(selectProduct({ product: product }))
+    this.store.dispatch(getNavigationItemsFromProduct({ product: product }))
   }
 
+  backToSearchResult() {
+    this.router.navigate([
+      '/dashboard', {
+        outlets: {
+          'dashboard-content': 'explorer'
+        }
+      }])
+  }
 }

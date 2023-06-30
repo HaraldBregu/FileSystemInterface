@@ -1,11 +1,10 @@
-import { Component, ElementRef, OnDestroy, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { dashboardDataSelector, getSearchFilters, getSearchResult } from 'src/app/store';
-import { Observable, Subscription, filter, map } from 'rxjs';
-import { SearchData, SearchDataField, SearchDataPostFieldInitial, SearchFieldType, SearchPostField } from '../../interfaces/search-data';
-import { Store } from '@ngrx/store';
+import { Observable, map } from 'rxjs';
+import { SearchData, SearchDataField, SearchFieldType, SearchPostField } from '../../interfaces/search-data';
 import { SearchDataResult } from '../../interfaces/search-data-result';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { ProductType } from '../../enums/product-type';
 
 @Component({
   selector: 'app-search-data',
@@ -17,146 +16,181 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
   templateUrl: './search-data.component.html',
   styleUrls: ['./search-data.component.scss']
 })
-export class SearchDataComponent implements OnInit, OnDestroy {
-  dashboardObservable$ = this.store.select(dashboardDataSelector);
-  searchDataObservable$: Observable<SearchData | undefined> =
-    this.dashboardObservable$
-      .pipe(filter(data => data.searchData !== undefined || data.searchData !== null))
-      .pipe(map(data => data.searchData))
-  searchDataResultObservable$: Observable<SearchDataResult[]> =
-    this.dashboardObservable$
-      .pipe(map(data => data.searchDataResult))
-  subscribtion?: Subscription = this.searchDataObservable$.subscribe(data => this.searchData = data)
+export class SearchDataComponent {
+  @Input() searchData$: Observable<SearchData | undefined> = new Observable()
+  @Input() searchDataResult$: Observable<SearchDataResult[]> = new Observable()
+  @Input() selectable: boolean = true
+  @Output() onSelectItem = new EventEmitter<SearchDataResult>()
+  @Output() onSelectItems = new EventEmitter<SearchDataResult[]>()
+  @Output() onSearchData = new EventEmitter()
 
-  searchData: SearchData | undefined
   searchDataFieldSelected: SearchDataField | undefined
-  searchDataPostFields: SearchPostField[] = []
-  searchDataPostField: SearchPostField = { ...SearchDataPostFieldInitial }
+
   inputValue: string = ''
-  showSearchFields: boolean = true
   SearchFieldType = SearchFieldType
   toggleOrderDisplayName: boolean = true
   toggleOrderCategoryName: boolean = true
   orderDisplayName = false
   orderCategoryName = false
+  selectedData: SearchDataResult[] = []
 
-  constructor(private store: Store) {
-  }
+  currentPage = 1
+  itemsPerPage = 20
+  showItemsPerPage = false
+  ProductType = ProductType
 
-  ngOnInit(): void {
+  @Output() onSelectCatalogName = new EventEmitter<string>();
+  @Output() onSelectProductType = new EventEmitter<string>();
+  @Output() onSetOperator = new EventEmitter<{ operator: string, index: number }>();
+  @Output() onSetPostField = new EventEmitter<{ fieldName: string, fieldType: SearchFieldType, index: number }>();
+  @Output() onSetPostFieldCondition = new EventEmitter<{ condition: string, index: number }>();
+  @Output() onSetPostFieldValue = new EventEmitter<{ fieldValue: string, index: number }>();
+  @Output() onAddEmptyCondition = new EventEmitter();
+  @Output() onRemoveCondition = new EventEmitter<{ index: number }>();
+  @Output() onGetSearchDataResult = new EventEmitter();
 
-  }
+  constructor() { }
 
-  ngOnDestroy(): void {
-    this.subscribtion?.unsubscribe()
-  }
+  /// [LOOKIN] select
 
   selectLookIn($event: any) {
-    if (!this.searchData)
-      return
-
-    const newSearchData = { ...this.searchData }
-    newSearchData.lookinselected = $event.target.value
-    this.searchData = newSearchData
+    this.onSelectCatalogName.emit($event.target.value)
   }
+
+  /// [LOOKFOR] select
 
   selectLookFor($event: any) {
-    if (!this.searchData)
-      return
-
-    const newSearchData = { ...this.searchData }
-    newSearchData.lookforselected = $event.target.value
-    this.searchData = newSearchData
+    this.onSelectProductType.emit($event.target.value)
   }
 
-  selectResultsPerPage($event: any) {
-    if (!this.searchData)
-      return
+  /// [OPERATORS] select
 
-    const newSearchData = { ...this.searchData }
-    newSearchData.resultperpageselected = $event.target.value
-    this.searchData = newSearchData
+  selectOperator($event: any, index: number) {
+    this.onSetOperator.emit({ operator: $event.target.value, index: index })
   }
 
-  selectField($event: any, searchData: SearchData) {
-    const value = $event.target.value
-
-    this.searchDataFieldSelected = searchData.fields.find(option => option.fieldvalue === value)
-    this.searchDataPostField.field = value
-    this.searchDataPostField.fieldtype = this.searchDataFieldSelected?.fieldtype ?? 0
-  }
-
-  updateSelectedField(field: SearchPostField, $event: any) {
-    const value = $event.target.value
-    field.field = value
-    field.condition = ''
-    field.logicaloperator = ''
-    field.value = ''
-  }
-
-  selectOperator($event: any, field: SearchPostField) {
-    field.logicaloperator = $event.target.value
-  }
+  /// [OPERATORS] list
 
   operatorsForField(searchData: SearchData, index: number) {
-    return searchData.fields
-      .find(data => data.fieldvalue === this.searchDataPostFields[index].field)?.operators
+    return searchData.fields[0].operators//.find(data => data.fieldvalue === this.searchDataPostFields[index].field)?.operators
   }
 
-  selectCondition($event: any, postField: SearchPostField) {
+  /// [FIELD] set
+
+  updatePostFieldAtIndex($event: any, index: number, searchData: SearchData) {
     const value = $event.target.value
-    postField.condition = value
-  }
+    const fields = searchData.fields
+    let dataIndex = fields.findIndex(item => item.fieldtext === value)
+    const field = fields[dataIndex]
 
-  conditionsForField(searchData: SearchData, index: number) {
-    return searchData.fields
-      .find(data => data.fieldvalue === this.searchDataPostFields[index].field)?.conditions
-  }
-
-  setConditionValue($event: any, postField: SearchPostField) {
-    const value = $event.target.value
-    postField.value = value
-  }
-
-  addCondition(postField: SearchPostField) {
-    this.showSearchFields = true
-
-    if (this.conditionIsComplete(postField) && this.searchData) {
-      this.searchDataPostFields.push({ ...postField })
-      this.searchDataFieldSelected = undefined
-      this.searchDataPostField = { ...SearchDataPostFieldInitial }
-
-      const newSearchData = { ...this.searchData }
-      newSearchData.postfields = this.searchDataPostFields
-      this.searchData = newSearchData
+    if (field === undefined) {
+      this.onSetPostField.emit({ fieldName: "", fieldType: SearchFieldType.NoType, index: index })
+      return
     }
+
+    if (!field.fieldtype)
+      return
+
+    this.onSetPostField.emit({ fieldName: value, fieldType: field.fieldtype, index: index })
   }
+
+  /// [CONDITION] select
+
+  selectPostFieldConditionAtIndex($event: any, index: number) {
+    this.onSetPostFieldCondition.emit({ condition: $event.target.value, index: index })
+  }
+
+  /// [CONDITION] list
+
+  conditionsForField(fieldValue: string, searchData: SearchData) {
+    const fields = searchData.fields
+    let index = fields.findIndex(item => item.fieldvalue === fieldValue)
+    return index >= 0 ? fields[index].conditions : []
+  }
+
+  /// [VALUE] set
+
+  setValueForField($event: any, index: number) {
+    this.onSetPostFieldValue.emit({ fieldValue: $event.target.value, index: index })
+  }
+
+  isChecked(value: string) {
+    if (value.length === 0)
+      return false
+
+    const result = Boolean(JSON.parse(value))
+    return result
+  }
+
+  setCheckBoxValueForField(value: string, index: number) {
+    if (value.length === 0)
+      value = "false"
+
+    var result = Boolean(JSON.parse(value))
+    result = !result
+    var strBool = result ? "true" : "false"
+
+    this.onSetPostFieldValue.emit({ fieldValue: strBool, index: index })
+  }
+
+  valuesForSelectedFieldAtIndex(index: number, searchData: SearchData) {
+    const fields = searchData.fields
+    const fieldName = searchData.postfields[index].field
+    let dataIndex = fields.findIndex(item => item.fieldtext === fieldName)
+    return searchData.fields[dataIndex].values
+  }
+
+  /// [CONDITION] add empty
+
+  addEmptyCondition() {
+    this.onAddEmptyCondition.emit()
+  }
+
+  /// [CONDITION] remove
 
   removeCondition(index: number) {
-    if (this.searchData && this.searchDataPostFields.length > 0) {
-      console.log(JSON.stringify(this.searchDataPostFields))
+    this.onRemoveCondition.emit({ index: index })
+  }
 
-      
-      this.searchDataPostFields.splice(index, 1)
+  /// [ACTION] search
 
-      const newSearchData = { ...this.searchData }
-      newSearchData.postfields = this.searchDataPostFields
-      this.searchData = newSearchData
+  searchProducts(searchData: SearchData) {
+    if (this.baseParamsAreCompleted(searchData)) {
+      this.onGetSearchDataResult.emit()
     }
   }
 
-  searchProducts() {
-    if (this.baseParamsAreCompleted() && this.searchData) {
-      this.store.dispatch(getSearchResult({ searchData: this.searchData }))
+  /// [ACTION] selected products 
+
+  selectProducts() {
+    this.onSelectItems.emit(this.selectedData)
+  }
+
+  selectItem(item: SearchDataResult) {
+    if (this.selectable) {
+      const index = this.selectedData.indexOf(item)
+      if (index > -1) {
+        this.selectedData.splice(index, 1);
+      } else {
+        this.selectedData.push(item)
+      }
+    } else {
+      this.onSelectItem.emit(item)
     }
   }
+
+  selected(item: SearchDataResult) {
+    return this.selectedData.includes(item)
+  }
+
+  /// [UTILS] 
 
   toggleOrderByDisplayName() {
     this.orderDisplayName = true
     this.orderCategoryName = false
     this.toggleOrderDisplayName = !this.toggleOrderDisplayName
 
-    this.searchDataResultObservable$ = this.searchDataResultObservable$.pipe(map(data => {
+    this.searchDataResult$ = this.searchDataResult$.pipe(map(data => {
       return data.slice().sort((a, b) => this.toggleOrderDisplayName ?
         b.displayname.toLowerCase().localeCompare(a.displayname.toLowerCase()) :
         a.displayname.toLowerCase().localeCompare(b.displayname.toLowerCase()))
@@ -168,7 +202,7 @@ export class SearchDataComponent implements OnInit, OnDestroy {
     this.orderCategoryName = true
     this.toggleOrderCategoryName = !this.toggleOrderCategoryName
 
-    this.searchDataResultObservable$ = this.searchDataResultObservable$.pipe(map(data => {
+    this.searchDataResult$ = this.searchDataResult$.pipe(map(data => {
       return data.slice().sort((a, b) => this.toggleOrderCategoryName ?
         b.categoryname.toLowerCase().localeCompare(a.categoryname.toLowerCase()) :
         a.categoryname.toLowerCase().localeCompare(b.categoryname.toLowerCase())
@@ -178,24 +212,52 @@ export class SearchDataComponent implements OnInit, OnDestroy {
 
   // UTILS
 
-  baseParamsAreCompleted() {
-    if (this.searchData &&
-      this.searchData.lookinselected &&
-      this.searchData.lookforselected &&
-      this.searchData.resultperpageselected)
+  baseParamsAreCompleted(searchData: SearchData) {
+    if (searchData.lookinselected && searchData.lookforselected)
       return true
 
     return false
   }
 
   conditionIsComplete(postFieldData: SearchPostField) {
-    if ((this.searchDataPostFields.length > 0 && postFieldData.logicaloperator.length === 0) ||
-      postFieldData.field.length === 0 ||
-      postFieldData.condition.length === 0 ||
-      postFieldData.value.length === 0)
-      return false
+    /* if ((this.searchDataPostFields.length > 0 && postFieldData.logicaloperator.length === 0) ||
+       postFieldData.field.length === 0 ||
+       postFieldData.condition.length === 0 ||
+       postFieldData.value.length === 0)
+       return false*/
 
     return true
   }
 
+
+  prevPage() {
+    return (this.currentPage === 1) ? 1 : --this.currentPage
+  }
+
+  nextPage(list: SearchDataResult[]) {
+    return (this.currentPage === this.getPageCount(list)) ? this.getPageCount(list) : ++this.currentPage
+  }
+
+  prevPageNumber(page: number) {
+    const prevPage = page - 1
+    return prevPage
+  }
+
+  nextPageNumber(page: number) {
+    const nextPage = page + 1
+    return nextPage
+  }
+
+  selectPage($event: any) {
+    this.currentPage = parseInt($event.target.value)
+  }
+
+  getPageCount(list: SearchDataResult[]) {
+    return Math.ceil(list.length / this.itemsPerPage)
+  }
+
+  selectItemsPerPage($event: any) {
+    this.itemsPerPage = parseInt($event.target.value)
+  }
+  
 }

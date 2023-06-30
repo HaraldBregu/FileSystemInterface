@@ -1,11 +1,10 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Product } from '../../interfaces/product';
-import { ProductType } from '../../enums/product-type';
 import { CommonModule } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { Store } from '@ngrx/store';
-import { clearNavItems, dashboardDataSelector, getCatalogProperties, getCatalogs, getCategories, getCategoryProperties, selectCatalog, selectCategory } from 'src/app/store';
-import { Observable, map } from 'rxjs';
+import { CoreUIModule } from 'src/app/core/components/core-ui.module';
+import { Observable } from 'rxjs';
+import { NavigationItem } from '../../interfaces/navigation-item';
 
 @Component({
   selector: 'app-breadcrumb',
@@ -13,54 +12,32 @@ import { Observable, map } from 'rxjs';
   imports: [
     CommonModule,
     FontAwesomeModule,
+    CoreUIModule,
   ],
   templateUrl: './breadcrumb.component.html',
   styleUrls: ['./breadcrumb.component.scss']
 })
 export class BreadcrumbComponent {
-  dashboardObservable$ = this.store.select(dashboardDataSelector)
-  currentCatalogObservable$: Observable<Product | undefined> = this.dashboardObservable$
-    .pipe(map(data => data.currentCatalog))
-  currentCatalog: Product | undefined
-  navItems$: Observable<Product[]> = this.dashboardObservable$.pipe(map(data => data.navItems))
-  lastSelectedProducts$: Observable<Product[]> = this.dashboardObservable$.pipe(map(data => data.products))
-  
-  constructor(private store: Store) {
-    this.currentCatalogObservable$.subscribe(data => this.currentCatalog = data)
-  }
+  @Input() navigationList$: Observable<NavigationItem[]> = new Observable()
+  @Input() childsCount$: Observable<number> = new Observable()
+  @Input() loading: boolean = false
+  @Input() hasSearchResults: boolean = false
+  @Output() onGetCatalogs = new EventEmitter()
+  @Output() onSelectProduct = new EventEmitter<NavigationItem>()
+  @Output() onBackToSearchResult = new EventEmitter()
+
+  constructor() { }
 
   getCatalogs() {
-    this.store.dispatch(getCatalogs());
-    this.store.dispatch(clearNavItems());
+    this.onGetCatalogs.emit()
   }
 
-  selectItem(item: Product) {
-    var catalog = this.currentCatalog
-    if (!catalog) return
-
-    switch (item.type) {
-      case ProductType.Catalog:
-        this.selectCatalog(item)
-        break
-      case ProductType.Category:
-      case ProductType.CategoryVariant:
-      case ProductType.File:
-      case ProductType.FileVariant:
-        this.selectCategory(catalog, item);
-        break
-    }
+  selectProduct(item: NavigationItem) {
+    this.onSelectProduct.emit(item)
   }
 
-  selectCatalog(item: Product) {
-    this.store.dispatch(selectCatalog({ catalog: item }))
-    this.store.dispatch(getCatalogProperties({ catalog: item }))
-    this.store.dispatch(getCategories({ catalog: item }))
+  clickBackToSearchResult() {
+    this.onBackToSearchResult.emit()
   }
-
-  selectCategory(catalog: Product, category: Product) {
-    this.store.dispatch(selectCategory({ category: category }));
-    this.store.dispatch(getCategoryProperties({ catalog_name: catalog.name, category_id: category.id }))
-    this.store.dispatch(getCategories({ catalog: catalog, category: category }))
-  }
-
+  
 }

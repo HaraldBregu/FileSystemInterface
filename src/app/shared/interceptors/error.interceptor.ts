@@ -18,7 +18,11 @@ export class ErrorInterceptor implements HttpInterceptor {
     if (error.error instanceof ErrorEvent) {
       errorMessage = error.error.message;
     } else {
-      errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
+      if (error.status === 404) {
+        errorMessage = `${error.error.message}`
+      } else {
+        errorMessage = `${error.statusText}\n${error.error.ExceptionMessage}`
+      }
     }
     window.alert(errorMessage);
     return throwError(() => {

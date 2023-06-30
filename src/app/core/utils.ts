@@ -1,3 +1,5 @@
+import { DashboardState } from "../modules/dashboard/store/state";
+import { Product } from "../shared/interfaces/product";
 import { ProductDetail, ProductProperty, PropertFieldType, PropertyField } from "../shared/interfaces/product-detail";
 import { Variant, VariantPropertyField } from "../shared/interfaces/variant";
 
@@ -74,6 +76,7 @@ export default class Utils {
                 value: property.name,
                 options: [],
                 readonly: true,
+                required: false,
                 maxlength: 0,
             })
 
@@ -84,6 +87,7 @@ export default class Utils {
                     value: data.value ?? "",
                     options: data.options,
                     readonly: data.isreadonly,
+                    required: data.isrequired,
                     maxlength: data.maxlength,
                 })
             })
@@ -148,6 +152,7 @@ export default class Utils {
                 value: property.name,
                 options: [],
                 readonly: true,
+                required: false,
                 maxlength: 0,
             })
 
@@ -158,6 +163,7 @@ export default class Utils {
                     value: data.value ?? "",
                     options: data.options,
                     readonly: data.isreadonly,
+                    required: data.isrequired,
                     maxlength: data.maxlength,
                 })
             })
@@ -167,4 +173,30 @@ export default class Utils {
 
         return variants
     }
+
+    /*
+    static updateCategoryNavItems(state: DashboardState, data: Product) {
+        // Check if data with type file and file variant exists,
+        // if exists replace it
+        // if not exists add it 
+        var navItems = [...state.productState.selectedProductList]
+
+        // Add product
+        navItems.push(data)
+
+        // Remove all files firts
+        //const fileFilter = navItems.filter(data => data.type === ProductType.File || data.type === ProductType.FileVariant)
+
+
+        // filter duplicated
+        const filteredArray = navItems.filter((obj, index, self) => index === self.findIndex((t) => t.name === obj.name && t.id === obj.id))
+
+
+        const index = filteredArray.findIndex((obj) => obj.name === data.name && obj.id === data.id)
+        const resultArray = filteredArray.slice(0, index + 1)
+        return resultArray
+    }
+
+    */
+
 }

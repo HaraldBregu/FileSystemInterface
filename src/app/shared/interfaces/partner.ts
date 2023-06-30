@@ -1,0 +1,23 @@
+export interface Partner {
+    partner_id: string,
+    user_name: string,
+    password: string,
+    certificate?: string,
+    partner_role_id: string,
+    partner_role_name: string,
+    network?: string,
+    leave_invoice_items: boolean,
+    leave_category_prices?: string,
+    css?: string,
+    css_header?: string,
+    css_footer?: string,
+    referrer?: string,
+    referrer_is_mandatory?: boolean,
+    html_header?: string,
+    html_footer?: string,
+    html_left?: string,
+    html_right?: string,
+    split_invoice_items_for_guests?: string,
+    deletable: boolean,
+}
+

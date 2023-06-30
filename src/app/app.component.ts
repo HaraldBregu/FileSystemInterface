@@ -11,6 +11,7 @@ import { fas } from '@fortawesome/free-solid-svg-icons';
 export class AppComponent {
 
   constructor(library: FaIconLibrary) {
-    library.addIconPacks(fas, far);
+    library.addIconPacks(fas, far)
   }
+  
 }

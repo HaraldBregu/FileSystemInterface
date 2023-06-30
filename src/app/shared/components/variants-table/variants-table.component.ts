@@ -1,11 +1,7 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { Variant } from '../../interfaces/variant';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Store } from '@ngrx/store';
-import { Observable, map } from 'rxjs';
-import { ProductProperty } from '../../interfaces/product-detail';
-import { DashboardModelState, dashboardDataSelector } from 'src/app/store';
-import Utils from 'src/app/core/utils';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Variant, VariantPropertyField } from '../../interfaces/variant';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
+import { distinctUntilChanged } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
@@ -22,52 +18,89 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
   styleUrls: ['./variants-table.component.scss']
 })
 export class VariantsTableComponent implements OnInit {
-  @Input() type?: string
-  @Output() onSave = new EventEmitter<ProductProperty[]>()
-  properties: ProductProperty[] = []
+  @Input() variants: Variant[] = []
+  @Output() isValidForm = new EventEmitter<boolean>();
+  @Output() onChange = new EventEmitter<Variant[]>();
 
-  variants: Variant[] = []
   variantFormGroup: FormGroup = new FormGroup({})
   headerVariant: Variant | undefined
-  dashboardObservable$: Observable<DashboardModelState> = new Observable()
 
-  constructor(private store: Store) {
-    this.dashboardObservable$ = this.store.select(dashboardDataSelector)
-  }
+  constructor() { }
 
   ngOnInit() {
-    var propertiesObservable$ = this.dashboardObservable$.pipe(map(data => data.variantProperties))
 
-    propertiesObservable$.subscribe(variants => {
-      this.variants = Utils.variantsFromVariantProperties(variants)
+    this.variants.forEach((variant, index) => {
 
-      this.variants.forEach((variant, index) => {
-        var tempFormGroup = new FormGroup({})
-        variant.properties.forEach(property => {
-          tempFormGroup.addControl(property.name, new FormControl(property.value, []))
-        })
-        this.variantFormGroup.addControl("variant" + index, tempFormGroup)
+      var tempFormGroup = new FormGroup({})
+
+      variant.properties.forEach(property => {
+        function validatorFromPropertyField(propertyField: VariantPropertyField) {
+          const validators: ValidatorFn[] = []
+
+          if (propertyField.required)
+            validators.push(Validators.required)
+
+          return validators
+        }
+
+        tempFormGroup.addControl(property.name, new FormControl(property.value, validatorFromPropertyField(property)))
+
       })
 
-      this.headerVariant = this.variants[0]
-      this.variants = this.variants
-    })
-  }
+      this.variantFormGroup.addControl("variant" + index, tempFormGroup)
 
-  saveVariants() {
-    var newVariants = this.variants.map((variant, index) => {
-      const nestedFormGroup = this.variantFormGroup?.get("variant" + index) as FormGroup
-      return {
-        ...variant,
-        properties: variant.properties.map(property => {
+      setTimeout(() => {
+        this.isValidForm.emit(this.variantFormGroup.valid)
+      }, 0)
+
+      
+    })
+
+    this.headerVariant = this.variants[0]
+
+    this.variantFormGroup.valueChanges
+      .pipe(distinctUntilChanged((prev, curr) => prev === curr))
+      .subscribe(_ => {
+
+        const newVariantProperties = this.variants.map((variant, index) => {
+          const nestedFormGroup = this.variantFormGroup?.get("variant" + index) as FormGroup
           return {
-            ...property,
-            value: nestedFormGroup.get(property.name)?.value
+            ...variant,
+            properties: variant.properties.map(property => {
+              return {
+                ...property,
+                value: nestedFormGroup.get(property.name)?.value
+              }
+            })
           }
         })
-      }
-    })
-    
-    this.onSave.emit(Utils.propertiesFromVariants(newVariants))
+
+        setTimeout(() => {
+          this.isValidForm.emit(this.variantFormGroup.valid)
+        }, 0)
+
+        this.onChange.emit(newVariantProperties)
+        
+      })
+
   }
+
+  valid(field: VariantPropertyField, index: number) {
+    const formGroupBase = this.variantFormGroup.controls["variant" + index] as FormGroup
+    return formGroupBase.controls[field.name].valid
+  }
+
+  touched(field: VariantPropertyField, index: number) {
+    const formGroupBase = this.variantFormGroup.controls["variant" + index] as FormGroup
+    return formGroupBase.controls[field.name].touched
+  }
+
+  fieldInValid(field: VariantPropertyField, index: number) {
+    const isValid = this.valid(field, index)
+    const isTouched = this.touched(field, index)
+    const inValid = !isValid && isTouched && field.required
+    //this.onValidation.emit(inValid === false)
+    return inValid
+  }
+
 }

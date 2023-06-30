@@ -1,3 +1,9 @@
+export const productDetailInitial = {
+    id: 0,
+    catalogname: '',
+    properties: []
+}
+
 export interface ProductDetail {
     id: number
     catalogname: string
@@ -41,4 +47,3 @@ export interface PropertyField {
     options: PropertyFieldOption[]
     maxlength: number
 }
-

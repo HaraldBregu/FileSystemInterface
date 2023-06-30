@@ -1,65 +1,65 @@
 import { createReducer, on } from "@ngrx/store";
-import Utils from "src/app/core/utils";
 import { ProductType } from "src/app/shared/enums/product-type";
-import { Product } from "src/app/shared/interfaces/product";
 import {
     clearNavItems,
     getApiEnvironments,
     getApiEnvironmentsFailure,
     getApiEnvironmentsSuccess,
-    getCatalogProperties,
-    getCatalogPropertiesFailure,
-    getCatalogPropertiesSuccess,
     getCatalogs,
     getCatalogsFailure,
     getCatalogsSuccess,
-    getCategories,
-    getCategoriesFailure,
-    getCategoriesSuccess,
-    getCategoryAssociations,
-    getCategoryAssociationsFailure,
-    getCategoryAssociationsSuccess,
-    getCategoryProperties,
-    getCategoryPropertiesFailure,
-    getCategoryPropertiesSuccess,
+    getProductAssociation,
+    getProductAssociationFailure,
+    getProductAssociationSuccess,
+    getProductDetail,
+    getProductDetailFailure,
+    getProductDetailSuccess,
+    getProducts,
+    getProductsFailure,
+    getProductsSuccess,
     getSearchFilters,
     getSearchFiltersFailure,
+    getSearchFiltersOfSelectedProduct,
     getSearchFiltersSuccess,
     getSearchResult,
     getSearchResultFailure,
     getSearchResultSuccess,
-    saveCatalogProperties,
-    saveCatalogPropertiesFailure,
-    saveCatalogPropertiesSuccess,
-    saveCategoryProperties,
-    saveCategoryPropertiesFailure,
-    saveCategoryPropertiesSuccess,
-    searchCatalog,
-    selectCatalog,
-    selectCategory,
+    postProductAssociation,
+    postProductAssociationFailure,
+    postProductAssociationSuccess,
+    postProductDetail,
+    postProductDetailFailure,
+    postProductDetailSuccess,
+    selectProduct,
     setApiEnv,
+    setProductAssociation,
+    setProductDetailProperties,
     toggleDashboardSideMenu,
+    toggleTheme,
 } from "../actions";
-
-import { DashboardModelState } from "../models";
+import {
+    DashboardModelState,
+    productAssociationStateFail,
+    productAssociationStateInitial,
+    productAssociationStateStart,
+    productDetailStateFail,
+    productDetailStateInitial,
+    productDetailStateStart,
+    productStateFail,
+    productStateInitial,
+    productStateStart
+} from "../models";
+import Utils from "src/app/core/utils";
+import { productDetailInitial } from "src/app/shared/interfaces/product-detail";
 
 const initialState: DashboardModelState = {
+    productState: productStateInitial,
+    productDetailState: { ...productDetailStateInitial },
+    productAssociationState: { ...productAssociationStateInitial },
+
+    darkTheme: false,
     apiEnvironment: "",
-    loading: false,
-    catalogs: [],
-    currentCatalog: undefined,
-    filteredCatalogs: [],
-    products: [],
-    currentProduct: undefined,
-    currentProductDetail: undefined,
-    getCurrentProductDetailLoading: false,
-    saveCurrentProductDetailLoading: false,
-    currentProductAssociation: undefined,
-    error: undefined,
-    navItems: [],
-    baseProperties: [],
-    customProperties: [],
-    variantProperties: [],
+
     environments: [],
     searchData: undefined,
     searchDataResult: [],
@@ -69,210 +69,246 @@ const initialState: DashboardModelState = {
 export const dashboardReducer = createReducer(
     initialState,
 
-    /**
-    * SET API ENV
-    */
+    on(toggleTheme, (state: DashboardModelState) => ({
+        ...state,
+        darkTheme: !state.darkTheme,
+    })),
     on(setApiEnv, (state: DashboardModelState, data) => ({
         ...state,
         apiEnvironment: data.environment,
     })),
 
-    /**
-     * CATALOGS AND FEATURES
-     */
-    on(getCatalogs, (state: DashboardModelState) => ({
-        ...state,
-        loading: true,
-        currentProductAssociation: undefined,
-    })),
+    
+    /// CATALOGS 
+    
+    on(getCatalogs, (state: DashboardModelState) => {
+        console.log("getCatalogs")
+
+        return {
+            ...state,
+            productState: { ...productStateStart },
+            productDetailState: { ...productDetailStateInitial },
+            productAssociationState: { ...productAssociationStateInitial },
+        }
+    }),
 
     on(getCatalogsSuccess, (state: DashboardModelState, data) => {
-        var dataCatalogs = data.catalogs.map((v) => ({ ...v, type: ProductType.Catalog }))
+        console.log("getCatalogsSuccess")
+
         return {
             ...state,
+            productState: {
+                ...productStateInitial,
+                loading: false,
+                productList: data.productList.map((v) => ({ ...v, type: ProductType.Catalog })),
+            }
+        }
+    }),
+
+    on(getCatalogsFailure, (state: DashboardModelState, data) => {
+        console.log("getCatalogsFailure")
+
+        return {
+            ...state,
+            productState: productStateFail,
+        }
+    }),
+
+    /// Select Product
+
+    on(selectProduct, (state: DashboardModelState, data) => ({
+        ...state,
+        productState: {
+            ...productStateStart,
+            selectedProduct: data.product,
+            selectedProductList: Utils.updateCategoryNavItems(state, data.product),
+            productList: [],
+        },
+        productDetailState: { ...productDetailStateStart },
+        productAssociationState: { ...productAssociationStateStart },
+    })),
+
+    on(getProducts, (state: DashboardModelState) => ({
+        ...state,
+    })),
+
+    on(getProductsSuccess, (state: DashboardModelState, data) => {
+console.log("getProductsSuccess")
+        return {
+            ...state,
+            productState: {
+                ...state.productState,
+                productList: data.products,
+                loading: false,
+            },
+        }
+    }),
+
+    on(getProductsFailure, (state: DashboardModelState, data) => {
+        console.log("getProductsFailure")
+
+        return {
+            ...state,
+            productState: {
+                ...productStateFail,
+            },
+        }
+    }),
+
+    /// PRODUCT DETAIL
+
+    on(getProductDetail, (state: DashboardModelState, data) => ({
+        ...state,
+        productDetailState: { ...productDetailStateStart },
+    })),
+
+    on(getProductDetailSuccess, (state: DashboardModelState, data) => ({
+        ...state,
+        productDetailState: {
+            ...productDetailStateInitial,
+            currentProductDetail: {
+                ...data.productDetail
+            },
+            updatedProductDetail: {
+                ...data.productDetail
+            },
+        },
+    })),
+
+    on(getProductDetailFailure, (state: DashboardModelState, data) => ({
+        ...state,
+        productDetailState: { ...productDetailStateFail },
+    })),
+
+    on(setProductDetailProperties, (state: DashboardModelState, data) => ({
+        ...state,
+        productDetailState: {
+            ...state.productDetailState,
+            updatedProductDetail: {
+                ...state.productDetailState.updatedProductDetail,
+                properties: state.productDetailState.updatedProductDetail.properties
+                    .map(prop => {
+                        const matchingObject = data.productDetailProperties.find(updatedObj => updatedObj.name === prop.name)
+                        return matchingObject ? matchingObject : prop;
+                    })
+            }
+        }
+    })),
+
+    on(postProductDetail, (state: DashboardModelState, data) => {
+        console.log("postProductDetail")
+
+        return {
+            ...state,
+            productDetailState: {
+                ...state.productDetailState,
+                loading: true,
+            },
+        }    
+    }),
+
+    on(postProductDetailSuccess, (state: DashboardModelState, data) => {
+        console.log("postProductDetailSuccess")
+
+        return {
+            ...state,
+            
+            productDetailState: {
+                ...state.productDetailState,
+                loading: false,
+                currentProductDetail: state.productDetailState.updatedProductDetail,
+            },  
+        }
+    }),
+
+    on(postProductDetailFailure, (state: DashboardModelState, data) => {
+console.log("postProductDetailFailure")
+        return {
+            ...state,
+            productDetailState: {
+                ...state.productDetailState,
+                loading: false,
+            },
+        }
+    }),
+
+    /// ASSOCIATION 
+
+    on(getProductAssociation, (state: DashboardModelState, data) => ({
+        ...state,
+        productAssociationState: productAssociationStateStart,
+    })),
+
+    on(getProductAssociationSuccess, (state: DashboardModelState, data) => ({
+        ...state,
+        productAssociationState: {
+            ...productAssociationStateInitial,
+            currentProductAssociation: data.productAssociation,
+            updatedProductAssociation: data.productAssociation
+        }
+    })),
+
+    on(getProductAssociationFailure, (state: DashboardModelState, data) => ({
+        ...state,
+        productAssociationState: productAssociationStateFail
+    })),
+
+    on(setProductAssociation, (state: DashboardModelState, data) => ({
+        ...state,
+        productAssociationState: {
+            ...state.productAssociationState,
+            //currentProductAssociation: state.productAssociationState.currentProductAssociation,
+            updatedProductAssociation: data.productAssociation
+        }
+    })),
+
+    on(postProductAssociation, (state: DashboardModelState, data) => ({
+        ...state,
+        productAssociationState: {
+            ...state.productAssociationState,
+            loading: true,
+        },
+    })),
+
+    on(postProductAssociationSuccess, (state: DashboardModelState, data) => ({
+        ...state,
+        productAssociationState: {
+            ...state.productAssociationState,
+            currentProductAssociation: state.productAssociationState.updatedProductAssociation,
             loading: false,
-            catalogs: dataCatalogs,
-            filteredCatalogs: dataCatalogs
-        }
-    }),
-
-    on(getCatalogsFailure, (state: DashboardModelState, data) => ({
-        ...state,
-        loading: false,
+        },
     })),
 
-    /// SELECT CATALOG
-    on(selectCatalog, (state: DashboardModelState, data) => {
-        return {
-            ...state,
-            currentCatalog: data.catalog,
-            navItems: [data.catalog],
-            currentProduct: undefined,
-        };
-    }),
-
-    /// SEARCH CATALOG LOACALLY
-    on(searchCatalog, (state: DashboardModelState, data) => {
-        const filteredCatalogs = Utils.isBlankString(data.catalog_name) ?
-            state.catalogs :
-            state.catalogs.filter(
-                content => content.name.toLowerCase().includes(data.catalog_name.toLowerCase()))
-        return {
-            ...state,
-            filteredCatalogs: filteredCatalogs
-        };
-    }),
-
-    /// GET CATALOG PROPERTIES
-    on(getCatalogProperties, (state: DashboardModelState, data) => ({
+    on(postProductAssociationFailure, (state: DashboardModelState, data) => ({
         ...state,
-        loading: true,
-        getCurrentProductDetailLoading: true,
-        baseProperties: [],
-        customProperties: [],
-        variantProperties: [],
-        currentProductAssociation: undefined,
-    })),
-
-    on(getCatalogPropertiesSuccess, (state: DashboardModelState, data) => ({
-        ...state,
-        loading: false,
-        currentProductDetail: data.catalog_properties,
-        getCurrentProductDetailLoading: false,
-        baseProperties: data.catalog_properties.properties.filter(data => data.type === "Base"),
-        customProperties: data.catalog_properties.properties.filter(data => data.type === "Custom"),
-        variantProperties: data.catalog_properties.properties.filter(data => data.type === "Variant"),
-    })),
-
-    on(getCatalogPropertiesFailure, (state: DashboardModelState, data) => ({
-        ...state,
-        loading: false,
-        currentProductDetail: undefined,
-        getCurrentProductDetailLoading: false,
-        baseProperties: [],
-        customProperties: [],
-        variantProperties: [],
-    })),
-
-    /// SAVE CATALOG PROPERTIES
-    on(saveCatalogProperties, (state: DashboardModelState, data) => ({
-        ...state,
-        saveCurrentProductDetailLoading: true,
-    })),
-
-    on(saveCatalogPropertiesSuccess, (state: DashboardModelState, data) => ({
-        ...state,
-        saveCurrentProductDetailLoading: false,
-    })),
-
-    on(saveCatalogPropertiesFailure, (state: DashboardModelState, data) => ({
-        ...state,
-        saveCurrentProductDetailLoading: false,
-    })),
-
-    /**
-     * CATEGORIES
-     */
-    on(getCategories, (state: DashboardModelState) => ({
-        ...state,
-        loading: true,
-    })),
-
-    on(getCategoriesSuccess, (state: DashboardModelState, data) => {
-        return {
-            ...state,
+        productAssociationState: {
+            ...state.productAssociationState,
             loading: false,
-            products: data.categories,
-        };
-    }),
-
-    on(getCategoriesFailure, (state: DashboardModelState, data) => ({
-        ...state,
-        loading: false,
+        },
     })),
 
-    on(selectCategory, (state: DashboardModelState, data) => {
-        const newCategory: Product = {
-            ...data.category,
-            parent: state.navItems.at(-1)
+    /*
+    on(updateAssociation, (state: DashboardModelState, data) => ({
+        ...state,
+        productAssociationState: {
+            ...state.productAssociationState,
+            currentProductAssociation: state.productAssociationState.currentProductAssociation,
+            updatedProductAssociation: data.productAssociation
         }
+    })),*/
 
-        var prs: Product[] = []
-        if (data.category.type !== ProductType.File &&
-            data.category.type !== ProductType.FileVariant) {
-            prs = state.products
-        }
 
-        return {
-            ...state,
-            products: prs,
-            currentProduct: newCategory,
-            navItems: updateCategoryNavItems(state, newCategory),
-        };
-    }),
 
-    on(getCategoryProperties, (state: DashboardModelState, data) => ({
-        ...state,
-        loading: true,
-        getCurrentProductDetailLoading: true,
-        baseProperties: [],
-        customProperties: [],
-        variantProperties: [],
-        currentProductAssociation: undefined,
-    })),
+    /// UPDATE PROPERTIES
 
-    on(getCategoryPropertiesSuccess, (state: DashboardModelState, data) => ({
-        ...state,
-        loading: false,
-        currentProductDetail: data.product_detail,
-        getCurrentProductDetailLoading: false,
-        baseProperties: data.product_detail.properties.filter(data => data.type === "Base"),
-        customProperties: data.product_detail.properties.filter(data => data.type === "Custom"),
-        variantProperties: data.product_detail.properties.filter(data => data.type === "Variant"),
-    })),
 
-    on(getCategoryPropertiesFailure, (state: DashboardModelState, data) => ({
-        ...state,
-        loading: false,
-        currentProductDetail: undefined,
-        getCurrentProductDetailLoading: false,
-        baseProperties: [],
-        customProperties: [],
-        variantProperties: [],
-    })),
 
-    on(saveCategoryProperties, (state: DashboardModelState, data) => ({
-        ...state,
-        saveCurrentProductDetailLoading: true,
-    })),
 
-    on(saveCategoryPropertiesSuccess, (state: DashboardModelState, data) => ({
-        ...state,
-        saveCurrentProductDetailLoading: false,
-    })),
-
-    on(saveCategoryPropertiesFailure, (state: DashboardModelState, data) => ({
-        ...state,
-        saveCurrentProductDetailLoading: false,
-    })),
-
-    on(getCategoryAssociations, (state: DashboardModelState, data) => ({
-        ...state,
-        currentProductAssociation: undefined
-    })),
-
-    on(getCategoryAssociationsSuccess, (state: DashboardModelState, data) => ({
-        ...state,
-        currentProductAssociation: data.product_association,
-    })),
-
-    on(getCategoryAssociationsFailure, (state: DashboardModelState, data) => ({
-        ...state,
-        currentProductAssociation: undefined
-    })),
+    /// API ENV
 
     on(getApiEnvironments, (state: DashboardModelState) => ({
-        ...initialState,
+        ...state,
+        darkTheme: state.darkTheme
     })),
 
     on(getApiEnvironmentsSuccess, (state: DashboardModelState, data) => ({
@@ -301,6 +337,12 @@ export const dashboardReducer = createReducer(
         searchData: undefined
     })),
 
+    on(getSearchFiltersOfSelectedProduct, (state: DashboardModelState) => ({
+        ...state,
+        searchData: undefined,
+        searchDataResult: []
+    })),
+
     on(getSearchResult, (state: DashboardModelState, data) => ({
         ...state,
         searchData: data.searchData,
@@ -324,18 +366,10 @@ export const dashboardReducer = createReducer(
 
     on(clearNavItems, (state: DashboardModelState) => ({
         ...state,
-        navItems: [],
+        selectedProductList: [],
         currentCatalog: undefined,
         products: [],
         currentProduct: undefined
     })),
 
 )
-
-function updateCategoryNavItems(state: DashboardModelState, data: Product) {
-    var navItems = [...state.navItems, data]
-    const filteredArray = navItems.filter((obj, index, self) => index === self.findIndex((t) => t.name === obj.name && t.id === obj.id))
-    const index = filteredArray.findIndex((obj) => obj.name === data.name && obj.id === data.id)
-    const resultArray = filteredArray.slice(0, index + 1)
-    return resultArray
-}

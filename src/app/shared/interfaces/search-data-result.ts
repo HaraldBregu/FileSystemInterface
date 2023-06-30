@@ -1,10 +1,12 @@
+import { ProductType } from "../enums/product-type"
+
 export interface SearchDataResult {
     oid: number
-    parentoid: number
+    parentoid: number // REMOVE IT
     displayname: string
     categoryname: string
     productid: string
     variantid: string
-    type: string
+    type: ProductType
     catalogname: string
 }

@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { Store } from '@ngrx/store';
-import { map, Observable } from 'rxjs';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { select, Store } from '@ngrx/store';
 import { Product } from 'src/app/shared/interfaces/product';
-import { dashboardDataSelector, getCatalogs, getCategories, getSearchFilters, searchCatalog, selectCatalog } from 'src/app/store';
+import { selectedProductName, sideMenuOpened } from './store/selectors';
+import { getCatalogs, getSearchData, selectProduct } from './store/actions/actions';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
@@ -11,40 +12,18 @@ import { dashboardDataSelector, getCatalogs, getCategories, getSearchFilters, se
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent {
-  dashboardObservable$ = this.store.select(dashboardDataSelector)
+  selectedProductName$ = this.store.pipe(select(selectedProductName))
+  sideBarMenuOpened$ = this.store.pipe(select(sideMenuOpened))
+  currentRoute?: string
 
-  catalogsObservable: Observable<Product[]> = new Observable<Product[]>();
-  items: Product[] = [];
-
-  menuItems$: Observable<Product[]> = this.dashboardObservable$
-    .pipe(map(data => data.filteredCatalogs))
-  selectedProductObserver$: Observable<Product | undefined> = this.dashboardObservable$
-    .pipe(map(data => data.navItems.at(-1)))
-  currentCatalog$: Observable<Product | undefined> = this.dashboardObservable$
-    .pipe(map(data => data.currentCatalog))
-  sideBarMenuOpened$: Observable<boolean> = this.dashboardObservable$
-    .pipe(map(data => data.dashboardSideMenuOpened))
-
-  showCatalogs = false;
-
-  constructor(private store: Store, private router: Router) {
-
+  constructor(private store: Store, private route: ActivatedRoute, private router: Router) {
+    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
+      this.currentRoute = this.route.snapshot.firstChild?.routeConfig?.path
+    })
   }
 
-  toggleCatalogs() {
-    this.showCatalogs = !this.showCatalogs;
-    this.store.dispatch(getCatalogs());
+  goToProductPage() {
     this.navigateToProductPage()
-  }
-
-  selectCatalog(item: Product) {
-    this.store.dispatch(selectCatalog({ catalog: item }));
-    this.store.dispatch(getCategories({ catalog: item }));
-    this.navigateToProductPage()
-  }
-
-  onInputType(input: any) {
-    this.store.dispatch(searchCatalog({ catalog_name: input.inputValue }));
   }
 
   navigateToProductDetailPage() {
@@ -57,6 +36,7 @@ export class DashboardComponent {
   }
 
   navigateToProductPage() {
+    this.store.dispatch(getCatalogs())
     this.router.navigate([
       '/dashboard', {
         outlets: {
@@ -66,6 +46,7 @@ export class DashboardComponent {
   }
 
   navigateToProductExplorer() {
+    this.store.dispatch(getSearchData())
     this.router.navigate([
       '/dashboard', {
         outlets: {
