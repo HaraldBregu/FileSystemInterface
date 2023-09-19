@@ -15,31 +15,8 @@ import { EnvironmentInterceptor } from './shared/interceptors/environment.interc
 import { AppEffects } from './store/effects';
 import { appReducer } from './store/reducers';
 import { hydrationMetaReducer } from './store/metareducers';
-import { DefaultUrlSerializer, UrlSerializer, UrlTree } from '@angular/router';
-
-
-class CustomUrlSerializer extends DefaultUrlSerializer {
-  private _reverseUrl(url: string): string {
-    const startIndex = 1;
-    const segmentString =
-      `(${url.substring(startIndex).split('/').join('//')})`;
-    return url.substring(0, startIndex) + segmentString;
-  }
-  private _beautifyUrl(url: string): string {
-    return url
-      .replace('(', '')
-      .replace(')', '')
-      .split('//').join('/');
-  }
-
-  override parse(url: string): UrlTree {
-    return super.parse(this._reverseUrl(url));
-  }
-
-  override serialize(tree: UrlTree): string {
-    return this._beautifyUrl(super.serialize(tree));
-  }
-}
+import { MatDialogModule } from "@angular/material/dialog";
+import { ErrorAlertComponent } from './shared/alerts/error-alert/error-alert.component';
 
 export const metaReducers: MetaReducer<any>[] = [
   hydrationMetaReducer
@@ -62,10 +39,9 @@ export const metaReducers: MetaReducer<any>[] = [
     HttpClientModule,
     ComponentsModule,
     BrowserAnimationsModule,
-
+    MatDialogModule,
   ],
   providers: [
-    //{ provide: UrlSerializer, useClass: CustomUrlSerializer },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: EnvironmentInterceptor,
@@ -82,7 +58,8 @@ export const metaReducers: MetaReducer<any>[] = [
     }
   ],
   bootstrap: [AppComponent],
-  exports: []
+  exports: [],
+  entryComponents: [ErrorAlertComponent]
 })
 export class AppModule { }
 

@@ -1,3 +1,38 @@
+
+// Custom Theming for Angular Material
+// For more information: https://material.angular.io/guide/theming
+@use '@angular/material' as mat;
+// Plus imports for other components in your app.
+
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
+@include mat.core();
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue. Available color palettes: https://material.io/design/color/
+$CommerceEditor-primary: mat.define-palette(mat.$indigo-palette);
+$CommerceEditor-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
+
+// The warn palette is optional (defaults to red).
+$CommerceEditor-warn: mat.define-palette(mat.$red-palette);
+
+// Create the theme object. A theme consists of configurations for individual
+// theming systems such as "color" or "typography".
+$CommerceEditor-theme: mat.define-light-theme((
+  color: (
+    primary: $CommerceEditor-primary,
+    accent: $CommerceEditor-accent,
+    warn: $CommerceEditor-warn,
+  )
+));
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+@include mat.all-component-themes($CommerceEditor-theme);
+
 /* You can add global styles to this file, and also import other style files */
 @tailwind base;
 @tailwind components;
@@ -48,7 +83,11 @@
             @apply block uppercase tracking-wide text-gray-800 dark:text-white text-xs font-medium mb-2
         } 
         .input {
-            @apply block w-full text-gray-800 dark:text-white border border-gray-800 dark:border-gray-400 bg-gray-200 dark:bg-gray-800 rounded-md text-xs py-2 px-3 leading-tight
+            @apply block w-full text-gray-800 dark:text-white border border-gray-800 dark:border-gray-400 bg-gray-200 dark:bg-gray-800 rounded-md text-xs py-2 px-3 leading-tight;
+          
+            &.disabled {
+                @apply border-gray-400 dark:border-gray-600 text-gray-400 dark:text-gray-600 bg-gray-200 dark:bg-gray-800 focus:outline-none;
+            }
         }
     }
 
@@ -84,17 +123,34 @@
         }
     }
 
+    .radio-input-frame {
+        @apply flex items-center;
+        .label {
+            @apply block ml-2 uppercase tracking-wide text-gray-800 dark:text-white text-xs font-medium
+        }
+        .box {
+            @apply w-4 h-4 
+        }
+    }
+
     .input-field-left-icon {
         @apply left-0 flex items-center pl-3 pointer-events-none text-sm text-gray-900 dark:text-white
     }
 
     .button-primary-md {
-        @apply bg-blue-700 text-white hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 focus:outline-none font-medium rounded-md text-xs px-3 py-2 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800 text-center inline-flex items-center;
+        @apply bg-blue-700 text-white hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 focus:outline-none font-medium rounded-lg text-xs px-3 py-2 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800 text-center inline-flex items-center;
         &.disabled {
-            @apply bg-blue-300 focus:outline-none;
+            @apply bg-blue-300 dark:bg-blue-500 focus:outline-none;
         }
     }
-    
+
+    .button-warning-md {
+        @apply bg-red-700 text-white hover:bg-red-800 focus:ring-4 focus:ring-red-300 focus:outline-none font-medium rounded-md text-xs px-3 py-2 dark:hover:text-white dark:hover:bg-red-500 dark:focus:ring-red-800 text-center inline-flex items-center;
+        &.disabled {
+            @apply bg-red-300 focus:outline-none;
+        }
+    }
+
     .button-primary-outlined-md {
         @apply text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-xs px-3 py-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800 text-center inline-flex items-center;
         &.disabled {
@@ -134,3 +190,5 @@ body {
     scrollbar-width: none;
     /* Firefox */
 }
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

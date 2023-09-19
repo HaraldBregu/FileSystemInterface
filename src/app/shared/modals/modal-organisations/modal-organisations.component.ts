@@ -1,10 +1,11 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Store, select } from '@ngrx/store';
 import { allOrganizations, organizationLoading } from 'src/app/modules/management/store/selectors';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { Organization } from '../../interfaces/organization';
 import { addOrganisationIds, getAllOrganizations, getAllOrganizationsByPartnerId } from 'src/app/modules/management/store/actions';
+import { MatDialogModule, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-modal-organisations',
@@ -16,33 +17,29 @@ import { addOrganisationIds, getAllOrganizations, getAllOrganizationsByPartnerId
   templateUrl: './modal-organisations.component.html',
   styleUrls: ['./modal-organisations.component.scss']
 })
-export class ModalOrganisationsComponent implements OnInit {
+export class ModalOrganisationsComponent {
   @ViewChild('searchNameInput') searchNameInput: ElementRef = new ElementRef('')
   @ViewChild('searchCompanyNameInput') searchCompanyNameInput: ElementRef = new ElementRef('')
 
-  visible: boolean = false
   allOrganizations$ = this.store.pipe(select(allOrganizations))
   organizationsLoading$ = this.store.pipe(select(organizationLoading))
   selectedOrganisationIds: string[] = []
 
-  constructor(private store: Store) {
-
+  constructor(
+    private store: Store,
+    private dialogRef: MatDialogRef<ModalOrganisationsComponent>) {
   }
 
-  ngOnInit(): void {
-
-  }
-
-  open() {
-    this.visible = true
-  }
 
   close() {
-    this.visible = false
+    this.dialogRef.close()
     this.selectedOrganisationIds = []
   }
 
   selectOrganisation(organization: Organization) {
+    if (organization.associated)
+      return
+
     const selectedId = organization.org_id
     const index = this.selectedOrganisationIds.indexOf(selectedId)
     if (index > -1) {

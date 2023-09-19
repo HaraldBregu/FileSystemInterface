@@ -85,7 +85,6 @@ export const organizationReducer = createReducer(
     }),
 
     on(deleteOrganisationIdsSuccess, (state) => {
-        debugger
         return {
             ...state,
             loading: false,

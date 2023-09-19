@@ -1,5 +1,3 @@
-import { DashboardState } from "../modules/dashboard/store/state";
-import { Product } from "../shared/interfaces/product";
 import { ProductDetail, ProductProperty, PropertFieldType, PropertyField } from "../shared/interfaces/product-detail";
 import { Variant, VariantPropertyField } from "../shared/interfaces/variant";
 

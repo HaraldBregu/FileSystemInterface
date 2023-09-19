@@ -3,37 +3,25 @@
 
         <!-- LOOK IN -->
 
-        <div class="col-span-1">
-            <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-                Look In
-            </label>
-            <select (change)="selectLookIn($event)" [disabled]="searchData.lookinoptions.length === 1"
-                class="bg-gray-50 border border-gray-300 py-2 px-3 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full">
+        <div class="select-input-frame col-span-1">
+            <label class="label">Look In</label>
+            <select (change)="selectLookIn($event)" [disabled]="searchData.lookinoptions.length === 1" class="select">
                 <option *ngIf="!searchData.lookinselected"></option>
                 <option *ngFor="let option of searchData.lookinoptions"
-                    [selected]="option.value === searchData.lookinselected">
-                    <span
-                        class="bg-gray-50 border border-gray-300 py-2 px-3 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full">
-                        {{option.text}}
-                    </span>
+                    [selected]="option.value === searchData.lookinselected" class="option">
+                    {{option.text}}
                 </option>
             </select>
         </div>
 
         <!-- LOOK FOR -->
 
-        <div class="col-span-1">
-            <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-                Look For
-            </label>
-            <select (change)="selectLookFor($event)" [disabled]="searchData.lookforoptions.length === 1"
-                class="bg-gray-50 border border-gray-300 py-2 px-3 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full">
+        <div class="select-input-frame col-span-1">
+            <label class="label">Look For</label>
+            <select (change)="selectLookFor($event)" [disabled]="searchData.lookforoptions.length === 1" class="select">
                 <option *ngFor="let option of searchData.lookforoptions"
-                    [selected]="option.value === searchData.lookforselected" [value]="option.value">
-                    <span
-                        class="bg-gray-50 border border-gray-300 py-2 px-3 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full">
-                        {{option.text}}
-                    </span>
+                    [selected]="option.value === searchData.lookforselected" [value]="option.value" class="option">
+                    {{option.text}}
                 </option>
             </select>
         </div>
@@ -41,7 +29,7 @@
         <!-- SEARCH FIELDS -->
 
         <div class="col-start-1 col-span-4">
-            <div class="relative overflow-x-auto border border-gray-200 sm:rounded-lg">
+            <div class="relative overflow-x-auto border border-gray-200 sm:rounded-sm">
                 <table class="table-fixed w-full text-left text-gray-500">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                         <tr>
@@ -67,51 +55,41 @@
                         <!-- CURRENT ADDED FILEDS -->
 
                         <tr *ngFor="let data of searchData.postfields; let first = first; let last = last let index = index"
-                            class="border-b bg-white hover:bg-gray-50">
+                            class="border-b bg-white">
 
                             <!-- OPERATORS (AND/OR) -->
 
-                            <td class="px-2 py-2">
-                                <select *ngIf="!first" (change)="selectOperator($event, index)"
-                                    class="bg-gray-50 border border-gray-300 py-2 px-1 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full">
+                            <td class="select-input-frame px-2 py-2">
+                                <select *ngIf="!first" (change)="selectOperator($event, index)" class="select">
                                     <option *ngFor="let operator of operatorsForField(searchData, index)"
-                                        [value]="operator.value" [selected]="operator.value === data.logicaloperator">
-                                        <span
-                                            class="bg-gray-50 border border-gray-300 py-2 px-3 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full">
-                                            {{operator.text}}
-                                        </span>
+                                        [value]="operator.value" [selected]="operator.value === data.logicaloperator"
+                                        class="option">
+                                        {{operator.text}}
                                     </option>
                                 </select>
                             </td>
 
                             <!-- FIELDS (NAME) -->
 
-                            <td class="px-2 py-2">
-                                <select (change)="updatePostFieldAtIndex($event, index, searchData)"
-                                    class="bg-gray-50 border border-gray-300 py-2 px-3 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full">
+                            <td class="select-input-frame px-2 py-2">
+                                <select (change)="updatePostFieldAtIndex($event, index, searchData)" class="select">
                                     <option></option>
                                     <option *ngFor="let field of searchData.fields" [value]="field.fieldvalue"
-                                        [selected]="field.fieldtext === data.field">
-                                        <span
-                                            class="bg-gray-50 border border-gray-300 py-2 px-3 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full">
-                                            {{field.fieldtext}}
-                                        </span>
+                                        [selected]="field.fieldtext === data.field" class="option">
+                                        {{field.fieldtext}}
                                     </option>
                                 </select>
                             </td>
 
                             <!-- CONDITION -->
 
-                            <td class="px-2 py-2">
-                                <select (change)="selectPostFieldConditionAtIndex($event, index)"
-                                    class="bg-gray-50 border border-gray-300 py-2 px-3 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full">
+                            <td class="select-input-frame px-2 py-2">
+                                <select (change)="selectPostFieldConditionAtIndex($event, index)" class="select">
                                     <option></option>
                                     <option *ngFor="let condition of conditionsForField(data.field, searchData)"
-                                        [value]="condition.value" [selected]="condition.value === data.condition">
-                                        <span
-                                            class="bg-gray-50 border border-gray-300 py-2 px-3 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full">
-                                            {{condition.text}}
-                                        </span>
+                                        [value]="condition.value" [selected]="condition.value === data.condition"
+                                        class="option">
+                                        {{condition.text}}
                                     </option>
                                 </select>
                             </td>
@@ -124,63 +102,81 @@
 
                                     <!-- DateTime -->
 
-                                    <input *ngSwitchCase="SearchFieldType.DateTime" type="date"
-                                        (change)="setValueForField($event, index)" [value]="data.value"
-                                        class="block w-full bg-white border-gray-400 focus:outline-none focus:bg-white focus:border-gray-500 text-gray-700 border rounded-lg text-xs py-2 px-3 leading-tight">
+                                    <div *ngSwitchCase="SearchFieldType.DateTime" class="text-input-frame">
+                                        <input type="date" (change)="setValueForField($event, index)"
+                                            [value]="data.value" class="input">
+                                    </div>
 
                                     <!-- MultipleChoice -->
 
-                                    <select *ngSwitchCase="SearchFieldType.MultipleChoice"
-                                        (change)="setValueForField($event, index)"
-                                        class="bg-gray-50 border border-gray-300 py-2 px-3 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full">
-                                        <option *ngFor="let value of valuesForSelectedFieldAtIndex(index, searchData)">
-                                            <span
-                                                class="bg-gray-50 border border-gray-300 py-2 px-3 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full">
+                                    <div *ngSwitchCase="SearchFieldType.MultipleChoice" class="select-input-frame">
+                                        <select (change)="setValueForField($event, index)" class="select">
+                                            <option
+                                                *ngFor="let value of valuesForSelectedFieldAtIndex(index, searchData)"
+                                                class="option">
                                                 {{value.text}}
-                                            </span>
-                                        </option>
-                                    </select>
+                                            </option>
+                                        </select>
+                                    </div>
 
                                     <!-- BOOLEAN VALUES -->
 
-                                    <input *ngSwitchCase="SearchFieldType.Boolean" type="checkbox"
-                                        [checked]="isChecked(data.value)"
-                                        (click)="setCheckBoxValueForField(data.value, index)"
-                                        class="block w-full focus:outline-none focus:bg-white focus:border-gray-500 text-xs bg-white text-gray-700 border border-gray-200 rounded-md py-2 px-3 leading-tight">
+                                    <div *ngSwitchCase="SearchFieldType.Boolean" class="checkbox-input-frame">
+                                        <input type="checkbox" [checked]="isChecked(data.value)"
+                                            (click)="setCheckBoxValueForField(data.value, index)" class="box">
+                                    </div>
 
-                                    <!-- NUMER VALUES -->
+                                    <!-- NUMBER VALUES -->
 
-                                    <input *ngSwitchCase="SearchFieldType.Number" type="number" [value]="data.value"
-                                        (change)="setValueForField($event, index)" [value]="data.value"
-                                        class="block w-full focus:outline-none focus:bg-white focus:border-gray-500 text-xs bg-white text-gray-700 border border-gray-200 rounded-md py-2 px-3 leading-tight">
+                                    <div *ngSwitchCase="SearchFieldType.Number" class="text-input-frame">
+                                        <input type="number" [value]="data.value"
+                                            (change)="setValueForField($event, index)" [value]="data.value"
+                                            class="input">
+                                    </div>
 
-                                    <input *ngSwitchCase="SearchFieldType.BigNumber" type="number" [value]="data.value"
-                                        (change)="setValueForField($event, index)" [value]="data.value"
-                                        class="block w-full focus:outline-none focus:bg-white focus:border-gray-500 text-xs bg-white text-gray-700 border border-gray-200 rounded-md py-2 px-3 leading-tight">
+                                    <div *ngSwitchCase="SearchFieldType.BigNumber" class="text-input-frame">
+                                        <input type="number"
+                                            [value]="data.value" (change)="setValueForField($event, index)"
+                                            [value]="data.value" class="input">
+                                    </div>
 
-                                    <input *ngSwitchCase="SearchFieldType.Double" type="number" [value]="data.value"
-                                        (change)="setValueForField($event, index)" [value]="data.value"
-                                        class="block w-full focus:outline-none focus:bg-white focus:border-gray-500 text-xs bg-white text-gray-700 border border-gray-200 rounded-md py-2 px-3 leading-tight">
+                                    <div *ngSwitchCase="SearchFieldType.Double" class="text-input-frame">
+                                        <input type="number" [value]="data.value"
+                                            (change)="setValueForField($event, index)" [value]="data.value"
+                                            class="input">
+                                    </div>
 
-                                    <input *ngSwitchCase="SearchFieldType.Decimal" type="number" [value]="data.value"
-                                        (change)="setValueForField($event, index)" [value]="data.value"
-                                        class="block w-full focus:outline-none focus:bg-white focus:border-gray-500 text-xs bg-white text-gray-700 border border-gray-200 rounded-md py-2 px-3 leading-tight">
+                                    <div *ngSwitchCase="SearchFieldType.Decimal" class="text-input-frame">
+                                        <input type="number"
+                                            [value]="data.value" (change)="setValueForField($event, index)"
+                                            [value]="data.value" class="input">
+                                    </div>
 
                                     <!-- TEXT VALUES -->
+                                    <div *ngSwitchCase="SearchFieldType.FileName" class="text-input-frame">
+                                        <input type="text" [value]="data.value"
+                                        (change)="setValueForField($event, index)" [value]="data.value"
+                                        class="input">
+                                    </div>
 
-                                    <input *ngSwitchCase="SearchFieldType.FileName" type="text" [value]="data.value"
+                                    <div *ngSwitchCase="SearchFieldType.LongText" class="text-input-frame">
+                                        <input type="text" [value]="data.value"
                                         (change)="setValueForField($event, index)" [value]="data.value"
-                                        class="block w-full focus:outline-none focus:bg-white focus:border-gray-500 text-xs bg-white text-gray-700 border border-gray-200 rounded-md py-2 px-3 leading-tight">
-                                    <input *ngSwitchCase="SearchFieldType.LongText" type="text" [value]="data.value"
+                                        class="input">
+                                    </div>
+
+                                    <div *ngSwitchCase="SearchFieldType.Text" class="text-input-frame">
+                                        <input type="text" [value]="data.value"
                                         (change)="setValueForField($event, index)" [value]="data.value"
-                                        class="block w-full focus:outline-none focus:bg-white focus:border-gray-500 text-xs bg-white text-gray-700 border border-gray-200 rounded-md py-2 px-3 leading-tight">
-                                    <input *ngSwitchCase="SearchFieldType.Text" type="text" [value]="data.value"
-                                        (change)="setValueForField($event, index)" [value]="data.value"
-                                        class="block w-full focus:outline-none focus:bg-white focus:border-gray-500 text-xs bg-white text-gray-700 border border-gray-200 rounded-md py-2 px-3 leading-tight">
-                                    <input *ngSwitchCase="SearchFieldType.MoneyCurrency" type="text"
+                                        class="input">
+                                    </div>
+
+                                    <div *ngSwitchCase="SearchFieldType.MoneyCurrency" class="text-input-frame">
+                                        <input type="text"
                                         [value]="data.value" (change)="setValueForField($event, index)"
                                         [value]="data.value"
-                                        class="block w-full focus:outline-none focus:bg-white focus:border-gray-500 text-xs bg-white text-gray-700 border border-gray-200 rounded-md py-2 px-3 leading-tight">
+                                        class="input">
+                                    </div>
 
                                 </div>
                             </td>

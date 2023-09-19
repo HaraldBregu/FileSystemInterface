@@ -1,9 +1,8 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { select, Store } from '@ngrx/store';
-import { Product } from 'src/app/shared/interfaces/product';
-import { selectedProductName, sideMenuOpened } from './store/selectors';
-import { getCatalogs, getSearchData, selectProduct } from './store/actions/actions';
+import { selectedProductName } from './store/selectors';
+import { getCatalogs, getSearchData } from './store/actions/actions';
 import { filter } from 'rxjs';
 
 @Component({
@@ -13,7 +12,6 @@ import { filter } from 'rxjs';
 })
 export class DashboardComponent {
   selectedProductName$ = this.store.pipe(select(selectedProductName))
-  sideBarMenuOpened$ = this.store.pipe(select(sideMenuOpened))
   currentRoute?: string
 
   constructor(private store: Store, private route: ActivatedRoute, private router: Router) {
@@ -30,7 +28,7 @@ export class DashboardComponent {
     this.router.navigate([
       '/dashboard', {
         outlets: {
-          'dashboard-content': 'detail-product'
+          'content': 'detail-product'
         }
       }])
   }
@@ -40,7 +38,7 @@ export class DashboardComponent {
     this.router.navigate([
       '/dashboard', {
         outlets: {
-          'dashboard-content': 'product'
+          'content': 'product'
         }
       }])
   }
@@ -50,7 +48,7 @@ export class DashboardComponent {
     this.router.navigate([
       '/dashboard', {
         outlets: {
-          'dashboard-content': 'explorer'
+          'content': 'explorer'
         }
       }])
   }

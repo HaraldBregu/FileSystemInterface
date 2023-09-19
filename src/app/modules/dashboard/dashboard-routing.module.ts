@@ -13,17 +13,17 @@ const routes: Routes = [
       {
         path:'product',
         component: ProductComponent,
-        outlet: 'dashboard-content'
+        outlet: 'content'
       },
       {
         path: 'detail-product',
         component: ProductDetailComponent,
-        outlet: 'dashboard-content'
+        outlet: 'content'
       },
       {
         path: 'explorer',
         component: ExplorerComponent,
-        outlet: 'dashboard-content'
+        outlet: 'content'
       },
     ]
   }

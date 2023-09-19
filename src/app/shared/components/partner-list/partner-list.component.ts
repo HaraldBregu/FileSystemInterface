@@ -24,6 +24,7 @@ export class PartnerListComponent implements OnChanges {
   @Output() onLoadRoles = new EventEmitter<PartnerRole[]>();
   @Output() onSelectRole = new EventEmitter<PartnerRole>();
   @Output() onReload = new EventEmitter();
+  @Output() onAddPartner = new EventEmitter();
   @ViewChild('searchInput') searchInput: ElementRef = new ElementRef('')
 
   filteredPartners?: Partner[]
@@ -37,7 +38,7 @@ export class PartnerListComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     const props = changes['partners']
-  
+
     if (props?.currentValue !== props?.previousValue) {
       this.filteredPartners = this.partners
     }
@@ -50,6 +51,10 @@ export class PartnerListComponent implements OnChanges {
   selectItem(item: Partner) {
     this.clearFilteredData()
     this.onSelectPartner.emit(item)
+  }
+
+  addPartner() {
+    this.onAddPartner.emit()
   }
 
   deleteItem(item: Partner) {
@@ -84,7 +89,7 @@ export class PartnerListComponent implements OnChanges {
     this.filteredPartners = this.partners
   }
 
-  reload(){
+  reload() {
     this.onReload.emit()
   }
 }

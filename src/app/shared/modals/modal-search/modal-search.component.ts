@@ -4,8 +4,18 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { SearchDataComponent } from '../../components/search-data/search-data.component';
 import { SearchDataResult } from '../../interfaces/search-data-result';
 import { Store, select } from '@ngrx/store';
+import {
+  addSearchDataPostFieldEmptyCondition,
+  getSearchDataForCatalog,
+  getSearchDataResult,
+  searchDataPostFieldRemoveConditionAtIndex,
+  setSearchDataLookFor,
+  setSearchDataPostFieldConditionAtIndex,
+  setSearchDataPostFieldNameAtIndex,
+  setSearchDataPostFieldOperatorAtIndex,
+  setSearchDataPostFieldValueAtIndex
+} from 'src/app/modules/dashboard/store/actions/actions';
 import { searchData, searchDataResult } from 'src/app/modules/dashboard/store/selectors';
-import { addSearchDataPostFieldEmptyCondition, getSearchDataForCatalog, getSearchDataResult, searchDataPostFieldRemoveConditionAtIndex, setSearchDataLookFor, setSearchDataPostFieldConditionAtIndex, setSearchDataPostFieldNameAtIndex, setSearchDataPostFieldOperatorAtIndex, setSearchDataPostFieldValueAtIndex } from 'src/app/modules/dashboard/store/actions/actions';
 
 @Component({
   selector: 'app-modal-search',

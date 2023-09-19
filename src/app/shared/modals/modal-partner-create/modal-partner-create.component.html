@@ -1,0 +1,89 @@
+<h1 mat-dialog-title>
+    <span>Create a Partner</span>
+</h1>
+
+<mat-dialog-content [formGroup]="formGroup">
+    <div class="grid grid-cols-4 gap-4 pt-4">
+        <div class="text-input-frame col-span-2">
+            <label class="label">Username</label>
+            <input type="text" formControlName="user_name" class="input">
+        </div>
+        <div class="text-input-frame col-span-2">
+            <label class="label">Password</label>
+            <input type="text" formControlName="password" class="input">
+        </div>
+        <div class="text-input-frame col-span-2">
+            <label class="label">Certificate</label>
+            <input type="text" formControlName="certificate" class="input">
+        </div>
+        <div class="text-input-frame col-span-2">
+            <label class="label">Network</label>
+            <input type="text" formControlName="network" class="input">
+        </div>
+        <div class="checkbox-input-frame col-span-2">
+            <input id="checkbox_leave_invoice_items" type="checkbox" formControlName="leave_invoice_items" class="box">
+            <label for="checkbox_leave_invoice_items" class="label">
+                Leave invoice items
+            </label>
+        </div>
+        <div class="checkbox-input-frame col-span-2">
+            <input id="checkbox_leave_category_prices" type="checkbox" formControlName="leave_category_prices"
+                class="box">
+            <label for="checkbox_leave_category_prices" class="label">
+                Leave category prices
+            </label>
+        </div>
+        <div class="checkbox-input-frame col-span-4">
+            <input id="checkbox_referrer_is_mandatory" type="checkbox" formControlName="referrer_is_mandatory"
+                class="box">
+            <label for="checkbox_referrer_is_mandatory" class="label">
+                Referrer is mandatory
+            </label>
+        </div>
+        <div class="text-input-frame col-span-2">
+            <label class="label">Referrer</label>
+            <input type="text" formControlName="referrer" class="input">
+        </div>
+        <div class="checkbox-input-frame col-span-4">
+            <input id="checkbox_split_invoice_items_for_guests" type="checkbox"
+                formControlName="split_invoice_items_for_guests" class="box">
+            <label for="checkbox_split_invoice_items_for_guests" class="label">
+                Split invoice items for guests
+            </label>
+        </div>
+        <div class="text-area-input-frame col-span-4">
+            <label class="label">HTML Header</label>
+            <textarea rows="4" formControlName="html_header" class="input"></textarea>
+        </div>
+        <div class="text-area-input-frame col-span-4">
+            <label class="label">CSS Header</label>
+            <textarea rows="4" formControlName="css_header" class="input"></textarea>
+        </div>
+        <div class="text-area-input-frame col-span-4">
+            <label class="label">HTML Footer</label>
+            <textarea rows="4" formControlName="html_footer" class="input"></textarea>
+        </div>
+        <div class="text-area-input-frame col-span-4">
+            <label class="label">CSS Footer</label>
+            <textarea rows="4" formControlName="css_footer" class="input"></textarea>
+        </div>
+        <div class="text-area-input-frame col-span-4">
+            <label class="label">HTML Left</label>
+            <textarea rows="4" formControlName="html_left" class="input"></textarea>
+        </div>
+        <div class="text-area-input-frame col-span-4">
+            <label class="label">HTML Right</label>
+            <textarea rows="4" formControlName="html_right" class="input"></textarea>
+        </div>
+        <div class="text-area-input-frame col-span-4">
+            <label class="label">CSS</label>
+            <textarea rows="4" formControlName="css" class="input"></textarea>
+        </div>
+    </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button type="button" (click)="createPartner()" class="button-primary-md">
+        <span>CREATE</span>
+    </button>    
+</mat-dialog-actions>

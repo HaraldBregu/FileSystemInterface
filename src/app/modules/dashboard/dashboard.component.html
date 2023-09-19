@@ -1,8 +1,6 @@
-<app-navbar [dashboardBarMenu]="true" class="fixed z-40 top-0 w-full"></app-navbar>
+<app-navbar class="fixed z-40 top-0 w-full"></app-navbar>
 
-<aside
-    class="sidebar fixed top-0 left-0 h-screen pt-16 transition-transform -translate-x-full border-r sm:translate-x-0"
-    [class.w-14]="!(sideBarMenuOpened$ | async)" [class.w-64]="(sideBarMenuOpened$ | async)">
+<aside class="sidebar fixed top-0 left-0 w-14 h-screen pt-16 transition-transform -translate-x-full sm:translate-x-0">
     <div class="h-full overflow-y-auto scrollbar-hide">
         <ul *ngIf="currentRoute as route">
             <li *ngIf="(selectedProductName$ | async)">
@@ -11,9 +9,9 @@
                         'selected' : route === 'detail-product'
                     }">
                     <fa-icon [icon]="['fas', 'pager']" class="icon text-lg"></fa-icon>
-                    <span *ngIf="(sideBarMenuOpened$ | async)" class="flex-1 ml-4 whitespace-nowrap">
+                    <!--<span *ngIf="(sideBarMenuOpened$ | async)" class="flex-1 ml-4 whitespace-nowrap">
                         {{ selectedProductName$ | async }}
-                    </span>
+                    </span>-->
                 </a>
             </li>
             <li>
@@ -22,9 +20,9 @@
                         'selected' : route === 'product'
                     }">
                     <fa-icon [icon]="['fas', 'home']" class="icon text-lg"></fa-icon>
-                    <span *ngIf="(sideBarMenuOpened$ | async)" class="flex-1 ml-4 whitespace-nowrap">
+                    <!--<span *ngIf="(sideBarMenuOpened$ | async)" class="flex-1 ml-4 whitespace-nowrap">
                         Catalogs and products
-                    </span>
+                    </span>-->
                 </a>
             </li>
             <li>
@@ -33,14 +31,13 @@
                         'selected' : route === 'explorer'
                     }">
                     <fa-icon [icon]="['fas', 'search']" class="icon text-lg"></fa-icon>
-                    <span *ngIf="(sideBarMenuOpened$ | async)" class="flex-1 ml-4 whitespace-nowrap">Search</span>
+                    <!--<span *ngIf="(sideBarMenuOpened$ | async)" class="flex-1 ml-4 whitespace-nowrap">Search</span>-->
                 </a>
             </li>
         </ul>
     </div>
 </aside>
 
-<div class="mt-16" [class.ml-14]="(sideBarMenuOpened$ | async) === false"
-    [class.ml-64]="(sideBarMenuOpened$ | async) === true">
-    <router-outlet name="dashboard-content"></router-outlet>
+<div class="fixed top-[64px] right-0 bottom-0 left-14">
+    <router-outlet name="content"></router-outlet>
 </div>

@@ -38,6 +38,18 @@ export class PartnerEffects {
         mergeMap((data) => this.getPartners$(data.partnerName, data.partnerRoleId))
     ))
 
+    /// ON DELETE PARTNER SUCCESS
+    getPartnersAfterDeletingSuccessEffect$ = createEffect(() => this.actions$.pipe(
+        ofType(deletePartnerIdSuccess),
+        mergeMap((data) => this.getPartners$())
+    ))
+
+    /// ON CREATE/UPDATE PARTNER SUCCESS
+    getPartnersAfterCreateOrUpdateSuccessEffect$ = createEffect(() => this.actions$.pipe(
+        ofType(createUpdatePartnerSuccess),
+        mergeMap((data) => this.getPartners$())
+    ))
+
     /// ON GET PARTNER BY ID
     getPartnerIdEffect$ = createEffect(() => this.actions$.pipe(
         ofType(getPartnerId),

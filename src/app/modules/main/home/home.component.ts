@@ -34,7 +34,7 @@ export class HomeComponent {
   navigateToManagementPage() {
     this.router.navigate(['/management', {
       outlets: {
-        'management-content': 'product'
+        'content': 'partner-detail'
       }
     }])
   }
@@ -43,7 +43,7 @@ export class HomeComponent {
     this.router.navigate([
       '/dashboard', {
         outlets: {
-          'dashboard-content': 'product'
+          'content': 'product'
         }
       }])
   }

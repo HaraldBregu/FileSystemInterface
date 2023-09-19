@@ -5,5 +5,7 @@ export interface NavigationItem {
     catalogname: string
     categoryname: string
     type: ProductType
+    parentoid: number
+    level: number
 }
 

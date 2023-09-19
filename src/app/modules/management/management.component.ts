@@ -1,8 +1,9 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { Subject, filter } from 'rxjs';
-import { ModalOrganisationsComponent } from 'src/app/shared/modals/modal-organisations/modal-organisations.component';
-import { ModalService } from 'src/app/shared/services/modal.service';
+import { Store } from '@ngrx/store';
+import { filter } from 'rxjs';
+import { getPartnerOperations, getRoleRegistry } from './store/actions';
+import { getPartnerRoleOperations } from './store/actions/role-operation';
 
 @Component({
   selector: 'app-management',
@@ -10,20 +11,15 @@ import { ModalService } from 'src/app/shared/services/modal.service';
   styleUrls: ['./management.component.scss']
 })
 export class ManagementComponent {
-  @ViewChild('modalOrganizations') modalOrganizations?: ModalOrganisationsComponent
   currentRoute?: string
 
-  constructor(private router: Router, private route: ActivatedRoute, private modalService: ModalService) {
+  constructor(
+    private store: Store,
+    private router: Router,
+    private route: ActivatedRoute) {
 
     this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
       this.currentRoute = this.route.snapshot.firstChild?.routeConfig?.path
-    })
-
-    this.modalService.openModalOrganisation.subscribe(open => {
-      if (open)
-        this.modalOrganizations?.open()
-      else
-        this.modalOrganizations?.close()
     })
 
   }
@@ -32,32 +28,51 @@ export class ManagementComponent {
     this.router.navigate([
       '/management', {
         outlets: {
-          'management-content': 'partner-detail'
+          'content': 'partner-detail'
         }
       }
     ])
   }
 
   navigateToRolesPage() {
+    this.store.dispatch(getRoleRegistry())
     this.router.navigate([
       '/management', {
         outlets: {
-          'management-content': 'roles-registry'
+          'content': 'roles-registry'
         }
       }
     ])
+  }
 
-    /*
+  navigateToRoleOperationPage() {
+    this.store.dispatch(getPartnerRoleOperations())
     this.router.navigate([
-      '/management', 
-      {
+      '/management', {
         outlets: {
-          'management-content': 'roles-registry'
+          'content': 'role-operation'
         }
       }
-    ])*/
+    ])
+  }
 
-    // this.router.navigate(['/management/(management-content:partner-detail)'])
+  navigateToPartnerOperationsPage() {
+    this.store.dispatch(getPartnerOperations())
+    this.router.navigate([
+      '/management', {
+        outlets: {
+          'content': 'partner-operations'
+        }
+      }
+    ])
+  }
+
+  confirm() {
+
+  }
+
+  cancel() {
+
   }
 
 }

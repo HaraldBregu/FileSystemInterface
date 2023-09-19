@@ -8,7 +8,8 @@
                 [selectedPartner]="(selectedPartner$ | async) ?? undefined" [roles]="(roles$ | async) ?? undefined"
                 [loading]="(partnersLoading$ | async) ?? false" (onSelectPartner)="selectPartner($event)"
                 (onDeletePartner)="deletePartner($event)" (onLoadRoles)="loadSearchRoles($event)"
-                (onSelectRole)="selectRole($event)" (onReload)="getPartnerList()">
+                (onSelectRole)="selectRole($event)" (onReload)="getPartnerList()"
+                (onAddPartner)="addNewPartner()">
             </app-partner-list>
         </div>
     </div>
@@ -17,7 +18,7 @@
     <div *ngIf="(selectedPartner$ | async) as currentPartner"
         class="absolute top-0 right-0 bottom-0 left-80 overflow-auto scrollbar-hide">
 
-        <div class="relative px-6 py-6 bg-white dark:bg-gray-900">
+        <div class="relative px-6 py-6 border-b border-gray-400 dark:border-gray-700 bg-white dark:bg-gray-900">
 
             <!-- HEADER -->
             <div class="flex items-center justify-between w-full py-2 font-medium text-left">
@@ -229,20 +230,10 @@
                                 </p>
                             </div>
                             <div class="relative">
-                                <button type="button" (click)="openMenuForOrganisation(organisation)"
-                                    class="text-blue-700 border border-blue-700 hover:bg-blue-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-sm p-1 text-center inline-flex items-center mr-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:focus:ring-blue-800 dark:hover:bg-blue-500">
-                                    <fa-icon class="w-5 h-5" [icon]="['fas', 'ellipsis-vertical']"></fa-icon>
-                                    <span class="sr-only">option</span>
-                                </button>
-                                <div [ngClass]="{'hidden': !menuOpened(organisation)}"
-                                    class="absolute right-0 z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-28 dark:bg-gray-700">
-                                    <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
-                                        <li>
-                                            <a (click)="deleteOrganisation(organisation)"
-                                                class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Delete</a>
-                                        </li>
-                                    </ul>
-                                </div>
+                                <span (click)="deleteOrganisation(organisation)"
+                                    class="whitespace-nowrap cursor-pointer text-red-500 hover:text-red-600 dark:text-red-500 dark:hover:text-red-400">
+                                    <fa-icon [icon]="['fas', 'trash']"></fa-icon>
+                                </span>
                             </div>
                         </div>
                         <div>

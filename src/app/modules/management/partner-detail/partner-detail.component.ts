@@ -1,4 +1,4 @@
-import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import { createUpdatePartner, deleteOrganisationIds, deletePartnerId, getAllOrganizations, getAllOrganizationsByPartnerId, getPartnerRoles, getPartners, getSearchRoles } from '../store/actions';
 import { associatedOrganizations, organizationLoading, partnersLoading, selectDetailTabs, selectPartners, selectRoles, selectedPartner } from '../store/selectors';
@@ -6,15 +6,20 @@ import { Partner } from 'src/app/shared/interfaces/partner';
 import { getPartnerId } from '../store/actions';
 import { PartnerRole } from 'src/app/shared/interfaces/partner-role';
 import { FormControl, FormGroup } from '@angular/forms';
-import { ModalService } from 'src/app/shared/services/modal.service';
 import { Organization } from 'src/app/shared/interfaces/organization';
+import { AlertButton, AlertButtonType } from 'src/app/shared/interfaces/alert-data';
+import { Subscription } from 'rxjs';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { ConfirmDeleteAlertComponent } from 'src/app/shared/alerts/confirm-delete-alert/confirm-delete-alert.component';
+import { ModalOrganisationsComponent } from 'src/app/shared/modals/modal-organisations/modal-organisations.component';
+import { ModalPartnerCreateComponent } from 'src/app/shared/modals/modal-partner-create/modal-partner-create.component';
 
 @Component({
   selector: 'app-partner-detail',
   templateUrl: './partner-detail.component.html',
   styleUrls: ['./partner-detail.component.scss']
 })
-export class PartnerDetailComponent implements OnInit, OnChanges {
+export class PartnerDetailComponent implements OnInit, OnChanges, OnDestroy {
   partners$ = this.store.pipe(select(selectPartners))
   partnersLoading$ = this.store.pipe(select(partnersLoading))
   selectedPartner$ = this.store.pipe(select(selectedPartner))
@@ -23,11 +28,17 @@ export class PartnerDetailComponent implements OnInit, OnChanges {
   associatedOrganizations$ = this.store.pipe(select(associatedOrganizations))
   organizationsLoading$ = this.store.pipe(select(organizationLoading))
 
+  alertSubscription = new Subscription()
+
   selectedOrganisationId = ''
   currentTab: string = 'Agencies'
   formGroup: FormGroup = new FormGroup({})
 
-  constructor(private store: Store, private modalService: ModalService) {
+  constructor(
+    private store: Store,
+    private dialog: MatDialog,
+  ) {
+
     this.selectedPartner$.subscribe(data => {
       this.formGroup = new FormGroup({})
       this.formGroup.addControl("user_name", new FormControl(data?.user_name))
@@ -65,6 +76,10 @@ export class PartnerDetailComponent implements OnInit, OnChanges {
     this.store.dispatch(getPartnerId({ partnerId: partner.partner_id }))
   }
 
+  ngOnDestroy(): void {
+    this.alertSubscription.unsubscribe()
+  }
+
   savePartner(partner: Partner) {
 
     const newPartner: Partner = {
@@ -89,10 +104,40 @@ export class PartnerDetailComponent implements OnInit, OnChanges {
     }
 
     this.store.dispatch(createUpdatePartner({ partner: newPartner }))
+
+  }
+
+  addNewPartner() {
+    const dialogConfig = new MatDialogConfig()
+    dialogConfig.position = { top: '30px', bottom: '30px' }
+    dialogConfig.width = '550px'
+    dialogConfig.autoFocus = false
+    dialogConfig.maxHeight = '90vh'
+    this.dialog.open(ModalPartnerCreateComponent, dialogConfig)
+    this.store.dispatch(getAllOrganizationsByPartnerId())
   }
 
   deletePartner(partner: Partner) {
-    this.store.dispatch(deletePartnerId({ partnerId: partner.partner_id }))
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.position = { top: '30px', bottom: '30px' }
+    dialogConfig.width = '450px'
+
+    var actions: AlertButton[] = []
+    actions.push({ type: AlertButtonType.DESCTRUCTIVE, text: "Delete" })
+    actions.push({ type: AlertButtonType.DISMISS, text: "Cancel" })
+
+    dialogConfig.data = {
+      title: "Delete",
+      description: "Are you sure you want to delete partner '" + partner.user_name + "'?",
+      buttons: actions
+    }
+
+    const dialogRef = this.dialog.open(ConfirmDeleteAlertComponent, dialogConfig)
+
+    dialogRef.afterClosed().subscribe(data => {
+      if (data.type === AlertButtonType.DESCTRUCTIVE)
+        this.store.dispatch(deletePartnerId({ partnerId: partner.partner_id }))
+    })
   }
 
   loadSearchRoles($event: any) {
@@ -111,24 +156,39 @@ export class PartnerDetailComponent implements OnInit, OnChanges {
   }
 
   searchNewAgencies() {
+    const dialogConfig = new MatDialogConfig()
+    dialogConfig.position = { top: '30px', bottom: '30px' }
+    dialogConfig.width = '950px'
+    dialogConfig.autoFocus = false
+    dialogConfig.maxHeight = '90vh'
+    //dialogConfig.data = role
+    this.dialog.open(ModalOrganisationsComponent, dialogConfig)
     this.store.dispatch(getAllOrganizationsByPartnerId())
-    this.modalService.openModalOrganisation.next(true)
-  }
-
-  openMenuForOrganisation(organisation: Organization) {
-    if (this.selectedOrganisationId === organisation.org_id)
-      this.selectedOrganisationId = ''
-    else
-      this.selectedOrganisationId = organisation.org_id
-  }
-
-  menuOpened(organisation: Organization) {
-    return this.selectedOrganisationId === organisation.org_id
   }
 
   deleteOrganisation(organisation: Organization) {
-    this.store.dispatch(deleteOrganisationIds({ ids: [organisation.org_id] }))
-    this.selectedOrganisationId = ''
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.position = { top: '30px', bottom: '30px' }
+    dialogConfig.width = '450px'
+
+    var actions: AlertButton[] = []
+    actions.push({ type: AlertButtonType.DESCTRUCTIVE, text: "Dissociate" })
+    actions.push({ type: AlertButtonType.DISMISS, text: "Cancel" })
+
+    dialogConfig.data = {
+      title: "Dissociate",
+      description: "Are you sure you want to dissociate this Agency from the current partner?",
+      buttons: actions
+    }
+
+    const dialogRef = this.dialog.open(ConfirmDeleteAlertComponent, dialogConfig)
+
+    dialogRef.afterClosed().subscribe(data => {
+      if (data.type === AlertButtonType.DESCTRUCTIVE) {
+        this.store.dispatch(deleteOrganisationIds({ ids: [organisation.org_id] }))
+        this.selectedOrganisationId = ''
+      }
+    })
   }
 
 }

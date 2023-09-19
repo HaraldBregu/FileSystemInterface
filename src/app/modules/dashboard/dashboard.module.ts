@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ComponentsModule } from 'src/app/shared/components/components.module';
 import { ProductComponent } from './product/product.component';
-import { ActionReducerMap, MetaReducer, StoreModule } from '@ngrx/store';
+import { MetaReducer, StoreModule, combineReducers } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { ExplorerComponent } from './explorer/explorer.component';
 import { DashboardRoutingModule } from './dashboard-routing.module';
@@ -11,21 +11,34 @@ import { ProductDetailComponent } from './product-detail/product-detail.componen
 import { RouterModule } from '@angular/router';
 import { DashboardComponent } from './dashboard.component';
 import { CoreUIModule } from 'src/app/core/components/core-ui.module';
-import { dashboardReducer } from './store/reducers';
-import { hydrationMetaReducer } from './store/metareducers';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from 'src/environments/environment.prod';
-import { NavigationEffects } from './store/effects/navigation.effects';
-import { CatalogEffects } from './store/effects/catalog.effects';
-import { ProductEffects } from './store/effects/product.effects';
-import { ProductDetailEffects } from './store/effects/product-detail.effects';
-import { SearchEffects } from './store/effects/search.effects';
-import { ProductAssociationEffects } from './store/effects/product-association.effects';
+import { NavigationEffects } from './store/effects/navigation.effect';
+import { CatalogEffects } from './store/effects/catalog.effect';
+import { ProductDetailEffects } from './store/effects/product-detail.effect';
+import { SearchEffects } from './store/effects/search.effect';
+import { ProductAssociationEffects } from './store/effects/product-association.effect';
 import { ModalSearchComponent } from 'src/app/shared/modals/modal-search/modal-search.component';
+import { ProductListComponent } from './product-list/product-list.component';
+import { ProductListEffects } from './store/effects/product-list.effect';
+import { DashboardState } from './store/states';
+import { productReducer } from './store/reducers/entity.reducer';
+import { productDetailReducer } from './store/reducers';
+import { productAssociationReducer } from './store/reducers/product-association';
+import { searchReducer } from './store/reducers/search';
+import { ProductEffects } from './store/effects/entity.effect';
+import { VariantEffects } from './store/effects';
 
 export const metaReducers: MetaReducer<any>[] = [
-  hydrationMetaReducer
+  //hydrationMetaReducer
 ]
+
+export const rootReducer = combineReducers<DashboardState>({
+  productState: productReducer,
+  productDetailState: productDetailReducer,
+  productAssociationState: productAssociationReducer,
+  searchDataState: searchReducer,
+})
 
 @NgModule({
   declarations: [
@@ -33,16 +46,23 @@ export const metaReducers: MetaReducer<any>[] = [
     ProductComponent,
     ExplorerComponent,
     ProductDetailComponent,
+    ProductListComponent,
   ],
   imports: [
-    StoreModule.forFeature("DASHBOARD_FEATURE", dashboardReducer, { metaReducers: metaReducers }),
+    StoreModule.forFeature(
+      "DASHBOARD_FEATURE",
+      rootReducer, {
+      metaReducers: metaReducers
+    }),
     EffectsModule.forFeature([
       CatalogEffects,
-      ProductEffects,
+      ProductListEffects,
       ProductDetailEffects,
       ProductAssociationEffects,
       SearchEffects,
       NavigationEffects,
+      ProductEffects,
+      VariantEffects,
     ]),
     StoreDevtoolsModule.instrument({
       maxAge: 25,

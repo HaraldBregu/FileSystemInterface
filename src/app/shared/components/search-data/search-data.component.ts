@@ -83,13 +83,10 @@ export class SearchDataComponent {
     let dataIndex = fields.findIndex(item => item.fieldtext === value)
     const field = fields[dataIndex]
 
-    if (field === undefined) {
+    if (field === undefined || field === null) {
       this.onSetPostField.emit({ fieldName: "", fieldType: SearchFieldType.NoType, index: index })
       return
     }
-
-    if (!field.fieldtype)
-      return
 
     this.onSetPostField.emit({ fieldName: value, fieldType: field.fieldtype, index: index })
   }

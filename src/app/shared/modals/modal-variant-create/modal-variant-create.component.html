@@ -1,0 +1,306 @@
+<h1 mat-dialog-title>
+    <span>Create a new variant</span>
+</h1>
+
+<mat-dialog-content *ngIf="!(propertiesLoadingObservable | async)">
+    <form *ngIf="propertiesObservable | async as properties" [formGroup]="propertiesFormGroup"
+        class="space-y-4 mt-4 mb-2 pb-4">
+        <div *ngFor="let property of productPropertyStart(properties)">
+            <div [formGroupName]="property.name" class="grid grid-cols-1 md:grid-cols-4 gap-6 pt-6">
+
+                <div class="col-span-4">
+                    <label class="block uppercase tracking-wide text-gray-700 text-xs font-medium mb-2">
+                        VARIANTID*
+                    </label>
+                    <input type="text" formControlName="VARIANTID"
+                        class="block w-full text-gray-700 border rounded-lg text-xs py-2 px-3 leading-tight bg-white border-gray-400 focus:outline-none focus:bg-white focus:border-gray-500">
+                </div>
+
+                <div class="col-span-4" *ngIf="isPropertType(property, PropertFieldType.Text)">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div *ngFor="let field of childsDataType(property, PropertFieldType.Text)" class="col-span-4">
+                            <label class="block uppercase tracking-wide text-gray-700 text-xs font-medium mb-2">
+                                {{field.displayname}}
+                                <span *ngIf="field.isrequired">*</span>
+                            </label>
+                            <input type="text" [readonly]="field.isreadonly && fieldHaveValue(field)"
+                                [formControlName]="controlKeyProperty(field)" [ngClass]="{
+                                'outline-none bg-gray-200 border-gray-200': field.isreadonly && fieldHaveValue(field),
+                                'bg-white border-gray-400 focus:outline-none focus:bg-white focus:border-gray-500': !field.isreadonly || !fieldHaveValue(field),
+                                'border-red-500 focus:border-red-600': fieldInValid(property.name, field)
+                            }" class="block w-full text-gray-700 border rounded-lg text-xs py-2 px-3 leading-tight">
+                            <span *ngIf="fieldInValid(property.name, field)"
+                                class="flex items-center font-medium tracking-wide text-red-500 text-xs mt-1 ml-1">
+                                <span *ngIf="errors(property.name, field)?.['required']">
+                                    This field is required
+                                </span>
+                                <span *ngIf="errors(property.name, field)?.['maxlength']">
+                                    Max length is {{field.maxlength}}
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-span-4" *ngIf="isPropertType(property, PropertFieldType.LongText)">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div *ngFor="let field of childsDataType(property, PropertFieldType.LongText)"
+                            class="col-span-4">
+                            <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                                <span *ngIf="field.ismultilanguage" [ngClass]="flagFromLang(field.language)"></span>
+                                {{field.displayname}}
+                                <span *ngIf="field.isrequired">*</span>
+                            </label>
+                            <textarea [readonly]="field.isreadonly  && fieldHaveValue(field)" rows="4"
+                                [formControlName]="controlKeyProperty(field)" [ngClass]="{
+                                'outline-none bg-gray-200 border-gray-200': field.isreadonly && fieldHaveValue(field),
+                                'bg-white border-gray-400 focus:outline-none focus:bg-white focus:border-gray-500': !field.isreadonly || !fieldHaveValue(field),
+                                'border-red-500 focus:border-red-600': fieldInValid(property.name, field)
+                            }" class="block w-full text-gray-700 border rounded-lg text-xs py-2 px-3 leading-tight">
+                            </textarea>
+                            <span *ngIf="fieldInValid(property.name, field)"
+                                class="flex items-center font-medium tracking-wide text-red-500 text-xs mt-1 ml-1">
+                                <span *ngIf="errors(property.name, field)?.['required']">
+                                    This field is required
+                                </span>
+                                <span *ngIf="errors(property.name, field)?.['maxlength']">
+                                    Max length is {{field.maxlength}}
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-span-4" *ngIf="isPropertType(property, PropertFieldType.FileName)">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div *ngFor="let field of childsDataType(property, PropertFieldType.FileName)"
+                            class="col-span-4">
+                            <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                                {{field.displayname}}
+                                <span *ngIf="field.isrequired">*</span>
+                            </label>
+                            <input type="text" [readonly]="field.isreadonly && fieldHaveValue(field)"
+                                [formControlName]="controlKeyProperty(field)" [ngClass]="{
+                                'outline-none bg-gray-200 border-gray-200': field.isreadonly && fieldHaveValue(field),
+                                'bg-white border-gray-400 focus:outline-none focus:bg-white focus:border-gray-500': !field.isreadonly || !fieldHaveValue(field),
+                                'border-red-500 focus:border-red-600': fieldInValid(property.name, field)
+                            }" class="block w-full text-gray-700 border rounded-lg text-xs py-2 px-3 leading-tight">
+                            <span *ngIf="fieldInValid(property.name, field)"
+                                class="flex items-center font-medium tracking-wide text-red-500 text-xs mt-1 ml-1">
+                                <span *ngIf="errors(property.name, field)?.['required']">
+                                    This field is required
+                                </span>
+                                <span *ngIf="errors(property.name, field)?.['maxlength']">
+                                    Max length is {{field.maxlength}}
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-span-4" *ngIf="isPropertType(property, PropertFieldType.Number)">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div *ngFor="let field of childsDataType(property, PropertFieldType.Number)" class="col-span-4">
+                            <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                                {{field.displayname}}
+                                <span *ngIf="field.isrequired">*</span>
+                            </label>
+                            <input type="number" [readonly]="field.isreadonly && fieldHaveValue(field)" step="0.01"
+                                [formControlName]="controlKeyProperty(field)" [ngClass]="{
+                                    'outline-none bg-gray-200 border-gray-200': field.isreadonly && fieldHaveValue(field),
+                                    'bg-white border-gray-400 focus:outline-none focus:bg-white focus:border-gray-500': !field.isreadonly || !fieldHaveValue(field),
+                                    'border-red-500 focus:border-red-600': fieldInValid(property.name, field)
+                                }"
+                                class="block w-full text-gray-700 border rounded-lg text-xs py-2 px-3 leading-tight">
+                            <span *ngIf="fieldInValid(property.name, field)"
+                                class="flex items-center font-medium tracking-wide text-red-500 text-xs mt-1 ml-1">
+                                <span *ngIf="errors(property.name, field)?.['required']">
+                                    This field is required
+                                </span>
+                                <span *ngIf="errors(property.name, field)?.['maxlength']">
+                                    Max length is {{field.maxlength}}
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-span-4" *ngIf="isPropertType(property, PropertFieldType.BigNumber)">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div *ngFor="let field of childsDataType(property, PropertFieldType.BigNumber)"
+                            class="col-span-4">
+                            <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                                {{field.displayname}}
+                                <span *ngIf="field.isrequired">*</span>
+                            </label>
+                            <input type="number" [readonly]="field.isreadonly && fieldHaveValue(field)" step="0.01"
+                                [formControlName]="controlKeyProperty(field)" [ngClass]="{
+                                    'outline-none bg-gray-200 border-gray-200': field.isreadonly && fieldHaveValue(field),
+                                    'bg-white border-gray-400 focus:outline-none focus:bg-white focus:border-gray-500': !field.isreadonly || !fieldHaveValue(field),
+                                    'border-red-500 focus:border-red-600': fieldInValid(property.name, field)
+                                }"
+                                class="block w-full text-gray-700 border rounded-lg text-xs py-2 px-3 leading-tight">
+                            <span *ngIf="fieldInValid(property.name, field)"
+                                class="flex items-center font-medium tracking-wide text-red-500 text-xs mt-1 ml-1">
+                                <span *ngIf="errors(property.name, field)?.['required']">
+                                    This field is required
+                                </span>
+                                <span *ngIf="errors(property.name, field)?.['maxlength']">
+                                    Max length is {{field.maxlength}}
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-span-4" *ngIf="isPropertType(property, PropertFieldType.Decimal)">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div *ngFor="let field of childsDataType(property, PropertFieldType.Decimal)"
+                            class="col-span-4">
+                            <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                                {{field.displayname}}
+                                <span *ngIf="field.isrequired">*</span>
+                            </label>
+                            <input type="number" [readonly]="field.isreadonly && fieldHaveValue(field)" step="0.01"
+                                [formControlName]="controlKeyProperty(field)" [ngClass]="{
+                                    'outline-none bg-gray-200 border-gray-200': field.isreadonly && fieldHaveValue(field),
+                                    'bg-white border-gray-400 focus:outline-none focus:bg-white focus:border-gray-500': !field.isreadonly || !fieldHaveValue(field),
+                                    'border-red-500 focus:border-red-600': fieldInValid(property.name, field)
+                                }"
+                                class="block w-full text-gray-700 border rounded-lg text-xs py-2 px-3 leading-tight">
+                            <span *ngIf="fieldInValid(property.name, field)"
+                                class="flex items-center font-medium tracking-wide text-red-500 text-xs mt-1 ml-1">
+                                <span *ngIf="errors(property.name, field)?.['required']">
+                                    This field is required
+                                </span>
+                                <span *ngIf="errors(property.name, field)?.['maxlength']">
+                                    Max length is {{field.maxlength}}
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-span-4" *ngIf="isPropertType(property, PropertFieldType.Double)">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div *ngFor="let field of childsDataType(property, PropertFieldType.Double)" class="col-span-4">
+                            <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                                {{field.displayname}}
+                                <span *ngIf="field.isrequired">*</span>
+                            </label>
+                            <input type="number" [readonly]="field.isreadonly && fieldHaveValue(field)" step="0.01"
+                                [formControlName]="controlKeyProperty(field)" [ngClass]="{
+                                    'outline-none bg-gray-200 border-gray-200': field.isreadonly && fieldHaveValue(field),
+                                    'bg-white border-gray-400 focus:outline-none focus:bg-white focus:border-gray-500': !field.isreadonly || !fieldHaveValue(field),
+                                    'border-red-500 focus:border-red-600': fieldInValid(property.name, field)
+                                }"
+                                class="block w-full text-gray-700 border rounded-lg text-xs py-2 px-3 leading-tight">
+                            <span *ngIf="fieldInValid(property.name, field)"
+                                class="flex items-center font-medium tracking-wide text-red-500 text-xs mt-1 ml-1">
+                                <span *ngIf="errors(property.name, field)?.['required']">
+                                    This field is required
+                                </span>
+                                <span *ngIf="errors(property.name, field)?.['maxlength']">
+                                    Max length is {{field.maxlength}}
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-span-4" *ngIf="isPropertType(property, PropertFieldType.MoneyCurrency)">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div *ngFor="let field of childsDataType(property, PropertFieldType.MoneyCurrency)"
+                            class="col-span-4">
+                            <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                                {{field.displayname}}
+                                <span *ngIf="field.isrequired">*</span>
+                            </label>
+                            <input type="number" [readonly]="field.isreadonly && fieldHaveValue(field)"
+                                [formControlName]="controlKeyProperty(field)" [ngClass]="{
+                                        'outline-none bg-gray-200 border-gray-200': field.isreadonly && fieldHaveValue(field),
+                                        'bg-white border-gray-400 focus:outline-none focus:bg-white focus:border-gray-500': !field.isreadonly || !fieldHaveValue(field),
+                                        'border-red-500 focus:border-red-600': fieldInValid(property.name, field)
+                                    }"
+                                class="block w-full text-gray-700 border rounded-lg text-xs py-2 px-3 leading-tight">
+                            <span *ngIf="fieldInValid(property.name, field)"
+                                class="flex items-center font-medium tracking-wide text-red-500 text-xs mt-1 ml-1">
+                                <span *ngIf="errors(property.name, field)?.['required']">
+                                    This field is required
+                                </span>
+                                <span *ngIf="errors(property.name, field)?.['maxlength']">
+                                    Max length is {{field.maxlength}}
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-span-4" *ngIf="isPropertType(property, PropertFieldType.Boolean)">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div *ngFor="let field of childsDataType(property, PropertFieldType.Boolean)"
+                            class="col-span-4">
+                            <div class="flex items-center mb-4">
+                                <input id="checkboxid" type="checkbox" [readonly]="field.isreadonly"
+                                    [formControlName]="controlKeyProperty(field)"
+                                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
+                                <label for="checkboxid"
+                                    class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                    {{field.displayname}}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-span-4" *ngIf="isPropertType(property, PropertFieldType.DateTime)">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div *ngFor="let field of childsDataType(property, PropertFieldType.DateTime)"
+                            class="col-span-4">
+                            <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                                {{field.displayname}}
+                                <span *ngIf="field.isrequired">*</span>
+                            </label>
+                            <input type="date" [readonly]="field.isreadonly && fieldHaveValue(field)"
+                                [formControlName]="controlKeyProperty(field)"
+                                [ngClass]="field.isreadonly ? 'outline-none bg-gray-200 border-gray-200' : 'bg-white border-gray-400 focus:outline-none focus:bg-white focus:border-gray-500'"
+                                class="block w-full text-gray-700 border rounded-lg text-xs py-2 px-3 leading-tight">
+                            <span *ngIf="fieldInValid(property.name, field)"
+                                class="flex items-center font-medium tracking-wide text-red-500 text-xs mt-1 ml-1">
+                                Required field!
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-span-4" *ngIf="isPropertType(property, PropertFieldType.MultipleChoice)">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div *ngFor="let field of childsDataType(property, PropertFieldType.MultipleChoice)"
+                            class="col-span-4">
+                            <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                                {{field.displayname}}
+                                <span *ngIf="field.isrequired">*</span>
+                            </label>
+                            <select [formControlName]="controlKeyProperty(field)"
+                                class="bg-gray-50 border border-gray-300 py-2 px-3 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full">
+                                <option *ngFor="let data of field.options" [selected]="data.value === field.value">
+                                    <span
+                                        class="bg-gray-50 border border-gray-300 py-2 px-3 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full">
+                                        {{data.text}}
+                                    </span>
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button type="button" (click)="createVariant()" class="button-primary-md">
+        <span>CREATE VARIANT</span>
+    </button>
+</mat-dialog-actions>

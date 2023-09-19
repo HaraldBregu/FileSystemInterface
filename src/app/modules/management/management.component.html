@@ -17,12 +17,24 @@
                     <fa-icon [icon]="['fas', 'user']" class="icon text-lg"></fa-icon>
                 </a>
             </li>
+            <li>
+                <a (click)="navigateToRoleOperationPage()" [ngClass]="{
+                    'selected' : route === 'role-operation'
+                }" class="item flex items-center justify-center px-3 py-2 text-base font-normal">
+                    <fa-icon [icon]="['fas', 'arrow-right-arrow-left']" class="icon text-lg"></fa-icon>
+                </a>
+            </li>
+            <li>
+                <a (click)="navigateToPartnerOperationsPage()" [ngClass]="{
+                    'selected' : route === 'partner-operations'
+                }" class="item flex items-center justify-center px-3 py-2 text-base font-normal">
+                    <fa-icon [icon]="['fas', 'briefcase']" class="icon text-lg"></fa-icon>
+                </a>
+            </li>
         </ul>
     </div>
 </aside>
 
 <div class="fixed top-[64px] right-0 bottom-0 left-14">
-    <router-outlet name="management-content"></router-outlet>
+    <router-outlet name="content"></router-outlet>
 </div>
-
-<app-modal-organisations #modalOrganizations></app-modal-organisations>

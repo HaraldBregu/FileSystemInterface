@@ -1,5 +1,5 @@
 import { ActionReducer, INIT, UPDATE } from "@ngrx/store";
-import { DashboardState } from "./state";
+import { DashboardState } from "./states/state";
 
 export const hydrationMetaReducer = (reducer: ActionReducer<DashboardState>): ActionReducer<DashboardState> => {
     return (state, action) => {

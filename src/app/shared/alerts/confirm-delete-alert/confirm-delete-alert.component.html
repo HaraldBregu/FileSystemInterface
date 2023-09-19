@@ -1,0 +1,20 @@
+<div class="p-6 bg-white dark:bg-gray-900">
+    <h3 class="mb-4 text-lg font-medium text-gray-900 dark:text-white">
+        <span>{{data.title}}</span>
+    </h3>
+    <div class="text-left break-words">
+        <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+            {{data.description}}
+        </h3>
+        <span *ngFor="let button of data.buttons">
+            <button type="button" (click)="clickButton(button)" [ngClass]="{
+                'button-primary-md': button.type === AlertButtonType.DEFAULT,
+                'button-primary-outlined-md': button.type === AlertButtonType.DISMISS,
+                'button-warning-md': button.type === AlertButtonType.DESCTRUCTIVE,
+            }" class="mr-2">
+                <span class="w-full">{{button.text}}</span>
+            </button>
+        </span>
+
+    </div>
+</div>

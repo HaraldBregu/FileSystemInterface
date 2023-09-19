@@ -11,21 +11,27 @@ import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from 'src/environments/environment.prod';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { OrganizationEffects, PartnerEffects, RoleEffects } from './store/effects';
-import { organizationReducer, partnerReducer, partnerRoleReducer } from './store/reducers';
+import { OperationsEffects, OrganizationEffects, PartnerEffects, RoleEffects } from './store/effects';
+import { operationReducer, organizationReducer, partnerReducer, partnerRoleReducer } from './store/reducers';
 import { ManagementState } from './store/states';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ModalOrganisationsComponent } from 'src/app/shared/modals/modal-organisations/modal-organisations.component';
 import { RolesRegistryComponent } from './roles-registry/roles-registry.component';
+import { PartnerOperationsComponent } from './partner-operations/partner-operations.component';
+import { ConfirmDeleteAlertComponent } from 'src/app/shared/alerts/confirm-delete-alert/confirm-delete-alert.component';
+import { PartnerRoleOperationComponent } from './partner-role-operation/partner-role-operation.component';
+import { RoleOperationsEffects } from './store/effects/role-operation';
+import { roleOperationReducer } from './store/reducers/role-operation';
 
 export const metaReducers: MetaReducer<any>[] = [
-  hydrationMetaReducer
+  //hydrationMetaReducer
 ]
 
 export const rootReducer = combineReducers<ManagementState>({
   partnerState: partnerReducer,
   partnerRoleState: partnerRoleReducer,
   organizationState: organizationReducer,
+  operationState: operationReducer,
+  roleOperationState: roleOperationReducer,
 })
 
 @NgModule({
@@ -33,6 +39,8 @@ export const rootReducer = combineReducers<ManagementState>({
     ManagementComponent,
     PartnerDetailComponent,
     RolesRegistryComponent,
+    PartnerOperationsComponent,
+    PartnerRoleOperationComponent,
   ],
   imports: [
     StoreModule.forFeature(
@@ -44,6 +52,8 @@ export const rootReducer = combineReducers<ManagementState>({
       PartnerEffects,
       RoleEffects,
       OrganizationEffects,
+      OperationsEffects,
+      RoleOperationsEffects,
     ]),
     StoreDevtoolsModule.instrument({
       maxAge: 25,
@@ -57,12 +67,14 @@ export const rootReducer = combineReducers<ManagementState>({
     ReactiveFormsModule,
     FontAwesomeModule,
     ComponentsModule,
-    ModalOrganisationsComponent,
+    ConfirmDeleteAlertComponent,
   ],
   exports: [
     ManagementComponent,
     PartnerDetailComponent,
     RolesRegistryComponent,
+    PartnerOperationsComponent,
+    PartnerRoleOperationComponent,
   ]
 })
 export class ManagementModule { }

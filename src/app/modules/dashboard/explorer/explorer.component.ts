@@ -79,7 +79,7 @@ export class ExplorerComponent {
     this.router.navigate([
       '/dashboard', {
         outlets: {
-          'dashboard-content': 'product'
+          'content': 'product'
         }
       }])
   }

@@ -5,7 +5,6 @@ import { MainRoutingModule } from './main-routing.module';
 import { HomeComponent } from './home/home.component';
 import { RouterModule } from '@angular/router';
 import { CoreUIModule } from 'src/app/core/components/core-ui.module';
-import { ModalEnvironmentsComponent } from 'src/app/shared/modals/modal-environments/modal-environments.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MainComponent } from './main.component';
 import { NavbarComponent } from 'src/app/shared/components/navbar/navbar.component';
@@ -29,7 +28,6 @@ import { MainEffects } from './store/effects';
     MainRoutingModule,
     NavbarComponent,
     CoreUIModule,
-    ModalEnvironmentsComponent,
   ],
   exports: [
     MainComponent,

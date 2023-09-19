@@ -1,9 +1,11 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ModalConfig } from 'src/app/core/interfaces/modal-config';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { Store } from '@ngrx/store';
-import { filter } from 'rxjs';
+import { Store, select } from '@ngrx/store';
+import { MatDialogRef } from '@angular/material/dialog';
+import { getEnvironmentList } from 'src/app/store/selectors';
+import { LocalService } from '../../services/local.service';
+import { setApiEnv } from 'src/app/store/actions';
 
 @Component({
   selector: 'app-modal-environments',
@@ -17,24 +19,23 @@ import { filter } from 'rxjs';
 })
 export class ModalEnvironmentsComponent {
   @Output() onSelectEnvironment = new EventEmitter<String>()
-  visible: boolean = false
-  environments: string[] = []
-  
-  constructor(private store: Store) {
-    
-  }
+  environments$ = this.store.pipe(select(getEnvironmentList))
 
-  open(environments: string[]) {
-    this.visible = true
-    this.environments = environments
+  constructor(
+    private store: Store,
+    private dialogRef: MatDialogRef<ModalEnvironmentsComponent>,
+    private localService: LocalService) {
+
   }
 
   close() {
-    this.visible = false
+    this.dialogRef.close()
   }
 
   selectEnvironment($event: string) {
-    this.onSelectEnvironment.emit($event)
+    this.localService.setEnvironment($event)
+    this.store.dispatch(setApiEnv({ environment: $event }))
+    this.close();
   }
 
 }

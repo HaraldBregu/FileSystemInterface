@@ -1,77 +1,33 @@
-<!--
-<nav class="navbar w-full">
-  <div class="px-3 py-3 lg:px-5">
-    <div class="flex flex-wrap justify-between items-center mx-auto">
-      <div class="flex items-center justify-start">
-        <button *ngIf="dashboardBarMenu" type="button" (click)="toggleSideMenu()"
-          class="inline-flex mr-2 items-center p-2 text-sm text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
-          <span class="sr-only">Open sidebar</span>
-          <fa-icon [icon]="['fas', 'bars']" class="w-6 h-6 text-xl"></fa-icon>
-        </button>
-        <span class="flex md:mr-10 cursor-pointer">
-          <span class="relative self-center text-lg font-semibold whitespace-nowrap dark:text-white">
-            <span class="font-black text-xl" [routerLink]="['']">Commerce Editor</span>
-            <span *ngIf="(currEnvironment$ | async) as env" (click)="getApiEnvironments()" [ngClass]="{
-              'bg-amber-400 hover:bg-amber-500 dark:bg-amber-900 dark:hover:bg-amber-800' : env === 'PRE',
-              'bg-green-400 hover:bg-green-500 dark:bg-green-800 dark:hover:bg-green-700' : env === 'PROD',
-            }"
-              class="absolute cursor-pointer font-normal text-black dark:text-white inline-flex items-center justify-center px-2 text-xs rounded-full -top-2 -right--2">
-              {{ env }}
-            </span>
-          </span>
-        </span>
-      </div>
-      <div class="items-center justify-between text-sm font-medium w-full md:flex md:w-auto md:order-1">
-        <div class="flex items-center md:space-x-4">
-          <a [routerLink]="['']" [ngClass]="{
-            'text-blue-900 dark:text-white': currentRoute === '',
-            'text-blue-700 dark:text-gray-400': currentRoute !== ''
-          }" class="block hover:bg-gray-100 hover:bg-transparent hover:text-blue-700 dark:hover:text-white">
-            Home
-          </a>
-          <a (click)="navigateToDashboard()"
-            class="cursor-pointer block pl-3 pr-4 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-white dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">
-            Dashboard
-          </a>
-          <a (click)="navigateToManagement()"
-            class="cursor-pointer block pl-3 pr-4 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-white dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">
-            Management
-          </a>
-          <button type="button" (click)="toggleTheme()"
-            class="w-10 h-10 justify-center text-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-xl">
-            <fa-icon *ngIf="(darkTheme$ | async) === true" [icon]="['fas', 'sun']"></fa-icon>
-            <fa-icon *ngIf="(darkTheme$ | async) === false" [icon]="['fas', 'moon']"></fa-icon>
-            <span class="sr-only">ToggleTheme</span>
-          </button>
-          <button type="button"
-            class="w-10 h-10 justify-center text-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-xl">
-            <fa-icon [icon]="['fas', 'right-from-bracket']"></fa-icon>
-            <span class="sr-only">Exit</span>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-</nav>
--->
-
 <nav class="navbar w-full">
   <div class="max-w-screen-3xl flex flex-wrap items-center justify-between mx-auto px-4 py-3">
     <a class="flex items-center">
       <span class="cursor-pointer self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
         <span class="relative self-center text-lg font-semibold whitespace-nowrap dark:text-white">
           <span class="font-black text-xl" [routerLink]="['']">Commerce Editor</span>
-          <span *ngIf="(currEnvironment$ | async) as env" (click)="getApiEnvironments()" [ngClass]="{
-            'bg-amber-400 hover:bg-amber-500 dark:bg-amber-900 dark:hover:bg-amber-800' : env === 'PRE',
-            'bg-green-400 hover:bg-green-500 dark:bg-green-800 dark:hover:bg-green-700' : env === 'PROD',
+          <span *ngIf="(currEnvironment$ | async) as env" [ngClass]="{
+            'bg-amber-400 dark:bg-amber-900' : env === 'PRE',
+            'bg-green-400 dark:bg-green-800' : env === 'PROD',
           }"
-            class="absolute cursor-pointer font-normal text-black dark:text-white inline-flex items-center justify-center px-2 text-xs rounded-full -top-2 -right--2">
+            class="absolute font-normal text-black dark:text-white inline-flex items-center justify-center px-2 text-xs rounded-full -top-2 -right--2">
             {{ env }}
           </span>
         </span>
       </span>
     </a>
     <div class="flex md:order-2">
+      <!--  
+      <button type="button" *ngIf="(currEnvironment$ | async) as env" (click)="getApiEnvironments()"
+        class="button-primary-md mr-2">
+        <span>CHANGE ENVIRONMENT</span>
+        <span class="sr-only">env</span>
+      </button>
+    -->
+      <button type="button" (click)="getApiEnvironments()"
+        class="w-10 h-10 justify-center text-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-xl">
+        <fa-icon [icon]="['fas', 'server']"></fa-icon>
+        <span class="sr-only">env</span>
+      </button>
+
       <button type="button" (click)="toggleTheme()"
         class="w-10 h-10 justify-center text-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-xl">
         <fa-icon *ngIf="(darkTheme$ | async) === true" [icon]="['fas', 'sun']"></fa-icon>
@@ -86,13 +42,13 @@
     </div>
     <div class="items-center justify-between w-full md:flex md:w-auto md:order-1">
       <ul
-        class="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg md:flex-row md:space-x-8 md:mt-0 md:border-0 dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+        class="flex flex-col p-4 md:p-0 mt-4 font-medium text-sm border border-gray-100 rounded-lg md:flex-row md:space-x-8 md:mt-0 md:border-0 dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
         <li>
           <a [routerLink]="['']" [ngClass]="{ 
             'text-blue-700 hover:text-blue-800 dark:text-blue-600 dark:hover:text-blue-700': currentRoute === '',
             'text-gray-500 hover:text-gray-950 dark:text-gray-300 dark:hover:text-white': currentRoute !== ''
           }" class="block cursor-pointer py-2 pl-3 pr-4 rounded md:p-0">
-            Home
+            HOME
           </a>
         </li>
         <li>
@@ -100,7 +56,7 @@
             'text-blue-700 hover:text-blue-800 dark:text-blue-600 dark:hover:text-blue-700': currentRoute === 'dashboard',
             'text-gray-500 hover:text-gray-950 dark:text-gray-300 dark:hover:text-white': currentRoute !== 'dashboard'
           }" class="block cursor-pointer py-2 pl-3 pr-4 rounded md:p-0">
-            Dashboard
+            CATALOG EDITOR
           </a>
         </li>
         <li>
@@ -108,13 +64,10 @@
             'text-blue-700 hover:text-blue-800 dark:text-blue-600 dark:hover:text-blue-700': currentRoute === 'management',
             'text-gray-500 hover:text-gray-950 dark:text-gray-300 dark:hover:text-white': currentRoute !== 'management'
           }" class="block cursor-pointer py-2 pl-3 pr-4 rounded md:p-0">
-            Management
+            USER MANAGER
           </a>
         </li>
       </ul>
     </div>
   </div>
 </nav>
-
-
-<app-modal-environments #modalEnvironment (onSelectEnvironment)="selectEnvironment($event)"></app-modal-environments>

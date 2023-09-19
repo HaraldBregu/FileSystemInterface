@@ -1,15 +1,43 @@
 import { Component, Input, OnDestroy, ViewChild } from '@angular/core';
 import { Store, select } from '@ngrx/store';
-import { Observable, Subject, combineLatest, distinctUntilChanged, filter, map, skip, take } from 'rxjs';
+import { Observable, Subject, combineLatest, distinctUntilChanged, filter, map, skip, take, takeLast } from 'rxjs';
 import Utils from 'src/app/core/utils';
 import { ProductType } from 'src/app/shared/enums/product-type';
 import { ProductProperty } from 'src/app/shared/interfaces/product-detail';
 import { Variant } from 'src/app/shared/interfaces/variant';
-import { currentProductDetailAssociationLoading, currentProductDetailBaseProperties, currentProductDetailCustomProperties, currentProductDetailVariant, currentProductIsFile, productAssociation, productAssociationChildCategories, productAssociationPrimaryCategory, productAssociationProducts, productDetail, productDetailTabs, savingProductAssociation, savingProductDetail, selectedProductName, selectedProductType } from '../store/selectors';
-import { getSearchDataForSelectedProduct, postProductAssociation, postProductDetail, setProductAssociation, setProductAssociationPrimaryCategory, setProductDetailProperties } from '../store/actions/actions';
+import {
+  canDeleteEntity,
+  currentProductDetailAssociationLoading,
+  currentProductDetailBaseProperties,
+  currentProductDetailCustomProperties,
+  currentProductDetailVariant,
+  productAssociation,
+  productDetail,
+  productDetailTabs,
+  savingProductAssociation,
+  savingProductDetail,
+  selectEmptyProductDetailLoading,
+  selectedProductIsFile,
+  selectedProductName,
+  selectedProductType
+} from '../store/selectors';
+import {
+  getSearchDataForSelectedProduct,
+  postProductAssociation,
+  postProductDetail,
+  setProductAssociation,
+  setProductAssociationPrimaryCategory,
+  setProductDetailProperties
+} from '../store/actions/actions';
 import { ProductAssociation } from 'src/app/shared/interfaces/product-association';
 import { SearchDataResult } from 'src/app/shared/interfaces/search-data-result';
 import { ModalSearchComponent } from 'src/app/shared/modals/modal-search/modal-search.component';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { AlertButton, AlertButtonType } from 'src/app/shared/interfaces/alert-data';
+import { ConfirmDeleteAlertComponent } from 'src/app/shared/alerts/confirm-delete-alert/confirm-delete-alert.component';
+import { deleteEntity } from '../store/actions/entity.action';
+import { ModalVariantCreateComponent } from 'src/app/shared/modals/modal-variant-create/modal-variant-create.component';
+import { deleteVariant, getEmptyVariant } from '../store/actions/variant.actions';
 
 @Component({
   selector: 'app-product-detail',
@@ -19,6 +47,7 @@ import { ModalSearchComponent } from 'src/app/shared/modals/modal-search/modal-s
 export class ProductDetailComponent {
   @ViewChild('modalSearch') modalSearch?: ModalSearchComponent
 
+  loadingForm$ = this.store.select(selectEmptyProductDetailLoading);
   tabs: string[] = []
   currentTab: string = ""
   ProductType = ProductType
@@ -53,7 +82,9 @@ export class ProductDetailComponent {
   productAssociation$ = this.store.pipe(select(productAssociation))
 
   /// PRODUCT IS FILE
-  currentProductIsFile$ = this.store.pipe(select(currentProductIsFile))
+  currentProductIsFile$ = this.store.pipe(select(selectedProductIsFile))
+
+  canDeleteEntity$ = this.store.pipe(select(canDeleteEntity))
 
   basePropertyValid = new Subject<boolean>()
   customPropertyValid = new Subject<boolean>()
@@ -65,7 +96,10 @@ export class ProductDetailComponent {
     this.variantPropertyValid.asObservable(),
   ]).pipe(map(([baseValid, customValid]) => baseValid && customValid))
 
-  constructor(private store: Store) {
+  constructor(
+    private store: Store,
+    private dialog: MatDialog) {
+
     this.basePropertyValid.next(true)
     this.customPropertyValid.next(true)
     this.variantPropertyValid.next(true)
@@ -73,6 +107,10 @@ export class ProductDetailComponent {
     this.productDetailTabs$.subscribe((data) => {
       this.tabs = data
       this.currentTab = data[0]
+    })
+
+    this.currentDetailLoading$.subscribe(data => {
+      // console.log("currentDetailLoading: " + data)
     })
   }
 
@@ -86,6 +124,30 @@ export class ProductDetailComponent {
 
   setVariantPropertyValidation(valid: boolean) {
     this.variantPropertyValid.next(valid)
+  }
+
+  saveAll() {
+    this.saveProperties()
+    this.saveAssociation()
+  }
+
+  deleteCurrentProduct() {
+    const dialogConfig = new MatDialogConfig()
+    dialogConfig.position = { top: '30px', bottom: '30px' }
+    dialogConfig.width = '450px'
+    dialogConfig.data = {
+      title: "Delete",
+      description: "Are you sure you want to delete this entity?",
+      buttons: [
+        { type: AlertButtonType.DESCTRUCTIVE, text: "Delete" },
+        { type: AlertButtonType.DISMISS, text: "Cancel" }
+      ]
+    }
+    const dialogRef = this.dialog.open(ConfirmDeleteAlertComponent, dialogConfig)
+    dialogRef.afterClosed().subscribe(data => {
+      if (data.type === AlertButtonType.DESCTRUCTIVE)
+        this.store.dispatch(deleteEntity())
+    })
   }
 
   saveProperties() {
@@ -107,6 +169,52 @@ export class ProductDetailComponent {
   didChangeVariantData(variants: Variant[]) {
     const newProperties = Utils.propertiesFromVariants(variants)
     this.store.dispatch(setProductDetailProperties({ productDetailProperties: newProperties }))
+  }
+
+  createNewVariant() {
+    this.store.dispatch(getEmptyVariant())
+
+    this.loadingForm$
+      .pipe(distinctUntilChanged())
+      .pipe(take(2))
+      .subscribe(loading => {
+        if (loading) return
+
+        const dialogConfig = new MatDialogConfig()
+        dialogConfig.position = { top: '30px', bottom: '30px' }
+        dialogConfig.width = '350px'
+        dialogConfig.autoFocus = false
+        dialogConfig.maxHeight = '90vh'
+        this.dialog.open(ModalVariantCreateComponent, dialogConfig)
+      })
+  }
+
+  deleteVariant(variant: Variant) {
+    const variantIdProperty = variant.properties.filter(data => data.name === "VariantId")[0]
+    const variantId = variantIdProperty.value
+
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.position = { top: '30px', bottom: '30px' }
+    dialogConfig.width = '450px'
+
+    var actions: AlertButton[] = []
+    actions.push({ type: AlertButtonType.DESCTRUCTIVE, text: "Delete" })
+    actions.push({ type: AlertButtonType.DISMISS, text: "Cancel" })
+
+    dialogConfig.data = {
+      title: "Delete",
+      description: `Are you sure you want to delete variant with id ${variantId}?`,
+      buttons: actions
+    }
+
+    const dialogRef = this.dialog.open(ConfirmDeleteAlertComponent, dialogConfig)
+
+    dialogRef.afterClosed().subscribe(data => {
+      if (data.type === AlertButtonType.DESCTRUCTIVE) {
+        this.store.dispatch(deleteVariant({ variantId: variantId }))
+      }
+    })
+
   }
 
   /// ASSOCIATIONS

@@ -1,6 +1,6 @@
-import { 
-    createReducer, 
-    on 
+import {
+    createReducer,
+    on
 } from "@ngrx/store";
 import {
     partnerStateInitial,
@@ -9,6 +9,9 @@ import {
     createUpdatePartner,
     createUpdatePartnerFailure,
     createUpdatePartnerSuccess,
+    deletePartnerId,
+    deletePartnerIdFailure,
+    deletePartnerIdSuccess,
     getPartnerId,
     getPartnerIdFailure,
     getPartnerIdSuccess,
@@ -84,5 +87,17 @@ export const partnerReducer = createReducer(
             loading: false,
         }
     }),
-    
+
+    on(deletePartnerId, (state) => ({
+        ...state
+    })),
+
+    on(deletePartnerIdSuccess, (state) => ({
+        ...state,
+        selectedPartner: undefined,
+    })),
+
+    on(deletePartnerIdFailure, (state) => ({
+        ...state
+    })),
 )

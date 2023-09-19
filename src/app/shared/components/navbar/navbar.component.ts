@@ -10,6 +10,7 @@ import { currentAPIEnvironment, getEnvironmentList, isDarkTheme } from 'src/app/
 import { clearDashboardData, getCatalogs, toggleDashboardSideMenu } from 'src/app/modules/dashboard/store/actions/actions';
 import { getApiEnvironments, setApiEnv, toggleTheme } from 'src/app/store/actions';
 import { getPartners } from 'src/app/modules/management/store/actions';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-navbar',
@@ -18,15 +19,12 @@ import { getPartners } from 'src/app/modules/management/store/actions';
     CommonModule,
     RouterModule,
     FontAwesomeModule,
-    ModalEnvironmentsComponent,
   ],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss']
 })
 
 export class NavbarComponent implements OnInit, OnDestroy {
-  @ViewChild('modalEnvironment') modalEnvironment?: ModalEnvironmentsComponent
-  @Input() dashboardBarMenu: boolean = false;
   @Input() navItems: any = [];
   @Input() currentEnvironment: string = ''
   @Output() clickMenu = new EventEmitter();
@@ -47,19 +45,20 @@ export class NavbarComponent implements OnInit, OnDestroy {
       }
     }
   })
-
+/*
   environementListSubscription$ = this.store.pipe(select(getEnvironmentList))
     .pipe(distinctUntilChanged((prev, curr) => prev === curr))
     .pipe(filter(data => data.length > 0))
     .subscribe(data => {
       this.modalEnvironment?.open(data)
-    })
+    })*/
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private store: Store,
-    private localService: LocalService) {
+    private localService: LocalService,
+    private dialog: MatDialog) {
 
     this.routerSubscribtion$ = this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe((data) => {
       this.currentRoute = this.route.snapshot.root.firstChild?.routeConfig?.path
@@ -71,7 +70,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.environementListSubscription$?.unsubscribe()
     this.darkThemeSubscribtion$.unsubscribe()
     this.routerSubscribtion$?.unsubscribe()
   }
@@ -81,15 +79,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   getApiEnvironments() {
+    const dialogConfig = new MatDialogConfig()
+    dialogConfig.position = { top: '30px', bottom: '30px' }
+    dialogConfig.width = '350px'
+    this.dialog.open(ModalEnvironmentsComponent, dialogConfig)
     this.store.dispatch(getApiEnvironments())
-  }
-
-  selectEnvironment($event: any) {
-    this.localService.setEnvironment($event)
-    this.store.dispatch(setApiEnv({ environment: $event }))
-    //this.store.dispatch(getCatalogs())
-    //this.navigateToDashboardPage()
-    this.modalEnvironment?.close()
   }
 
   toggleTheme() {
@@ -119,7 +113,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.router.navigate([
       '/dashboard', {
         outlets: {
-          'dashboard-content': 'product'
+          'content': 'product'
         }
       }
     ])
@@ -129,7 +123,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.router.navigate([
       '/management', {
         outlets: {
-          'management-content': 'partner-detail'
+          'content': 'partner-detail'
         }
       }
     ])

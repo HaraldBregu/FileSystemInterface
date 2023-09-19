@@ -1,9 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Variant, VariantPropertyField } from '../../interfaces/variant';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
-import { distinctUntilChanged } from 'rxjs';
+import { Subscription, distinctUntilChanged } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { Store } from '@ngrx/store';
+import { selectEmptyProductDetailLoading } from 'src/app/modules/dashboard/store/selectors';
 
 @Component({
   selector: 'app-variants-table',
@@ -19,13 +21,18 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 })
 export class VariantsTableComponent implements OnInit {
   @Input() variants: Variant[] = []
+  @Input() loading: boolean = false
   @Output() isValidForm = new EventEmitter<boolean>();
   @Output() onChange = new EventEmitter<Variant[]>();
+  @Output() onCreateNewVariant = new EventEmitter();
+  @Output() onDeleteVariant = new EventEmitter<Variant>();
+
+  //loadingForm$ = this.store.select(selectEmptyProductDetailLoading);
 
   variantFormGroup: FormGroup = new FormGroup({})
   headerVariant: Variant | undefined
 
-  constructor() { }
+  constructor(private store: Store) { }
 
   ngOnInit() {
 
@@ -53,7 +60,7 @@ export class VariantsTableComponent implements OnInit {
         this.isValidForm.emit(this.variantFormGroup.valid)
       }, 0)
 
-      
+
     })
 
     this.headerVariant = this.variants[0]
@@ -80,7 +87,7 @@ export class VariantsTableComponent implements OnInit {
         }, 0)
 
         this.onChange.emit(newVariantProperties)
-        
+
       })
 
   }
@@ -101,6 +108,54 @@ export class VariantsTableComponent implements OnInit {
     const inValid = !isValid && isTouched && field.required
     //this.onValidation.emit(inValid === false)
     return inValid
+  }
+
+  orderCodChannel = false
+  toggleOrderCodChannel: boolean = true
+
+  toggleOrderByCodChannel() {
+    this.orderCodChannel = true
+    this.orderCodMercato = false
+    this.toggleOrderCodChannel = !this.toggleOrderCodChannel
+
+    this.variants = this.variants.sort((a, b) => {
+      const dataA = a.properties.find(data => data.name === 'CCN_COD_CHANNEL')
+      const dataB = b.properties.find(data => data.name === 'CCN_COD_CHANNEL')
+
+      if (this.toggleOrderCodChannel) {
+        return dataB?.value.toLowerCase().localeCompare(dataA?.value.toLowerCase() ?? '') ?? 0
+      } else {
+        return dataA?.value.toLowerCase().localeCompare(dataB?.value.toLowerCase() ?? '') ?? 0
+      }
+    })
+  }
+
+  orderCodMercato = false
+  toggleOrderCodMercato: boolean = true
+
+  toggleOrderByCodMercato() {
+    this.orderCodMercato = true
+    this.orderCodChannel = false
+    this.toggleOrderCodMercato = !this.toggleOrderCodMercato
+
+    this.variants = this.variants.sort((a, b) => {
+      const dataA = a.properties.find(data => data.name === 'CCN_COD_MERCATO')
+      const dataB = b.properties.find(data => data.name === 'CCN_COD_MERCATO')
+
+      if (this.toggleOrderCodMercato) {
+        return dataB?.value.toLowerCase().localeCompare(dataA?.value.toLowerCase() ?? '') ?? 0
+      } else {
+        return dataA?.value.toLowerCase().localeCompare(dataB?.value.toLowerCase() ?? '') ?? 0
+      }
+    })
+  }
+
+  createNewVariant() {   
+    this.onCreateNewVariant.emit()
+  }
+
+  deleteVariant(event: Variant) {
+    this.onDeleteVariant.emit(event)
   }
 
 }
